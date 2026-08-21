@@ -762,12 +762,15 @@
   <div id="toast" class="toast-note" role="status" aria-live="polite"></div>
   <script src="/_sdk/f344579cd2b2cf70.editing_sdk.js" integrity="sha512-bzdgmfJ/pl/acJqgk+LGvYwJbF03Y2d6f4oZHD96WjqTnvQUZBGVAQkTDRz+fyIMjVc+AXkpwFXqDYLeHDMLSw=="></script>
 
-  <!-- ===== Firebase (penyimpanan online lintas perangkat) ===== -->
-  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
-  <script>
-    // GANTI dengan konfigurasi project Firebase kamu sendiri.
-    // Cara dapatnya: Firebase Console > Project Settings > General > scroll ke "Your apps" > SDK setup and configuration
+  <!-- ==== KONFIGURASI FIREBASE ====
+       1. Buat project di https://console.firebase.google.com
+       2. Aktifkan "Firestore Database" (mode production/test, pilih lokasi asia-southeast2 misalnya)
+       3. Buka Project settings > General > scroll ke "Your apps" > tambah app Web (ikon </>)
+       4. Salin nilai firebaseConfig di bawah, ganti semua "GANTI_..." dengan nilai punya Anda -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+    import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+
     const firebaseConfig = {
       apiKey: "AIzaSyBgR4q_NyXM2HyOgLB3Oakc9AtwGh7fOgU",
       authDomain: "cips-smanela.firebaseapp.com",
@@ -776,11 +779,34 @@
       messagingSenderId: "42727755578",
       appId: "1:42727755578:web:249be8622fcc5593070a03"
     };
-    firebase.initializeApp(firebaseConfig);
-    const cipsDb = firebase.firestore();
-    const cipsDocRef = cipsDb.collection("cips-smanela").doc("data");
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    // Semua data tersimpan dalam SATU dokumen (koleksi "cips-smanela", dokumen "app-data")
+    const dataDocRef = doc(db, "cips-smanela", "app-data");
+
+    window.__fb = {
+      async save(data) {
+        try { await setDoc(dataDocRef, data); }
+        catch (err) { console.error("Gagal menyimpan ke Firebase:", err); }
+      },
+      async loadOnce() {
+        try {
+          const snap = await getDoc(dataDocRef);
+          return snap.exists() ? snap.data() : null;
+        } catch (err) { console.error("Gagal memuat dari Firebase:", err); return null; }
+      },
+      subscribe(callback) {
+        onSnapshot(dataDocRef, snap => {
+          // Abaikan notifikasi hasil tulisan dari perangkat ini sendiri, supaya tidak render berulang.
+          if (snap.metadata.hasPendingWrites) return;
+          if (snap.exists()) callback(snap.data());
+        }, err => console.error("Gagal sinkron real-time:", err));
+      }
+    };
+
+    document.dispatchEvent(new Event("firebase-ready"));
   </script>
-  <!-- ===== Akhir konfigurasi Firebase ===== -->
 
   <script>
     const KEY = "cips-smanela-v1";
@@ -819,55 +845,49 @@
 
     function clone(value) { return JSON.parse(JSON.stringify(value)); }
     function uid(prefix) { return prefix + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
-    function fillMissingKeys() {
-      Object.keys(defaultData).forEach(key => { if (appData[key] === undefined) appData[key] = clone(defaultData[key]); });
+
+    function fillMissingKeys(data) {
+      Object.keys(defaultData).forEach(key => { if (data[key] === undefined) data[key] = clone(defaultData[key]); });
+      return data;
     }
 
-    function loadLocalFallback() {
+    function saveDataLocal() { localStorage.setItem(KEY, JSON.stringify(appData)); }
+
+    // saveData() dipanggil di semua form/aksi yang sudah ada di file ini.
+    // Sekarang selain menyimpan ke localStorage (cache instan/offline),
+    // data juga dikirim ke Firebase Firestore supaya bisa diakses dari perangkat lain.
+    function saveData() {
+      saveDataLocal();
+      if (window.__fb) window.__fb.save(appData);
+    }
+
+    function syncWithFirebase() {
+      if (!window.__fb) return;
+      window.__fb.loadOnce().then(remote => {
+        if (remote) {
+          appData = fillMissingKeys(remote);
+          saveDataLocal();
+          renderAll();
+        } else {
+          // Belum ada data di Firestore -> kirim data lokal sebagai data awal.
+          window.__fb.save(appData);
+        }
+        window.__fb.subscribe(remote => {
+          appData = fillMissingKeys(remote);
+          saveDataLocal();
+          renderAll();
+          toast("Data tersinkron dari perangkat lain.");
+        });
+      });
+    }
+    document.addEventListener("firebase-ready", syncWithFirebase);
+
+    function loadData() {
       const saved = localStorage.getItem(KEY);
       appData = saved ? JSON.parse(saved) : clone(defaultData);
-      fillMissingKeys();
-    }
-
-    // Alur: 1) tampilkan data lokal dulu biar cepat, 2) ambil data terbaru dari cloud,
-    // 3) pasang listener supaya perubahan dari perangkat lain langsung masuk tanpa refresh.
-    async function loadData() {
-      loadLocalFallback();
-      try {
-        const snap = await cipsDocRef.get();
-        if (snap.exists && snap.data().payload) {
-          appData = JSON.parse(snap.data().payload);
-          fillMissingKeys();
-          localStorage.setItem(KEY, JSON.stringify(appData));
-        } else {
-          await cipsDocRef.set({ payload: JSON.stringify(appData) });
-        }
-      } catch (err) {
-        console.warn("Gagal memuat data online, memakai data di perangkat ini.", err);
-        toast("Offline: memakai data tersimpan di perangkat ini.");
-      }
-      listenForRemoteChanges();
-    }
-
-    function listenForRemoteChanges() {
-      cipsDocRef.onSnapshot(snap => {
-        if (!snap.exists || !snap.data().payload) return;
-        const remoteRaw = snap.data().payload;
-        if (remoteRaw === JSON.stringify(appData)) return; // sama saja, abaikan (termasuk hasil simpanan kita sendiri)
-        appData = JSON.parse(remoteRaw);
-        fillMissingKeys();
-        localStorage.setItem(KEY, JSON.stringify(appData));
-        renderAll();
-        toast("Data diperbarui dari perangkat lain.");
-      }, err => console.warn("Gagal memantau perubahan online.", err));
-    }
-
-    function saveData() {
-      localStorage.setItem(KEY, JSON.stringify(appData));
-      cipsDocRef.set({ payload: JSON.stringify(appData) }).catch(err => {
-        console.warn("Gagal menyimpan ke online, data tersimpan lokal saja.", err);
-        toast("Gagal sinkron online, data tetap tersimpan di perangkat ini.");
-      });
+      fillMissingKeys(appData);
+      saveDataLocal();
+      if (window.__fb) syncWithFirebase();
     }
     function money(value) { return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(Number(value || 0)); }
     function escapeHtml(value) { return String(value || "").replace(/[&<>"']/g, char => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;" }[char])); }
@@ -1225,12 +1245,13 @@
     menuToggle.addEventListener("click", () => { document.querySelector(".side-panel").classList.add("open"); navBackdrop.classList.add("open"); });
     navBackdrop.addEventListener("click", () => { document.querySelector(".side-panel").classList.remove("open"); navBackdrop.classList.remove("open"); });
 
+    loadData();
     updateClock(); setInterval(updateClock, 1000);
     const now = new Date();
     todayLabel.textContent = now.toLocaleDateString("id-ID", { weekday:"long", day:"numeric", month:"long", year:"numeric" });
     attendanceDate.value = now.toISOString().slice(0,10);
     financeDate.value = now.toISOString().slice(0,10);
-    loadData().then(renderAll);
+    renderAll();
   </script>
  
 </body></html>
