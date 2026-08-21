@@ -1,0 +1,1236 @@
+<!doctype html>
+<html lang="id"><head><script>window["__codeletBootstrap__"]=JSON.parse('{"A":"A","B":"20260821-01-4849b1d","C":{"Abril Fatface":"YACgEZbkUVE,0","Alfa Slab One":"YACgEYS9sJU,0","Anton":"YACgEcYqQ-A,0","Archivo":"YAHO2-t-jNE,0","Arial":"YAGyDvJ_4Ts,0","Bebas Neue":"YACgESME5ew,0","Bricolage Grotesque":"YAFyMcdwzpc,0","Canva Sans":"YAFLd8sKbwc,2","Caveat":"YALBs2ploWQ,0","Comic Sans MS":"YAHO2VMiyZo,0","Cormorant Garamond":"YAFdJhX-538,0","Courier New":"YAGzXiGs0_8,0","DM Sans":"YAD1aU3sLnI,0","DM Serif Display":"YAD1aYG82rc,0","Forum":"YACgEcnnqB4,0","Fraunces":"YAEul-FRQw4,0","Georgia":"YAGzXkO0pEM,0","Helvetica Neue":"YAFcf6CtJfI,0","Impact":"YAFcfnjI7Vk,0","Inter":"YAFdJvSyp_k,3","Iowan Old Style":"YAGNIFa8j9o,0","Jacques Francois":"YAHO2a5g66Q,0","JetBrains Mono":"YAFdJksXcAk,0","Libre Baskerville":"YACgEUFdPdA,0","Manrope":"YAHO2b2feC4,0","Merriweather":"YACgEXvHxxs,0","Montserrat":"YADLjI9qxTA,0","Nunito":"YACgEX8C5Gg,0","Oleo Script":"YACgEQQ14jI,0","Phantom Sans":"YAHO2E8Pb88,0","Playfair Display":"YACgEYmuCJE,0","Poppins":"YAFdJjbTu24,1","Press Start 2P":"YAFyGr-8pmQ,0","Quicksand":"YADWjpfPmdk,0","Raleway":"YACgEVg3xZg,0","Segoe UI":"YAHNdRD1Klw,0","Source Sans 3":"YAG4lO1Mj10,0","Spectral":"YAHO2rVUHIM,0","Times New Roman":"YAGzXW3gftg,0","Times":"YAGzXW3gftg,0","Ubuntu":"YACgERDU--Q,0","Work Sans":"YAGXhLOKv44,0","Yellowtail":"YACgEYG4kG4,0","ui-monospace":"YADlN8CFZ8Q,0","ui-sans-serif":"YACkoN-xg4g,0"}}');</script><script src="/_sdk/50d846425a1e5082.telemetry_sdk.js" integrity="sha512-Otbex+ztlVbcEGql0rXGd/3E3ee/hqAntg6DeuUEMG6pIPbXGOSvZbFZVzknAXi1tH/itQ+ijEhOTr2aWj6CXg=="></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CIPS SMANELA | Sistem Informasi</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --blue: #00B3FF;
+      --ink: #0F172A;
+      --muted: #64748B;
+      --paper: #FFFFFF;
+      --canvas: #F8FAFC;
+      --line: #E2E8F0;
+      --success: #16A34A;
+      --danger: #DC2626;
+      --warning: #D97706;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      width: 100%;
+      font-family: "Poppins", sans-serif;
+      background: #F8FAFC;
+      color: #0F172A;
+    }
+
+    .app-shell {
+      width: 100%;
+      min-height: calc(100 * min(var(--vh, 1vh), 1vh));
+      display: flex;
+      background:
+        radial-gradient(circle at 92% 0%, rgba(0,179,255,.11), transparent 26rem),
+        #F8FAFC;
+    }
+
+    .side-panel {
+      width: 275px;
+      min-height: calc(100 * min(var(--vh, 1vh), 1vh));
+      background: #FFFFFF;
+      border-right: 1px solid #E2E8F0;
+      padding: 1.5rem 1rem;
+      position: fixed;
+      inset: 0 auto 0 0;
+      z-index: 1040;
+      display: flex;
+      flex-direction: column;
+      transition: transform .28s ease;
+    }
+
+    .brand-mark {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      color: #FFFFFF;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(145deg, #0F172A, #00B3FF);
+      box-shadow: 0 10px 24px rgba(0,179,255,.28);
+      font-size: 1.2rem;
+    }
+
+    .brand-title { font-weight: 800; font-size: 1rem; letter-spacing: -.03em; }
+    .brand-subtitle { color: #64748B; font-size: .7rem; letter-spacing: .06em; }
+
+    .nav-caption {
+      margin: 1.6rem .75rem .65rem;
+      color: #94A3B8;
+      font-size: .65rem;
+      letter-spacing: .11em;
+      font-weight: 700;
+    }
+
+    .menu-link {
+      border: 0;
+      width: 100%;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: .85rem;
+      padding: .72rem .85rem;
+      border-radius: 12px;
+      color: #475569;
+      background: transparent;
+      font-size: .82rem;
+      font-weight: 500;
+      margin-bottom: .22rem;
+      transition: .2s ease;
+    }
+
+    .menu-link:hover, .menu-link.active {
+      background: #EAF8FF;
+      color: #0284C7;
+    }
+
+    .menu-link i { font-size: 1rem; width: 18px; }
+
+    .main-area {
+      width: 100%;
+      margin-left: 275px;
+      padding: 1.4rem 2rem 2rem;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.8rem;
+    }
+
+    .page-kicker {
+      color: #0284C7;
+      text-transform: uppercase;
+      letter-spacing: .13em;
+      font-size: .65rem;
+      font-weight: 700;
+      margin-bottom: .2rem;
+    }
+
+    .page-heading {
+      margin: 0;
+      font-weight: 800;
+      letter-spacing: -.04em;
+      font-size: clamp(1.45rem, 3vw, 2rem);
+    }
+
+    .date-chip {
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      color: #64748B;
+      border-radius: 999px;
+      padding: .55rem .9rem;
+      font-size: .75rem;
+      white-space: nowrap;
+    }
+
+    .stat-card, .surface-card {
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(15,23,42,.035);
+    }
+
+    .stat-total-card { order: 4; }
+    .stat-achievements-card { order: 5; }
+    .stat-balance-card { order: 6; }
+
+    .stat-card {
+      height: 100%;
+      padding: 1.2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::after {
+      content: "";
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      right: -28px;
+      bottom: -35px;
+      background: rgba(0,179,255,.1);
+    }
+
+    .stat-label { color: #64748B; font-size: .72rem; font-weight: 600; }
+    .stat-value { margin-top: .45rem; font-size: 1.7rem; font-weight: 800; letter-spacing: -.06em; }
+    .stat-icon {
+      width: 38px; height: 38px; display: grid; place-items: center;
+      border-radius: 12px; color: #0284C7; background: #EAF8FF;
+    }
+
+    .surface-card { padding: 1.3rem; }
+    .section-title { font-size: 1rem; margin: 0; font-weight: 700; letter-spacing: -.03em; }
+    .section-copy { color: #64748B; font-size: .75rem; margin: .25rem 0 0; }
+
+    .form-label { font-size: .75rem; font-weight: 600; color: #334155; }
+    .form-control, .form-select {
+      border-color: #CBD5E1;
+      border-radius: 10px;
+      font-size: .8rem;
+      padding: .62rem .75rem;
+    }
+    .form-control:focus, .form-select:focus {
+      border-color: #00B3FF;
+      box-shadow: 0 0 0 .2rem rgba(0,179,255,.13);
+    }
+
+    .btn-cips {
+      background: #00B3FF;
+      border-color: #00B3FF;
+      color: #FFFFFF;
+      border-radius: 10px;
+      font-size: .78rem;
+      font-weight: 600;
+      padding: .63rem .9rem;
+    }
+    .btn-cips:hover { background: #0099DB; border-color: #0099DB; color: #FFFFFF; }
+    .btn-soft {
+      border: 1px solid #CBD5E1;
+      color: #334155;
+      background: #FFFFFF;
+      border-radius: 10px;
+      font-size: .76rem;
+      font-weight: 600;
+      padding: .58rem .75rem;
+    }
+    .btn-soft:hover { background: #F1F5F9; }
+    .btn-danger-soft { color: #DC2626; border-color: #FECACA; background: #FFF7F7; }
+    .btn-danger-soft:hover { color: #FFFFFF; background: #DC2626; }
+
+    .table-wrap { overflow-x: auto; }
+    .table { margin: 0; font-size: .76rem; }
+    .table > :not(caption) > * > * { padding: .8rem .7rem; vertical-align: middle; }
+    .table thead th { color: #64748B; font-size: .66rem; letter-spacing: .06em; text-transform: uppercase; border-bottom-width: 1px; }
+    .member-initial {
+      width: 31px; height: 31px; display: inline-grid; place-items: center;
+      border-radius: 9px; background: #EAF8FF; color: #0284C7; font-size: .7rem; font-weight: 700;
+    }
+
+    .badge-soft { font-size: .65rem; padding: .42rem .55rem; border-radius: 999px; font-weight: 600; }
+    .badge-creator { background: #DBF4FF; color: #0369A1; }
+    .badge-editor { background: #EDE9FE; color: #6D28D9; }
+    .badge-creative { background: #FEF3C7; color: #B45309; }
+    .badge-income { background: #DCFCE7; color: #15803D; }
+    .badge-expense { background: #FEE2E2; color: #B91C1C; }
+
+    .view-section { display: none; animation: slideUp .28s ease; }
+    .view-section.active { display: block; }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: translateY(0); } }
+
+    .division-block { min-height: 205px; }
+    .division-line { width: 45px; height: 4px; border-radius: 99px; margin: .8rem 0 1rem; background: #00B3FF; }
+
+    .program-card {
+      border: 1px solid #E2E8F0;
+      border-radius: 16px;
+      padding: 1rem;
+      height: 100%;
+      background: linear-gradient(145deg, #FFFFFF, #F8FAFC);
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .program-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(15,23,42,.08); }
+
+    .empty-state { text-align: center; padding: 2.2rem 1rem; color: #94A3B8; font-size: .8rem; }
+    .empty-state i { font-size: 1.8rem; display: block; margin-bottom: .6rem; }
+
+    .class-edit-modal { display: none; position: fixed; inset: 0; z-index: 1090; align-items: center; justify-content: center; padding: 1rem; }
+    .class-edit-modal.open { display: flex; }
+    .class-edit-backdrop { position: absolute; inset: 0; background: rgba(15,23,42,.45); backdrop-filter: blur(3px); }
+    .class-edit-dialog { position: relative; width: min(100%, 420px); background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 18px; padding: 1.3rem; box-shadow: 0 22px 60px rgba(15,23,42,.2); animation: slideUp .2s ease; }
+
+    .toast-note {
+      position: fixed; right: 1.2rem; bottom: 1.2rem; z-index: 1080;
+      color: #FFFFFF; background: #0F172A; border-radius: 12px; padding: .8rem 1rem;
+      font-size: .75rem; box-shadow: 0 12px 30px rgba(15,23,42,.2);
+      transform: translateY(130%); transition: .25s ease;
+    }
+    .toast-note.show { transform: translateY(0); }
+
+    .production-member {
+      display: flex; gap: .75rem; align-items: center;
+      border-bottom: 1px solid #F1F5F9; padding: .75rem 0;
+    }
+    .production-member:last-child { border-bottom: 0; }
+
+    .mobile-toggle { display: none; }
+
+    @media (max-width: 991px) {
+      .side-panel { transform: translateX(-105%); box-shadow: 14px 0 30px rgba(15,23,42,.14); }
+      .side-panel.open { transform: translateX(0); }
+      .main-area { margin-left: 0; padding: 1.15rem; }
+      .mobile-toggle { display: inline-flex; }
+      .nav-backdrop {
+        display: none; position: fixed; inset: 0; background: rgba(15,23,42,.35); z-index: 1030;
+      }
+      .nav-backdrop.open { display: block; }
+      .top-bar { margin-bottom: 1.3rem; }
+    }
+
+    @media print {
+      .side-panel, .top-bar .date-chip, .mobile-toggle, .no-print, .btn, button, form, #toast { display: none !important; }
+      .main-area { margin: 0; padding: 0; }
+      .view-section { display: none !important; }
+      .view-section.active { display: block !important; }
+      .surface-card, .stat-card { box-shadow: none; border: 1px solid #CBD5E1; }
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js" type="text/javascript"></script>
+  <script src="/_sdk/b3bf9e8ac58e6ad6.data_sdk.js" type="text/javascript" integrity="sha512-otc1u9NYq9Ms5Jt//7vmhrrqR5CLPr8Jdgs6741gqniClfLMcfmC+jK/cKuQdhLv6G0esJ/FzaMS9tv0T/vj/Q=="></script>
+  <script src="/_sdk/a27879be4562f807.resizing_sdk.js" type="text/javascript" integrity="sha512-trcxRwz+QLrzK0Dqg95xqVRryR7WtWui2YopXyzOIr3WMde3j/xCRgT63/b/EAg7klDsAOuHzoRgoryhwm8QFw=="></script>
+ </head>
+ <body data-template-id="__page-root" style="background: rgb(248, 250, 252);">
+  <div class="app-shell">
+   <div class="nav-backdrop" id="navBackdrop"></div>
+   <aside class="side-panel" aria-label="Navigasi utama">
+    <div class="d-flex align-items-center gap-3 px-2">
+     <div class="brand-mark"><i class="bi bi-camera-reels-fill"></i>
+     </div>
+     <div>
+      <div data-template-id="brand-name" class="canva-text brand-title" style="color: rgb(15, 23, 42); font-weight: 800; font-style: normal; font-size: 14px;">CIPS SMANELA</div>
+      <div data-template-id="brand-caption" class="canva-text brand-subtitle" style="color: rgb(100, 116, 139); font-weight: 600; font-style: normal; font-size: 14px;">CINEMA &amp; PHOTOGRAPHY</div>
+     </div>
+    </div>
+    <div class="nav-caption">
+     MENU UTAMA
+    </div>
+    <nav class="flex-grow-1" id="sideNavigation">
+     <button class="menu-link active" data-view="dashboard"><i class="bi bi-grid-1x2-fill"></i><span data-template-id="nav-dashboard" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Dashboard</span></button> <button class="menu-link" data-view="members"><i class="bi bi-people-fill"></i><span data-template-id="nav-members" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Anggota CIPS</span></button> <button class="menu-link" data-view="divisions"><i class="bi bi-diagram-3-fill"></i><span data-template-id="nav-divisions" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Divisi Anggota</span></button> <button class="menu-link" data-view="programs"><i class="bi bi-calendar2-check-fill"></i><span data-template-id="nav-programs" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Program Kerja</span></button> <button class="menu-link" data-view="attendance"><i class="bi bi-clipboard2-check-fill"></i><span data-template-id="nav-attendance" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Absensi Anggota</span></button> <button class="menu-link" data-view="finance"><i class="bi bi-wallet2"></i><span data-template-id="nav-finance" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Uang Kas</span></button> <button class="menu-link" data-view="polo"><i class="bi bi-person-vcard-fill"></i><span data-template-id="nav-polo" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Produksi Polo</span></button> <button class="menu-link" data-view="jacket"><i class="bi bi-shield-fill"></i><span data-template-id="nav-jacket" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Produksi Jaket</span></button> <button class="menu-link" data-view="latdas"><i class="bi bi-flag-fill"></i><span data-template-id="nav-latdas" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">LATDAS CIPS</span></button> <button class="menu-link" data-view="grades"><i class="bi bi-award-fill"></i><span data-template-id="nav-grades" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Nilai Anggota</span></button> <button class="menu-link" data-view="dispensation"><i class="bi bi-file-earmark-medical-fill"></i><span data-template-id="nav-dispensation" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Dispensasi</span></button> <button class="menu-link" data-view="achievements"><i class="bi bi-trophy-fill"></i><span data-template-id="nav-achievements" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Prestasi Lomba</span></button> <button class="menu-link" data-view="classes"><i class="bi bi-building"></i><span data-template-id="nav-classes" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Data Kelas</span></button>
+    </nav>
+    <div class="mt-3 p-3 rounded-4" style="background:#EAF8FF;">
+     <div data-template-id="sidebar-note-title" class="canva-text fw-bold" style="font-size: 14px; color: rgb(15, 23, 42); font-weight: 700; font-style: normal;">DATE &amp; TIME</div>
+     <div id="liveDateTime" class="canva-text mt-1" style="font-size:.65rem; line-height:1.6;"></div>
+    </div>
+   </aside>
+   <main class="main-area">
+    <header class="top-bar">
+     <div class="d-flex align-items-center gap-3">
+      <button class="btn btn-soft mobile-toggle" type="button" id="menuToggle" aria-label="Buka menu"><i class="bi bi-list"></i></button>
+      <div>
+       <div data-template-id="header-kicker" class="canva-text page-kicker" style="color: rgb(2, 132, 199); font-weight: 700; font-style: normal; font-size: 14px;">SISTEM INFORMASI EKSTRAKURIKULER</div>
+       <h1 id="pageTitle" class="page-heading">Dashboard</h1>
+      </div>
+     </div>
+     <div class="date-chip"><i class="bi bi-calendar3 me-1"></i><span id="todayLabel"></span>
+     </div>
+    </header>
+    <section class="view-section active" id="dashboard">
+     <div class="row g-3 mb-4">
+      <div class="col-6 col-xl-4 stat-total-card">
+       <article class="stat-card">
+        <div class="d-flex justify-content-between">
+         <div data-template-id="stat-total-members" class="canva-text stat-label" style="color: rgb(100, 116, 139); font-weight: 600; font-style: normal; font-size: 14px;">Total Anggota</div>
+         <div class="stat-icon"><i class="bi bi-people"></i>
+         </div>
+        </div>
+        <div class="stat-value" id="statMembers">
+         0
+        </div>
+       </article>
+      </div>
+      <div class="col-6 col-xl-4">
+       <article class="stat-card">
+        <div class="d-flex justify-content-between">
+         <div data-template-id="stat-creator" class="canva-text stat-label" style="color: rgb(100, 116, 139); font-weight: 600; font-style: normal; font-size: 14px;">Divisi Creator</div>
+         <div class="stat-icon"><i class="bi bi-camera-video"></i>
+         </div>
+        </div>
+        <div class="stat-value" id="statCreator">
+         0
+        </div>
+       </article>
+      </div>
+      <div class="col-6 col-xl-4">
+       <article class="stat-card">
+        <div class="d-flex justify-content-between">
+         <div data-template-id="stat-editor" class="canva-text stat-label" style="color: rgb(100, 116, 139); font-weight: 600; font-style: normal; font-size: 14px;">Divisi Editor</div>
+         <div class="stat-icon"><i class="bi bi-film"></i>
+         </div>
+        </div>
+        <div class="stat-value" id="statEditor">
+         0
+        </div>
+       </article>
+      </div>
+      <div class="col-6 col-xl-4">
+       <article class="stat-card">
+        <div class="d-flex justify-content-between">
+         <div data-template-id="stat-creative" class="canva-text stat-label" style="color: rgb(100, 116, 139); font-weight: 600; font-style: normal; font-size: 14px;">Divisi Creative</div>
+         <div class="stat-icon"><i class="bi bi-palette"></i>
+         </div>
+        </div>
+        <div class="stat-value" id="statCreative">
+         0
+        </div>
+       </article>
+      </div>
+      <div class="col-6 col-xl-4 stat-achievements-card">
+       <article class="stat-card">
+        <div class="d-flex justify-content-between">
+         <div data-template-id="stat-achievements" class="canva-text stat-label" style="color: rgb(100, 116, 139); font-weight: 600; font-style: normal; font-size: 14px;">Prestasi Lomba</div>
+         <div class="stat-icon"><i class="bi bi-trophy"></i>
+         </div>
+        </div>
+        <div class="stat-value" id="statAchievements">
+         0
+        </div>
+       </article>
+      </div>
+      <div class="col-6 col-xl-4 stat-balance-card">
+       <article class="stat-card">
+        <div class="d-flex justify-content-between">
+         <div data-template-id="stat-balance" class="canva-text stat-label" style="color: rgb(100, 116, 139); font-weight: 600; font-style: normal; font-size: 14px;">Saldo Kas Terkini</div>
+         <div class="stat-icon"><i class="bi bi-cash-stack"></i>
+         </div>
+        </div>
+        <div class="stat-value" id="statBalance">
+         Rp0
+        </div>
+       </article>
+      </div>
+     </div>
+     <div class="row g-3">
+      <div class="col-lg-7">
+       <article class="surface-card h-100">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+         <div>
+          <h2 data-template-id="dashboard-division-title" class="canva-text section-title" style="color: rgb(15, 23, 42); font-weight: 700; font-style: normal; font-size: 21px;">Komposisi Divisi</h2>
+          <p data-template-id="dashboard-division-copy" class="canva-text section-copy" style="color: rgb(100, 116, 139); font-weight: 400; font-style: normal; font-size: 14px;">Distribusi anggota aktif pada setiap divisi CIPS.</p>
+         </div><button class="btn btn-soft no-print" type="button" data-go="divisions"><i class="bi bi-arrow-right"></i></button>
+        </div>
+        <div id="dashboardDivisionBars"></div>
+       </article>
+      </div>
+      <div class="col-lg-5">
+       <article class="surface-card h-100">
+        <h2 data-template-id="dashboard-welcome-title" class="canva-text section-title" style="color: rgb(15, 23, 42); font-weight: 700; font-style: normal; font-size: 21px;">Ruang Kerja CIPS</h2>
+        <p data-template-id="dashboard-welcome-copy" class="canva-text section-copy mb-3" style="color: rgb(100, 116, 139); font-weight: 400; font-style: normal; font-size: 14px;">Kelola aktivitas, produksi, kas, dan perkembangan anggota dalam satu dashboard.</p>
+        <div class="row g-2" aria-label="Menu ruang kerja CIPS">
+         <div class="col-6"><button class="btn btn-soft w-100 d-flex align-items-center gap-2 text-start" type="button" data-go="members"><i class="bi bi-people-fill text-info"></i><span data-template-id="workspace-members" class="canva-text" style="color: rgb(51, 65, 85); font-weight: 600; font-style: normal; font-size: 14px;">Anggota</span></button>
+         </div>
+         <div class="col-6"><button class="btn btn-soft w-100 d-flex align-items-center gap-2 text-start" type="button" data-go="programs"><i class="bi bi-calendar2-check-fill text-info"></i><span data-template-id="workspace-programs" class="canva-text" style="color: rgb(51, 65, 85); font-weight: 600; font-style: normal; font-size: 14px;">Program</span></button>
+         </div>
+         <div class="col-6"><button class="btn btn-soft w-100 d-flex align-items-center gap-2 text-start" type="button" data-go="attendance"><i class="bi bi-clipboard2-check-fill text-info"></i><span data-template-id="workspace-attendance" class="canva-text" style="color: rgb(51, 65, 85); font-weight: 600; font-style: normal; font-size: 14px;">Absensi</span></button>
+         </div>
+         <div class="col-6"><button class="btn btn-soft w-100 d-flex align-items-center gap-2 text-start" type="button" data-go="finance"><i class="bi bi-wallet2 text-info"></i><span data-template-id="workspace-finance" class="canva-text" style="color: rgb(51, 65, 85); font-weight: 600; font-style: normal; font-size: 14px;">Uang Kas</span></button>
+         </div>
+         <div class="col-6"><button class="btn btn-soft w-100 d-flex align-items-center gap-2 text-start" type="button" data-go="achievements"><i class="bi bi-trophy-fill text-info"></i><span data-template-id="workspace-achievements" class="canva-text" style="color: rgb(51, 65, 85); font-weight: 600; font-style: normal; font-size: 14px;">Prestasi</span></button>
+         </div>
+         <div class="col-6"><button class="btn btn-soft w-100 d-flex align-items-center gap-2 text-start" type="button" data-go="classes"><i class="bi bi-building text-info"></i><span data-template-id="workspace-classes" class="canva-text" style="color: rgb(51, 65, 85); font-weight: 600; font-style: normal; font-size: 14px;">Data Kelas</span></button>
+         </div>
+        </div>
+       </article>
+      </div>
+     </div>
+    </section>
+    <section class="view-section" id="members">
+     <div class="row g-3">
+      <div class="col-lg-4">
+       <article class="surface-card">
+        <h2 data-template-id="members-form-title" class="canva-text section-title" style="color: rgb(15, 23, 42); font-weight: 700; font-style: normal; font-size: 21px;">Tambah Anggota</h2>
+        <p data-template-id="members-form-copy" class="canva-text section-copy mb-3" style="color: rgb(100, 116, 139); font-weight: 400; font-style: normal; font-size: 14px;">Isi data anggota CIPS yang baru.</p>
+        <form id="memberForm">
+         <input type="hidden" id="memberId">
+         <div class="mb-2"><label for="memberName" class="form-label">Nama Lengkap</label><input id="memberName" class="form-control" required="">
+         </div>
+         <div class="mb-2"><label for="memberNickname" class="form-label">Nama Panggilan</label><input id="memberNickname" class="form-control" required="">
+         </div>
+         <div class="row g-2">
+          <div class="col-6"><label for="memberAbsent" class="form-label">No. Absen</label><input id="memberAbsent" type="number" min="1" class="form-control" required="">
+          </div>
+          <div class="col-6"><label for="memberClass" class="form-label">Kelas</label><select id="memberClass" class="form-select" required=""><option value="">Pilih kelas</option></select>
+          </div>
+         </div>
+         <div class="mt-2 mb-3"><label for="memberDivision" class="form-label">Divisi</label><select id="memberDivision" class="form-select" required=""><option value="Creator">Creator</option><option value="Editor">Editor</option><option value="Creative">Creative</option></select>
+         </div><button data-template-id="member-save-button" class="canva-button btn btn-cips w-100" type="submit" style="background: rgb(0, 179, 255); color: rgb(255, 255, 255); font-weight: 600; font-style: normal; font-size: 14px;">Simpan Data Anggota</button>
+        </form>
+       </article>
+      </div>
+      <div class="col-lg-8">
+       <article class="surface-card">
+        <div class="d-flex flex-wrap justify-content-between gap-2 mb-3">
+         <div>
+          <h2 data-template-id="members-table-title" class="canva-text section-title" style="color: rgb(15, 23, 42); font-weight: 700; font-style: normal; font-size: 21px;">Daftar Anggota CIPS</h2>
+          <p data-template-id="members-table-copy" class="canva-text section-copy" style="color: rgb(100, 116, 139); font-weight: 400; font-style: normal; font-size: 14px;">Cari, filter, edit, atau kelola data anggota.</p>
+         </div>
+         <div class="d-flex flex-wrap gap-2 no-print">
+          <button class="btn btn-soft" type="button" onclick="printCurrent()"><i class="bi bi-printer"></i></button> <label class="btn btn-soft mb-0">Import<input type="file" class="d-none" accept=".json" onchange="importData(event,'members')"></label> <button class="btn btn-soft" type="button" onclick="exportExcel('members')">Export</button> <button class="btn btn-soft btn-danger-soft" type="button" onclick="resetCollection('members')">Reset</button>
+         </div>
+        </div>
+        <div class="row g-2 mb-3 no-print">
+         <div class="col-md-7"><label for="memberSearch" class="visually-hidden">Cari anggota</label><input id="memberSearch" class="form-control" placeholder="Cari nama, kelas, atau panggilan...">
+         </div>
+         <div class="col-md-5"><label for="memberFilter" class="visually-hidden">Filter divisi</label><select id="memberFilter" class="form-select"><option value="">Semua Divisi</option><option>Creator</option><option>Editor</option><option>Creative</option></select>
+         </div>
+        </div>
+        <div class="table-wrap">
+         <table class="table align-middle">
+          <thead>
+           <tr>
+            <th>Anggota</th>
+            <th>Kelas</th>
+            <th>Divisi</th>
+            <th class="text-end">Aksi</th>
+           </tr>
+          </thead>
+          <tbody id="memberRows"></tbody>
+         </table>
+        </div>
+       </article>
+      </div>
+     </div>
+    </section>
+    <section class="view-section" id="divisions">
+     <div class="d-flex justify-content-end gap-2 mb-3 no-print"><button class="btn btn-soft" type="button" onclick="printCurrent()"><i class="bi bi-printer"></i></button><label class="btn btn-soft mb-0">Import<input type="file" class="d-none" accept=".json" onchange="importData(event,'members')"></label><button class="btn btn-soft" type="button" onclick="exportExcel('members')">Export</button>
+     </div>
+     <div class="row g-3" id="divisionCards"></div>
+    </section>
+    <section class="view-section" id="programs">
+     <div class="row g-3">
+      <div class="col-lg-4">
+       <article class="surface-card">
+        <h2 data-template-id="program-form-title" class="canva-text section-title" style="color: rgb(15, 23, 42); font-weight: 700; font-style: normal; font-size: 21px;">Tambah Program Kerja</h2>
+        <p data-template-id="program-form-copy" class="canva-text section-copy mb-3" style="color: rgb(100, 116, 139); font-weight: 400; font-style: normal; font-size: 14px;">Rencanakan program kerja satu tahun CIPS.</p>
+        <form id="programForm">
+         <input type="hidden" id="programId">
+         <div class="mb-2"><label for="programName" class="form-label">Nama Program Kerja</label><input id="programName" class="form-control" required="">
+         </div>
+         <div class="mb-2"><label for="programMonth" class="form-label">Bulan Pelaksanaan</label><input id="programMonth" class="form-control" placeholder="Januari" required="">
+         </div>
+         <div class="mb-2"><label for="programStatus" class="form-label">Status</label><select id="programStatus" class="form-select"><option>Rencana</option><option>Berjalan</option><option>Selesai</option></select>
+         </div>
+         <div class="mb-3"><label for="programDescription" class="form-label">Deskripsi Singkat</label><textarea id="programDescription" class="form-control" rows="3"></textarea>
+         </div><button data-template-id="program-save-button" class="canva-button btn btn-cips w-100" type="submit" style="background: rgb(0, 179, 255); color: rgb(255, 255, 255); font-weight: 600; font-style: normal; font-size: 14px;">Simpan Program Kerja</button>
+        </form>
+       </article>
+      </div>
+      <div class="col-lg-8">
+       <div class="row g-3" id="programCards"></div>
+      </div>
+     </div>
+    </section>
+    <section class="view-section" id="attendance">
+     <article class="surface-card mb-3">
+      <div class="d-flex flex-wrap justify-content-between gap-3">
+       <div>
+        <h2 data-template-id="attendance-title" class="canva-text section-title" style="color: rgb(15, 23, 42); font-weight: 700; font-style: normal; font-size: 21px;">Absensi Anggota</h2>
+        <p data-template-id="attendance-copy" class="canva-text section-copy" style="color: rgb(100, 116, 139); font-weight: 400; font-style: normal; font-size: 14px;">Pilih tanggal lalu catat status kehadiran seluruh anggota.</p>
+       </div>
+       <div class="d-flex gap-2 no-print">
+        <label for="attendanceDate" class="visually-hidden">Tanggal absensi</label><input id="attendanceDate" type="date" class="form-control"> <button class="btn btn-soft" type="button" onclick="printCurrent()"><i class="bi bi-printer"></i></button> <label class="btn btn-soft mb-0">Import<input type="file" class="d-none" accept=".json" onchange="importData(event,'attendance')"></label> <button class="btn btn-soft" type="button" onclick="exportData('attendance','csv')">Export</button> <button class="btn btn-soft btn-danger-soft" type="button" onclick="resetCollection('attendance')">Reset</button>
+       </div>
+      </div>
+      <div class="row g-2 mt-3 no-print">
+       <div class="col-md-6"><label for="attendanceSearch" class="visually-hidden">Cari nama anggota</label><input id="attendanceSearch" class="form-control" placeholder="Cari nama panggilan atau nama lengkap...">
+       </div>
+      </div>
+     </article>
+     <article class="surface-card">
+      <div class="table-wrap">
+       <table class="table">
+        <thead>
+         <tr>
+          <th>Nama Anggota</th>
+          <th>Divisi</th>
+          <th>Status Kehadiran</th>
+         </tr>
+        </thead>
+        <tbody id="attendanceRows"></tbody>
+       </table>
+      </div>
+     </article>
+    </section>
+    <section class="view-section" id="finance">
+     <div class="row g-3">
+      <div class="col-lg-4">
+       <article class="surface-card">
+        <h2 data-template-id="finance-form-title" class="canva-text section-title" style="color: rgb(15, 23, 42); font-weight: 700; font-style: normal; font-size: 21px;">Catat Transaksi Kas</h2>
+        <p data-template-id="finance-form-copy" class="canva-text section-copy mb-3" style="color: rgb(100, 116, 139); font-weight: 400; font-style: normal; font-size: 14px;">Masukkan pemasukan kas atau pengeluaran kegiatan.</p>
+        <form id="financeForm">
+         <input type="hidden" id="financeId">
+         <div class="mb-2"><label for="financeDate" class="form-label">Tanggal</label><input id="financeDate" type="date" class="form-control" required="">
+         </div>
+         <div class="mb-2"><label for="financeType" class="form-label">Jenis Transaksi</label><select id="financeType" class="form-select"><option value="Pemasukan">Pemasukan</option><option value="Pengeluaran">Pengeluaran</option></select>
+         </div>
+         <div class="mb-2"><label for="financeDescription" class="form-label">Keterangan</label><input id="financeDescription" class="form-control" required="">
+         </div>
+         <div class="mb-3"><label for="financeAmount" class="form-label">Nominal (Rp)</label><input id="financeAmount" type="number" min="0" class="form-control" required="">
+         </div><button data-template-id="finance-save-button" class="canva-button btn btn-cips w-100" type="submit" style="background: rgb(0, 179, 255); color: rgb(255, 255, 255); font-weight: 600; font-style: normal; font-size: 14px;">Simpan Transaksi</button>
+        </form>
+       </article>
+      </div>
+      <div class="col-lg-8">
+       <article class="surface-card mb-3">
+        <div class="d-flex justify-content-between align-items-center">
+         <div>
+          <div data-template-id="finance-balance-label" class="canva-text stat-label" style="color: rgb(100, 116, 139); font-weight: 600; font-style: normal; font-size: 14px;">Total Saldo Kas Akhir</div>
+          <div id="financeBalance" class="stat-value">
+           Rp0
+          </div>
+         </div>
+         <div class="d-flex gap-2 no-print"><button class="btn btn-soft" type="button" onclick="printCurrent()"><i class="bi bi-printer"></i></button><label class="btn btn-soft mb-0">Import<input type="file" class="d-none" accept=".json" onchange="importData(event,'finance')"></label><button class="btn btn-soft" type="button" onclick="exportData('finance','csv')">Export</button><button class="btn btn-soft btn-danger-soft" type="button" onclick="resetCollection('finance')">Reset</button>
+         </div>
+        </div>
+       </article>
+       <article class="surface-card">
+        <div class="table-wrap">
+         <table class="table">
+          <thead>
+           <tr>
+            <th>Tanggal</th>
+            <th>Keterangan</th>
+            <th>Jenis</th>
+            <th>Nominal</th>
+            <th class="text-end">Aksi</th>
+           </tr>
+          </thead>
+          <tbody id="financeRows"></tbody>
+         </table>
+        </div>
+       </article>
+       <div class="my-4" style="border-top:1px solid #E2E8F0;"></div>
+       <article class="surface-card">
+        <h2 data-template-id="finance-member-payment-title" class="canva-text section-title" style="color: rgb(15, 23, 42); font-weight: 700; font-style: normal; font-size: 21px;">Status Pembayaran Anggota</h2>
+        <p data-template-id="finance-member-payment-copy" class="canva-text section-copy mb-3" style="color: rgb(100, 116, 139); font-weight: 400; font-style: normal; font-size: 14px;">Catatan pembayaran anggota tidak memengaruhi saldo kas akhir.</p>
+        <div class="table-wrap">
+         <table class="table">
+          <thead>
+           <tr>
+            <th>Nama Anggota</th>
+            <th>Kelas</th>
+            <th>Divisi</th>
+            <th>Catatan Pembayaran</th>
+           </tr>
+          </thead>
+          <tbody id="financeMemberPaymentRows"></tbody>
+         </table>
+        </div>
+       </article>
+      </div>
+     </div>
+    </section>
+    <section class="view-section" id="polo">
+     <div id="poloContent"></div>
+    </section>
+    <section class="view-section" id="jacket">
+     <div id="jacketContent"></div>
+    </section>
+    <section class="view-section" id="latdas">
+     <div class="d-flex justify-content-end gap-2 mb-3 no-print"><button class="btn btn-soft" type="button" onclick="printCurrent()"><i class="bi bi-printer"></i></button><label class="btn btn-soft mb-0">Import<input type="file" class="d-none" accept=".json" onchange="importData(event,'latdas')"></label><button class="btn btn-soft" type="button" onclick="exportExcel('latdas')">Export</button>
+     </div>
+     <article class="surface-card">
+      <div class="mb-3">
+       <h2 data-template-id="latdas-title" class="canva-text section-title" style="color: rgb(15, 23, 42); font-weight: 700; font-style: normal; font-size: 21px;">Data LATDAS</h2>
+       <p data-template-id="latdas-copy" class="canva-text section-copy" style="color: rgb(100, 116, 139); font-weight: 400; font-style: normal; font-size: 14px;">Kelola keikutsertaan dan kehadiran Latihan Dasar anggota.</p>
+      </div>
+      <div class="table-wrap">
+       <table class="table">
+        <thead>
+         <tr>
+          <th>Anggota</th>
+          <th>Divisi</th>
+          <th>Keikutsertaan</th>
+          <th>Kehadiran</th>
+         </tr>
+        </thead>
+        <tbody id="latdasRows"></tbody>
+       </table>
+      </div>
+     </article>
+    </section>
+    <section class="view-section" id="grades">
+     <div class="d-flex justify-content-end gap-2 mb-3 no-print"><button class="btn btn-soft" type="button" onclick="printCurrent()" aria-label="Cetak nilai"><i class="bi bi-printer"></i></button><label class="btn btn-soft mb-0">Import<input type="file" class="d-none" accept=".json" onchange="importData(event,'grades')"></label><button class="btn btn-soft" type="button" onclick="exportExcel('grades')">Export</button>
+     </div>
+     <article class="surface-card">
+      <div class="mb-3">
+       <h2 data-template-id="grades-title" class="canva-text section-title" style="color: rgb(15, 23, 42); font-weight: 700; font-style: normal; font-size: 21px;">Penilaian Anggota</h2>
+       <p data-template-id="grades-copy" class="canva-text section-copy" style="color: rgb(100, 116, 139); font-weight: 400; font-style: normal; font-size: 14px;">Nilai akhir dihitung otomatis dari Keaktifan 40%, Project 30%, dan LATDAS 30%.</p>
+      </div>
+      <div class="table-wrap">
+       <table class="table">
+        <thead>
+         <tr>
+          <th>Anggota</th>
+          <th>Keaktifan (40%)</th>
+          <th>Project (30%)</th>
+          <th>LATDAS (30%)</th>
+          <th>Nilai Akhir</th>
+          <th>Grade</th>
+         </tr>
+        </thead>
+        <tbody id="gradeRows"></tbody>
+       </table>
+      </div>
+     </article>
+    </section>
+    <section class="view-section" id="classes">
+     <article class="surface-card">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+       <div>
+        <h2 class="section-title">Data Kelas</h2>
+        <p class="section-copy">Kelola kelas dan lihat total anggota per kelas.</p>
+       </div>
+       <form id="classForm" class="d-flex gap-2">
+        <label for="classNameInput" class="visually-hidden">Nama kelas</label><input id="classNameInput" class="form-control" placeholder="Contoh: XI-10" required=""><button data-template-id="class-add-button" class="canva-button btn btn-cips" type="submit" style="background: rgb(0, 179, 255); color: rgb(255, 255, 255); font-weight: 600;"><span data-template-id="class-add-label" class="canva-text" style="color: rgb(255, 255, 255); font-weight: 600; font-style: normal; font-size: 14px;">Tambah Kelas</span><span data-template-id="class-save-label" class="canva-text d-none" style="color: rgb(255, 255, 255); font-weight: 600; font-style: normal; font-size: 14px;">Simpan</span></button>
+       </form>
+      </div>
+      <div id="classCards" class="row g-3"></div>
+     </article>
+    </section>
+    <section class="view-section" id="dispensation">
+     <div class="d-flex justify-content-end gap-2 mb-3 no-print"><button class="btn btn-soft" type="button" onclick="printCurrent()" aria-label="Cetak dispensasi"><i class="bi bi-printer"></i></button><label class="btn btn-soft mb-0">Import<input type="file" class="d-none" accept=".json" onchange="importData(event,'dispensation')"></label><button class="btn btn-soft" type="button" onclick="exportExcel('dispensation')">Export</button>
+     </div>
+     <article class="surface-card">
+      <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
+       <div>
+        <h2 class="section-title">Dispensasi</h2>
+        <p class="section-copy">Centang anggota yang mengajukan dispensasi.</p>
+       </div>
+      </div>
+      <div class="table-wrap">
+       <table class="table">
+        <thead>
+         <tr>
+          <th>Pilih</th>
+          <th>Nama Lengkap</th>
+          <th>No. Absen</th>
+          <th>Kelas</th>
+          <th>Divisi</th>
+         </tr>
+        </thead>
+        <tbody id="dispensationRows"></tbody>
+       </table>
+      </div>
+     </article>
+    </section>
+    <section class="view-section" id="achievements">
+     <div class="row g-3">
+      <div class="col-lg-4">
+       <article class="surface-card">
+        <h2 data-template-id="achievement-form-title" class="canva-text section-title" style="color: rgb(15, 23, 42); font-weight: 700; font-style: normal; font-size: 21px;">Tambah Prestasi</h2>
+        <p data-template-id="achievement-form-copy" class="canva-text section-copy mb-3" style="color: rgb(100, 116, 139); font-weight: 400; font-style: normal; font-size: 14px;">Catat pencapaian lomba CIPS SMANELA.</p>
+        <form id="achievementForm">
+         <input type="hidden" id="achievementId">
+         <div class="mb-2"><label for="achievementName" class="form-label">Nama Lomba</label><input id="achievementName" class="form-control" required="">
+         </div>
+         <div class="mb-2"><label for="achievementOrganizer" class="form-label">Penyelenggara</label><input id="achievementOrganizer" class="form-control" required="">
+         </div>
+         <div class="mb-2"><label for="achievementYear" class="form-label">Tahun Lomba</label><input id="achievementYear" type="number" min="2000" max="2100" class="form-control" required="">
+         </div>
+         <div class="mb-2"><label for="achievementMonth" class="form-label">Bulan Lomba</label><select id="achievementMonth" class="form-select" required=""><option value="">Pilih bulan</option><option>Januari</option><option>Februari</option><option>Maret</option><option>April</option><option>Mei</option><option>Juni</option><option>Juli</option><option>Agustus</option><option>September</option><option>Oktober</option><option>November</option><option>Desember</option></select>
+         </div>
+         <div class="mb-3"><label for="achievementAward" class="form-label">Kategori / Juara</label><input id="achievementAward" class="form-control" required="">
+         </div><button data-template-id="achievement-save-button" class="canva-button btn btn-cips w-100" type="submit" style="background: rgb(0, 179, 255); color: rgb(255, 255, 255); font-weight: 600; font-style: normal; font-size: 14px;">Simpan Prestasi</button>
+        </form>
+       </article>
+      </div>
+      <div class="col-lg-8">
+       <div class="d-flex flex-wrap justify-content-end align-items-center gap-2 mb-3 no-print">
+        <label for="achievementYearFilter" class="form-label mb-0">Filter Tahun</label> <select id="achievementYearFilter" class="form-select" style="width:auto;min-width:150px;"> <option value="">Semua Tahun</option> </select>
+       </div>
+       <div class="row g-3" id="achievementCards"></div>
+      </div>
+     </div>
+    </section>
+   </main>
+  </div>
+  <div id="classEditModal" class="class-edit-modal" role="dialog" aria-modal="true" aria-labelledby="classEditTitle" aria-hidden="true">
+   <div class="class-edit-backdrop" data-close-class-modal=""></div>
+   <div class="class-edit-dialog">
+    <h2 id="classEditTitle" class="section-title">Edit Nama Kelas</h2>
+    <p class="section-copy mb-3">Perbarui nama kelas anggota.</p><label for="classEditInput" class="form-label">Nama kelas</label> <input id="classEditInput" class="form-control mb-3" placeholder="Contoh: XI-10">
+    <div class="d-flex justify-content-end gap-2"><button id="classEditCancel" class="btn btn-soft" type="button">Batal</button> <button id="classEditSave" class="btn btn-cips" type="button">Simpan</button>
+    </div>
+   </div>
+  </div>
+  <div id="toast" class="toast-note" role="status" aria-live="polite"></div>
+  <script src="/_sdk/f344579cd2b2cf70.editing_sdk.js" integrity="sha512-bzdgmfJ/pl/acJqgk+LGvYwJbF03Y2d6f4oZHD96WjqTnvQUZBGVAQkTDRz+fyIMjVc+AXkpwFXqDYLeHDMLSw=="></script>
+
+  <!-- ===== Firebase (penyimpanan online lintas perangkat) ===== -->
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+  <script>
+    // GANTI dengan konfigurasi project Firebase kamu sendiri.
+    // Cara dapatnya: Firebase Console > Project Settings > General > scroll ke "Your apps" > SDK setup and configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyBgR4q_NyXM2HyOgLB3Oakc9AtwGh7fOgU",
+      authDomain: "cips-smanela.firebaseapp.com",
+      projectId: "cips-smanela",
+      storageBucket: "cips-smanela.firebasestorage.app",
+      messagingSenderId: "42727755578",
+      appId: "1:42727755578:web:249be8622fcc5593070a03"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const cipsDb = firebase.firestore();
+    const cipsDocRef = cipsDb.collection("cips-smanela").doc("data");
+  </script>
+  <!-- ===== Akhir konfigurasi Firebase ===== -->
+
+  <script>
+    const KEY = "cips-smanela-v1";
+    const defaultData = {
+      members: [
+        { id: "m1", name: "Aulia Putri Maharani", nickname: "Aulia", absent: 1, className: "XI-10", division: "Creator" },
+        { id: "m2", name: "Bagas Pratama", nickname: "Bagas", absent: 4, className: "XI-10", division: "Editor" },
+        { id: "m3", name: "Citra Lestari", nickname: "Citra", absent: 7, className: "XI IPA 2", division: "Creative" },
+        { id: "m4", name: "Dimas Arya Saputra", nickname: "Dimas", absent: 12, className: "XI IPA 2", division: "Creator" },
+        { id: "m5", name: "Nabila Fathia", nickname: "Nabila", absent: 16, className: "XI IPS 1", division: "Editor" }
+      ],
+      programs: [
+        { id: "p1", name: "Workshop Cinematography", month: "Februari", status: "Rencana", description: "Pelatihan dasar teknik pengambilan gambar dan visual storytelling." },
+        { id: "p2", name: "CIPS Short Movie Project", month: "Juli", status: "Berjalan", description: "Produksi film pendek kolaboratif untuk karya tahunan CIPS." },
+        { id: "p3", name: "Pameran Fotografi", month: "November", status: "Rencana", description: "Pameran karya fotografi siswa di lingkungan sekolah." }
+      ],
+      attendance: {},
+      finance: [
+        { id: "f1", date: "2026-07-10", type: "Pemasukan", description: "Kas Semester 1", amount: 250000 },
+        { id: "f2", date: "2026-07-18", type: "Pengeluaran", description: "Kebutuhan latihan produksi", amount: 75000 }
+      ],
+      memberPayments: {},
+      polo: {},
+      jacket: {},
+      classes: [],
+      dispensation: [],
+      latdas: {},
+      grades: {},
+      achievements: [
+        { id: "a1", name: "Festival Film Pelajar Bali", organizer: "Komunitas Film Bali", month: "Mei", award: "Juara 2 Film Pendek" },
+        { id: "a2", name: "Lomba Fotografi Sekolah", organizer: "Dinas Pendidikan", month: "Agustus", award: "Juara Harapan 1" }
+      ]
+    };
+
+    let appData = {};
+
+    function clone(value) { return JSON.parse(JSON.stringify(value)); }
+    function uid(prefix) { return prefix + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+    function fillMissingKeys() {
+      Object.keys(defaultData).forEach(key => { if (appData[key] === undefined) appData[key] = clone(defaultData[key]); });
+    }
+
+    function loadLocalFallback() {
+      const saved = localStorage.getItem(KEY);
+      appData = saved ? JSON.parse(saved) : clone(defaultData);
+      fillMissingKeys();
+    }
+
+    // Alur: 1) tampilkan data lokal dulu biar cepat, 2) ambil data terbaru dari cloud,
+    // 3) pasang listener supaya perubahan dari perangkat lain langsung masuk tanpa refresh.
+    async function loadData() {
+      loadLocalFallback();
+      try {
+        const snap = await cipsDocRef.get();
+        if (snap.exists && snap.data().payload) {
+          appData = JSON.parse(snap.data().payload);
+          fillMissingKeys();
+          localStorage.setItem(KEY, JSON.stringify(appData));
+        } else {
+          await cipsDocRef.set({ payload: JSON.stringify(appData) });
+        }
+      } catch (err) {
+        console.warn("Gagal memuat data online, memakai data di perangkat ini.", err);
+        toast("Offline: memakai data tersimpan di perangkat ini.");
+      }
+      listenForRemoteChanges();
+    }
+
+    function listenForRemoteChanges() {
+      cipsDocRef.onSnapshot(snap => {
+        if (!snap.exists || !snap.data().payload) return;
+        const remoteRaw = snap.data().payload;
+        if (remoteRaw === JSON.stringify(appData)) return; // sama saja, abaikan (termasuk hasil simpanan kita sendiri)
+        appData = JSON.parse(remoteRaw);
+        fillMissingKeys();
+        localStorage.setItem(KEY, JSON.stringify(appData));
+        renderAll();
+        toast("Data diperbarui dari perangkat lain.");
+      }, err => console.warn("Gagal memantau perubahan online.", err));
+    }
+
+    function saveData() {
+      localStorage.setItem(KEY, JSON.stringify(appData));
+      cipsDocRef.set({ payload: JSON.stringify(appData) }).catch(err => {
+        console.warn("Gagal menyimpan ke online, data tersimpan lokal saja.", err);
+        toast("Gagal sinkron online, data tetap tersimpan di perangkat ini.");
+      });
+    }
+    function money(value) { return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(Number(value || 0)); }
+    function escapeHtml(value) { return String(value || "").replace(/[&<>"']/g, char => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;" }[char])); }
+    function badge(division) { return `<span class="badge-soft badge-${division.toLowerCase()}">${escapeHtml(division)}</span>`; }
+    function toast(message) {
+      const el = document.getElementById("toast");
+      el.textContent = message; el.classList.add("show");
+      clearTimeout(window.toastTimer);
+      window.toastTimer = setTimeout(() => el.classList.remove("show"), 2600);
+    }
+
+    function getBalance() {
+      return appData.finance.reduce((total, item) => total + (item.type === "Pemasukan" ? Number(item.amount) : -Number(item.amount)), 0);
+    }
+
+    function updateDashboard() {
+      const members = appData.members;
+      document.getElementById("statMembers").textContent = members.length;
+      document.getElementById("statCreator").textContent = members.filter(m => m.division === "Creator").length;
+      document.getElementById("statEditor").textContent = members.filter(m => m.division === "Editor").length;
+      document.getElementById("statCreative").textContent = members.filter(m => m.division === "Creative").length;
+      document.getElementById("statAchievements").textContent = appData.achievements.length;
+      document.getElementById("statBalance").textContent = money(getBalance());
+      document.getElementById("financeBalance").textContent = money(getBalance());
+
+      const max = Math.max(members.length, 1);
+      document.getElementById("dashboardDivisionBars").innerHTML = ["Creator", "Editor", "Creative"].map(div => {
+        const total = members.filter(m => m.division === div).length;
+        return `<div class="mb-3"><div class="d-flex justify-content-between mb-1" style="font-size:.75rem;"><strong>${div}</strong><span class="text-secondary">${total} anggota</span></div><div class="progress" style="height:8px;border-radius:999px;"><div class="progress-bar" style="width:${(total / max) * 100}%;background:#00B3FF;"></div></div></div>`;
+      }).join("");
+    }
+
+    function renderMembers() {
+      const search = document.getElementById("memberSearch").value.toLowerCase();
+      const filter = document.getElementById("memberFilter").value;
+      const list = appData.members.filter(m => {
+        const text = `${m.name} ${m.nickname} ${m.className}`.toLowerCase();
+        return text.includes(search) && (!filter || m.division === filter);
+      });
+
+      document.getElementById("memberRows").innerHTML = list.length ? list.map(m => `
+        <tr>
+          <td><div class="d-flex align-items-center gap-2"><span class="member-initial">${escapeHtml(m.nickname.slice(0,1))}</span><div><strong>${escapeHtml(m.name)}</strong><div class="text-secondary" style="font-size:.67rem;">${escapeHtml(m.nickname)} · No. ${m.absent}</div></div></div></td>
+          <td>${escapeHtml(m.className)}</td><td>${badge(m.division)}</td>
+          <td class="text-end"><button class="btn btn-sm btn-soft me-1" onclick="editMember('${m.id}')"><i class="bi bi-pencil"></i></button><button class="btn btn-sm btn-soft btn-danger-soft" onclick="deleteItem('members','${m.id}',this)"><i class="bi bi-trash"></i></button></td>
+        </tr>`).join("") : `<tr><td colspan="4"><div class="empty-state"><i class="bi bi-search"></i>Data anggota tidak ditemukan.</div></td></tr>`;
+    }
+
+    function editMember(id) {
+      const item = appData.members.find(m => m.id === id); if (!item) return;
+      memberId.value = item.id; memberName.value = item.name; memberNickname.value = item.nickname; memberAbsent.value = item.absent; memberClass.value = item.className; memberDivision.value = item.division;
+      document.querySelector("#members .surface-card").scrollIntoView({ behavior:"smooth", block:"start" });
+    }
+
+    function renderDivisions() {
+      document.getElementById("divisionCards").innerHTML = ["Creator", "Editor", "Creative"].map(div => {
+        const group = appData.members.filter(m => m.division === div);
+        return `<div class="col-lg-4"><article class="surface-card division-block"><div class="d-flex justify-content-between"><div><h2 class="section-title">${div}</h2><p class="section-copy">${group.length} anggota terdaftar</p></div>${badge(div)}</div><div class="division-line"></div>${group.length ? group.map(m => `<div class="d-flex justify-content-between align-items-center mb-2" style="font-size:.76rem;"><span>${escapeHtml(m.nickname)}</span><span class="text-secondary">${escapeHtml(m.className)}</span></div>`).join("") : `<p class="text-secondary" style="font-size:.75rem;">Belum ada anggota pada divisi ini.</p>`}</article></div>`;
+      }).join("");
+    }
+
+    function renderPrograms() {
+      document.getElementById("programCards").innerHTML = appData.programs.length ? appData.programs.map(p => `<div class="col-md-6"><article class="program-card"><div class="d-flex justify-content-between gap-2"><span class="badge-soft badge-creator">${escapeHtml(p.month)}</span><div class="d-flex gap-1"><button class="btn btn-sm btn-soft" onclick="editProgram('${p.id}')" aria-label="Edit program ${escapeHtml(p.name)}"><i class="bi bi-pencil"></i></button><button class="btn btn-sm btn-soft btn-danger-soft no-print" onclick="deleteItem('programs','${p.id}',this)"><i class="bi bi-trash"></i></button></div></div><h3 class="mt-3 mb-2" style="font-size:.95rem;font-weight:700;">${escapeHtml(p.name)}</h3><p class="text-secondary mb-3" style="font-size:.72rem;line-height:1.65;">${escapeHtml(p.description)}</p><span class="badge-soft ${p.status === "Selesai" ? "badge-income" : p.status === "Berjalan" ? "badge-creator" : "badge-creative"}">${escapeHtml(p.status)}</span></article></div>`).join("") : `<div class="col-12"><div class="empty-state"><i class="bi bi-calendar-x"></i>Belum ada program kerja.</div></div>`;
+    }
+
+    function renderAttendance() {
+      const date = document.getElementById("attendanceDate").value;
+      const search = document.getElementById("attendanceSearch").value.toLowerCase().trim();
+      const records = appData.attendance[date] || {};
+      const filteredMembers = appData.members.filter(m => `${m.name} ${m.nickname}`.toLowerCase().includes(search));
+      document.getElementById("attendanceRows").innerHTML = filteredMembers.length ? filteredMembers.map(m => `
+        <tr><td><strong>${escapeHtml(m.name)}</strong><div class="text-secondary" style="font-size:.67rem;">${escapeHtml(m.nickname)} · ${escapeHtml(m.className)}</div></td><td>${badge(m.division)}</td>
+        <td><label for="att-${m.id}" class="visually-hidden">Status kehadiran ${escapeHtml(m.name)}</label><select id="att-${m.id}" class="form-select" style="max-width:160px;" onchange="saveAttendance('${m.id}',this.value)"><option ${records[m.id] === "Hadir" ? "selected" : ""}>Hadir</option><option ${records[m.id] !== "Hadir" ? "selected" : ""}>Tidak Hadir</option></select></td></tr>`).join("") : `<tr><td colspan="3"><div class="empty-state">${search ? "Nama anggota tidak ditemukan." : "Tambahkan anggota terlebih dahulu."}</div></td></tr>`;
+    }
+
+    function saveAttendance(memberId, status) {
+      const date = attendanceDate.value;
+      if (!appData.attendance[date]) appData.attendance[date] = {};
+      appData.attendance[date][memberId] = status; saveData(); toast("Absensi tersimpan.");
+    }
+
+    function renderFinance() {
+      document.getElementById("financeRows").innerHTML = appData.finance.length ? [...appData.finance].sort((a,b) => b.date.localeCompare(a.date)).map(f => `
+        <tr><td>${new Date(f.date + "T00:00:00").toLocaleDateString("id-ID")}</td><td>${escapeHtml(f.description)}</td><td><span class="badge-soft ${f.type === "Pemasukan" ? "badge-income" : "badge-expense"}">${escapeHtml(f.type)}</span></td><td class="fw-bold">${money(f.amount)}</td><td class="text-end"><button class="btn btn-sm btn-soft me-1" onclick="editFinance('${f.id}')"><i class="bi bi-pencil"></i></button><button class="btn btn-sm btn-soft btn-danger-soft" onclick="deleteItem('finance','${f.id}',this)"><i class="bi bi-trash"></i></button></td></tr>`).join("") : `<tr><td colspan="5"><div class="empty-state">Belum ada transaksi kas.</div></td></tr>`;
+    }
+
+    function renderMemberPayments() {
+      const target = document.getElementById("financeMemberPaymentRows");
+      if (!target) return;
+      target.innerHTML = appData.members.length ? appData.members.map(m => {
+        const note = appData.memberPayments[m.id] || "";
+        return `<tr><td><strong>${escapeHtml(m.name)}</strong><div class="text-secondary" style="font-size:.67rem;">${escapeHtml(m.nickname)}</div></td><td>${escapeHtml(m.className)}</td><td>${badge(m.division)}</td><td><label for="payment-note-${m.id}" class="visually-hidden">Catatan pembayaran ${escapeHtml(m.name)}</label><input id="payment-note-${m.id}" class="form-control" value="${escapeHtml(note)}" placeholder="Tulis catatan pembayaran..." onchange="saveMemberPayment('${m.id}',this.value)"></td></tr>`;
+      }).join("") : `<tr><td colspan="4"><div class="empty-state">Tambahkan anggota terlebih dahulu.</div></td></tr>`;
+    }
+
+    function saveMemberPayment(memberId, note) {
+      if (note.trim()) appData.memberPayments[memberId] = note.trim();
+      else delete appData.memberPayments[memberId];
+      saveData();
+      toast("Catatan pembayaran tersimpan.");
+    }
+
+    function editProgram(id) {
+      const item = appData.programs.find(p => p.id === id); if (!item) return;
+      programId.value = item.id; programName.value = item.name; programMonth.value = item.month; programStatus.value = item.status; programDescription.value = item.description;
+      document.querySelector("#programs .surface-card").scrollIntoView({ behavior:"smooth", block:"start" });
+    }
+
+    function editFinance(id) {
+      const item = appData.finance.find(f => f.id === id); if (!item) return;
+      financeId.value = item.id; financeDate.value = item.date; financeType.value = item.type; financeDescription.value = item.description; financeAmount.value = item.amount;
+    }
+
+    function renderProduction(type) {
+      const target = document.getElementById(type + "Content");
+      const records = appData[type];
+      const title = type === "polo" ? "Produksi Polo" : "Produksi Jaket";
+      target.innerHTML = `<div class="row g-3"><div class="col-lg-8"><article class="surface-card"><div class="d-flex justify-content-between align-items-start mb-3"><div><h2 class="section-title">${title}</h2><p class="section-copy">Pilih anggota dan lengkapi kebutuhan pesanan.</p></div><div class="d-flex gap-2 no-print"><button class="btn btn-soft" type="button" onclick="printCurrent()">Print</button><label class="btn btn-soft mb-0">Import<input type="file" class="d-none" accept=".json" onchange="importData(event,'${type}')"></label><button class="btn btn-soft" type="button" onclick="exportExcel('${type}')">Export</button></div></div><div id="${type}MemberList"></div></article></div><div class="col-lg-4"><article class="surface-card"><h2 class="section-title">Rekap Ukuran</h2><p class="section-copy mb-3">Total pesanan aktif berdasarkan ukuran.</p><div id="${type}Summary"></div></article></div></div>`;
+
+      document.getElementById(type + "MemberList").innerHTML = appData.members.length ? appData.members.map(m => {
+        const r = records[m.id] || { selected:false, payment:"Belum Bayar", size:"M", gender:"Cowok" };
+        return `<div class="production-member"><input class="form-check-input" type="checkbox" id="${type}-${m.id}" ${r.selected ? "checked" : ""} onchange="updateProduction('${type}','${m.id}','selected',this.checked)"><label class="flex-grow-1 mb-0" for="${type}-${m.id}"><strong style="font-size:.78rem;">${escapeHtml(m.name)}</strong><small class="d-block text-secondary">${escapeHtml(m.className)} · ${escapeHtml(m.division)}</small></label><select class="form-select" style="width:120px;" onchange="updateProduction('${type}','${m.id}','payment',this.value)"><option ${r.payment==="Belum Bayar"?"selected":""}>Belum Bayar</option><option ${r.payment==="Tunai"?"selected":""}>Tunai</option><option ${r.payment==="QRIS"?"selected":""}>QRIS</option><option ${r.payment==="DANA"?"selected":""}>DANA</option></select><select class="form-select" style="width:72px;" onchange="updateProduction('${type}','${m.id}','size',this.value)">${["S","M","L","XL","XXL","XXXL"].map(s=>`<option ${r.size===s?"selected":""}>${s}</option>`).join("")}</select><select class="form-select" style="width:95px;" onchange="updateProduction('${type}','${m.id}','gender',this.value)"><option ${r.gender==="Cowok"?"selected":""}>Cowok</option><option ${r.gender==="Cewek"?"selected":""}>Cewek</option></select></div>`;
+      }).join("") : `<div class="empty-state">Tambahkan anggota terlebih dahulu.</div>`;
+
+      const totals = ["S","M","L","XL","XXL","XXXL"].map(size => [size, Object.values(records).filter(r => r.selected && r.size === size).length]);
+      document.getElementById(type + "Summary").innerHTML = totals.map(([size,total]) => `<div class="d-flex justify-content-between py-2 border-bottom" style="font-size:.78rem;"><span>Ukuran ${size}</span><strong>${total} pcs</strong></div>`).join("");
+    }
+
+    function updateProduction(type, memberId, field, value) {
+      if (!appData[type][memberId]) appData[type][memberId] = { selected:false, payment:"Belum Bayar", size:"M", gender:"Cowok" };
+      appData[type][memberId][field] = value; saveData(); renderProduction(type);
+    }
+
+    function renderLatdas() {
+      document.getElementById("latdasRows").innerHTML = appData.members.map(m => {
+        const r = appData.latdas[m.id] || { participation:"Ikut", attendance:"Hadir" };
+        return `<tr><td><strong>${escapeHtml(m.name)}</strong></td><td>${badge(m.division)}</td><td><select class="form-select" onchange="updateLatdas('${m.id}','participation',this.value)"><option ${r.participation==="Ikut"?"selected":""}>Ikut</option><option ${r.participation==="Tidak Ikut"?"selected":""}>Tidak Ikut</option></select></td><td><select class="form-select" onchange="updateLatdas('${m.id}','attendance',this.value)"><option ${r.attendance==="Hadir"?"selected":""}>Hadir</option><option ${r.attendance==="Tidak Hadir"?"selected":""}>Tidak Hadir</option></select></td></tr>`;
+      }).join("") || `<tr><td colspan="4"><div class="empty-state">Tambahkan anggota terlebih dahulu.</div></td></tr>`;
+    }
+
+    function updateLatdas(memberId, field, value) {
+      if (!appData.latdas[memberId]) appData.latdas[memberId] = { participation:"Ikut", attendance:"Hadir" };
+      appData.latdas[memberId][field] = value; saveData();
+    }
+
+    function renderGrades() {
+      document.getElementById("gradeRows").innerHTML = appData.members.map(m => {
+        const r = appData.grades[m.id] || { activity:0, project:0, latdas:0 };
+        const final = (Number(r.activity)*.4) + (Number(r.project)*.3) + (Number(r.latdas)*.3);
+        const grade = final >= 70 ? "A" : "B";
+        return `<tr><td><strong>${escapeHtml(m.name)}</strong><div class="text-secondary" style="font-size:.67rem;">${escapeHtml(m.division)}</div></td>${["activity","project","latdas"].map(field => `<td><label class="visually-hidden">Nilai ${field} ${escapeHtml(m.name)}</label><input type="number" min="0" max="100" value="${r[field]}" class="form-control" style="min-width:86px;" onchange="updateGrade('${m.id}','${field}',this.value)"></td>`).join("")}<td><strong>${final.toFixed(1)}</strong></td><td><span class="badge-soft ${grade==="A"?"badge-income":"badge-creative"}">Grade ${grade}</span></td></tr>`;
+      }).join("") || `<tr><td colspan="6"><div class="empty-state">Tambahkan anggota terlebih dahulu.</div></td></tr>`;
+    }
+
+    function updateGrade(memberId, field, value) {
+      if (!appData.grades[memberId]) appData.grades[memberId] = { activity:0, project:0, latdas:0 };
+      appData.grades[memberId][field] = Math.max(0, Math.min(100, Number(value))); saveData(); renderGrades();
+    }
+
+    function renderAchievements() {
+      const filter = document.getElementById("achievementYearFilter");
+      const selectedYear = filter ? filter.value : "";
+      const years = [...new Set(appData.achievements.map(a => a.year).filter(Boolean))].sort((a, b) => b - a);
+      if (filter) {
+        const currentOptions = [...filter.options].map(option => option.value).slice(1);
+        if (currentOptions.join(",") !== years.map(String).join(",")) {
+          filter.innerHTML = `<option value="">Semua Tahun</option>${years.map(year => `<option value="${year}">${year}</option>`).join("")}`;
+          filter.value = years.map(String).includes(selectedYear) ? selectedYear : "";
+        }
+      }
+      const achievements = selectedYear ? appData.achievements.filter(a => String(a.year) === selectedYear) : appData.achievements;
+      document.getElementById("achievementCards").innerHTML = achievements.length ? achievements.map(a => `<div class="col-md-6"><article class="program-card"><div class="d-flex justify-content-between align-items-start"><span class="badge-soft badge-creative">${escapeHtml(a.month)} ${escapeHtml(a.year || "")}</span><div class="d-flex gap-1"><button class="btn btn-sm btn-soft" onclick="editAchievement('${a.id}')" aria-label="Edit prestasi ${escapeHtml(a.name)}"><i class="bi bi-pencil"></i></button><button class="btn btn-sm btn-soft btn-danger-soft" onclick="deleteItem('achievements','${a.id}',this)" aria-label="Hapus prestasi ${escapeHtml(a.name)}"><i class="bi bi-trash"></i></button></div></div><i class="bi bi-trophy-fill d-block mt-3" style="font-size:1.4rem;color:#D97706;"></i><h3 class="mt-2 mb-1" style="font-size:.94rem;font-weight:700;">${escapeHtml(a.name)}</h3><p class="text-secondary mb-2" style="font-size:.7rem;">${escapeHtml(a.organizer)}</p><span class="badge-soft badge-income">${escapeHtml(a.award)}</span></article></div>`).join("") : `<div class="col-12"><div class="empty-state">Belum ada prestasi lomba pada tahun yang dipilih.</div></div>`;
+    }
+
+    function editAchievement(id) {
+      const item = appData.achievements.find(a => a.id === id); if (!item) return;
+      achievementId.value = item.id; achievementName.value = item.name; achievementOrganizer.value = item.organizer; achievementYear.value = item.year || ""; achievementMonth.value = item.month; achievementAward.value = item.award;
+      document.querySelector("#achievements .surface-card").scrollIntoView({ behavior:"smooth", block:"start" });
+    }
+
+    function deleteItem(collection, id, button) {
+      if (button.dataset.confirm !== "true") {
+        button.dataset.confirm = "true"; button.innerHTML = "Yakin?";
+        setTimeout(() => { if (button.dataset.confirm === "true") { button.dataset.confirm = ""; button.innerHTML = '<i class="bi bi-trash"></i>'; } }, 2400);
+        return;
+      }
+      appData[collection] = appData[collection].filter(item => item.id !== id);
+      saveData(); renderAll(); toast("Data berhasil dihapus.");
+    }
+
+    function resetCollection(collection) {
+      const key = "reset-" + collection;
+      if (window[key]) {
+        appData[collection] = clone(defaultData[collection]);
+        saveData(); renderAll(); window[key] = false; toast("Data dikembalikan ke data awal.");
+      } else {
+        window[key] = true; toast("Klik Reset sekali lagi untuk mengonfirmasi.");
+        setTimeout(() => window[key] = false, 2800);
+      }
+    }
+
+    function exportExcel(collection) {
+      const data = collection === "attendance" ? Object.entries(appData.attendance).map(([date, records]) => ({ date, records: JSON.stringify(records) })) : collection === "dispensation" ? appData.members.filter(m => appData.dispensation.includes(m.id)).map(m => ({ name:m.name, absent:m.absent, className:m.className, division:m.division })) : collection === "polo" || collection === "jacket" ? appData.members.filter(m => appData[collection][m.id]?.selected).map(m => ({ name:m.name, className:m.className, division:m.division, payment:appData[collection][m.id].payment, size:appData[collection][m.id].size, gender:appData[collection][m.id].gender })) : appData[collection];
+      const content = toCSV(data);
+      const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([content], {type:"application/vnd.ms-excel"})); a.download = `cips-${collection}.xls`; a.click(); URL.revokeObjectURL(a.href); toast(`Data ${collection} berhasil diekspor ke Excel.`);
+    }
+
+    function exportData(collection, format) {
+      let data = appData[collection];
+      if (collection === "attendance") data = Object.entries(data).map(([date, records]) => ({ date, records }));
+      const content = format === "csv" ? toCSV(data) : JSON.stringify(data, null, 2);
+      const blob = new Blob([content], { type: format === "csv" ? "text/csv" : "application/json" });
+      const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `cips-${collection}.${format}`; a.click(); URL.revokeObjectURL(a.href);
+      toast(`Data ${collection} berhasil diekspor.`);
+    }
+
+    function toCSV(data) {
+      if (!Array.isArray(data) || !data.length) return "";
+      const keys = Object.keys(data[0]);
+      return [keys.join(","), ...data.map(row => keys.map(key => `"${String(row[key] ?? "").replaceAll('"','""')}"`).join(","))].join("\n");
+    }
+
+    function importData(event, collection) {
+      const file = event.target.files[0]; if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const parsed = JSON.parse(reader.result);
+          if (collection === "attendance") {
+            appData.attendance = {};
+            parsed.forEach(item => { if (item.date && item.records) appData.attendance[item.date] = item.records; });
+          } else if (Array.isArray(parsed)) appData[collection] = parsed;
+          else throw new Error();
+          saveData(); renderAll(); toast("Data berhasil diimpor.");
+        } catch { toast("File JSON tidak dapat dibaca."); }
+      };
+      reader.readAsText(file); event.target.value = "";
+    }
+
+    function printCurrent() { window.print(); }
+
+    function getClassOptions() {
+      return [...new Set([...appData.classes, ...appData.members.map(m => m.className).filter(Boolean)])].sort();
+    }
+    function populateMemberClassOptions(selectedValue = "") {
+      const select = document.getElementById("memberClass");
+      if (!select) return;
+      const options = getClassOptions();
+      select.innerHTML = `<option value="">Pilih kelas</option>${options.map(name => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join("")}`;
+      select.value = selectedValue;
+    }
+    function renderClasses() {
+      const classes = getClassOptions();
+      populateMemberClassOptions(memberClass.value);
+      document.getElementById("classCards").innerHTML = classes.length ? classes.map(name => `<div class="col-md-4"><div class="program-card d-flex justify-content-between align-items-center"><div><strong>${escapeHtml(name)}</strong><div class="section-copy">${appData.members.filter(m => m.className === name).length} anggota</div></div><div class="d-flex gap-1"><button class="btn btn-sm btn-soft" type="button" onclick="editClass('${encodeURIComponent(name)}')" aria-label="Edit kelas ${escapeHtml(name)}"><i class="bi bi-pencil"></i></button><button class="btn btn-sm btn-soft btn-danger-soft" type="button" onclick="deleteClass('${encodeURIComponent(name)}')" aria-label="Hapus kelas ${escapeHtml(name)}"><i class="bi bi-trash"></i></button></div></div></div>`).join("") : `<div class="col-12"><div class="empty-state">Belum ada data kelas.</div></div>`;
+    }
+    let editingClassName = "";
+    function setClassButtonMode(editing) {
+      document.getElementById("class-add-label").classList.toggle("d-none", editing);
+      document.getElementById("class-save-label").classList.toggle("d-none", !editing);
+    }
+    function editClass(encoded) {
+      editingClassName = decodeURIComponent(encoded);
+      const modal = document.getElementById("classEditModal");
+      const input = document.getElementById("classEditInput");
+      input.value = editingClassName;
+      modal.classList.add("open");
+      modal.setAttribute("aria-hidden", "false");
+      input.focus();
+    }
+    function closeClassEditModal() {
+      const modal = document.getElementById("classEditModal");
+      modal.classList.remove("open");
+      modal.setAttribute("aria-hidden", "true");
+      editingClassName = "";
+    }
+    function saveClassEdit() {
+      const name = document.getElementById("classEditInput").value.trim();
+      if (!name) { toast("Nama kelas wajib diisi."); return; }
+      if (name !== editingClassName && appData.classes.includes(name)) { toast("Nama kelas sudah digunakan."); return; }
+      appData.classes = appData.classes.map(item => item === editingClassName ? name : item);
+      appData.members.forEach(member => { if (member.className === editingClassName) member.className = name; });
+      saveData(); closeClassEditModal(); renderAll(); toast("Nama kelas diperbarui.");
+    }
+    function deleteClass(encoded) { const name = decodeURIComponent(encoded); appData.classes = appData.classes.filter(c => c !== name); saveData(); renderClasses(); toast("Kelas dihapus dari daftar."); }
+    function renderDispensation() { document.getElementById("dispensationRows").innerHTML = appData.members.length ? appData.members.map(m => `<tr><td><input class="form-check-input" type="checkbox" ${appData.dispensation.includes(m.id)?"checked":""} onchange="toggleDispensation('${m.id}',this.checked)"></td><td>${escapeHtml(m.name)}</td><td>${m.absent}</td><td>${escapeHtml(m.className)}</td><td>${badge(m.division)}</td></tr>`).join("") : `<tr><td colspan="5"><div class="empty-state">Tambahkan anggota terlebih dahulu.</div></td></tr>`; }
+    function toggleDispensation(id, checked) { appData.dispensation = checked ? [...new Set([...appData.dispensation, id])] : appData.dispensation.filter(item => item !== id); saveData(); }
+    function exportDispensation() { const rows = appData.members.filter(m => appData.dispensation.includes(m.id)); const content = toCSV(rows.map(m => ({"Nama Lengkap":m.name,"No Absen":m.absent,"Kelas":m.className,"Divisi":m.division}))); const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([content],{type:"text/csv;charset=utf-8;"})); a.download="cips-dispensasi.csv"; a.click(); URL.revokeObjectURL(a.href); toast("Data dispensasi diekspor."); }
+    function updateClock() { const el=document.getElementById("liveDateTime"); if (el) el.textContent = new Date().toLocaleString("id-ID", {weekday:"long", day:"numeric", month:"long", year:"numeric", hour:"2-digit", minute:"2-digit"}); }
+    function renderAll() {
+      updateDashboard(); renderMembers(); renderDivisions(); renderPrograms(); renderAttendance(); renderFinance(); renderMemberPayments(); renderProduction("polo"); renderProduction("jacket"); renderLatdas(); renderGrades(); renderAchievements(); renderClasses(); renderDispensation();
+    }
+
+    document.getElementById("classForm").addEventListener("submit", event => { event.preventDefault(); const name = classNameInput.value.trim(); if (!name) return; if (editingClassName) { closeClassEditModal(); return; } if (!appData.classes.includes(name)) appData.classes.push(name); saveData(); event.target.reset(); renderClasses(); toast("Kelas ditambahkan."); });
+    document.getElementById("classEditSave").addEventListener("click", saveClassEdit);
+    document.getElementById("classEditCancel").addEventListener("click", closeClassEditModal);
+    document.querySelector("[data-close-class-modal]").addEventListener("click", closeClassEditModal);
+    document.getElementById("classEditInput").addEventListener("keydown", event => { if (event.key === "Enter") saveClassEdit(); if (event.key === "Escape") closeClassEditModal(); });
+    document.getElementById("memberForm").addEventListener("submit", event => {
+      event.preventDefault();
+      const id = memberId.value || uid("m");
+      const item = { id, name:memberName.value.trim(), nickname:memberNickname.value.trim(), absent:Number(memberAbsent.value), className:memberClass.value.trim(), division:memberDivision.value };
+      const index = appData.members.findIndex(m => m.id === id);
+      if (index >= 0) appData.members[index] = item; else appData.members.push(item);
+      if (!appData.classes.includes(item.className)) appData.classes.push(item.className);
+      saveData(); event.target.reset(); memberId.value = ""; renderAll(); toast(index >= 0 ? "Data anggota diperbarui." : "Anggota baru ditambahkan.");
+    });
+
+    document.getElementById("programForm").addEventListener("submit", event => {
+      event.preventDefault();
+      const id = programId.value || uid("p");
+      const item = { id, name:programName.value.trim(), month:programMonth.value.trim(), status:programStatus.value, description:programDescription.value.trim() };
+      const index = appData.programs.findIndex(p => p.id === id);
+      if (index >= 0) appData.programs[index] = item; else appData.programs.push(item);
+      saveData(); event.target.reset(); programId.value = ""; renderAll(); toast("Program kerja tersimpan.");
+    });
+
+    document.getElementById("financeForm").addEventListener("submit", event => {
+      event.preventDefault();
+      const id = financeId.value || uid("f");
+      const item = { id, date:financeDate.value, type:financeType.value, description:financeDescription.value.trim(), amount:Number(financeAmount.value) };
+      const index = appData.finance.findIndex(f => f.id === id);
+      if (index >= 0) appData.finance[index] = item; else appData.finance.push(item);
+      saveData(); event.target.reset(); financeId.value = ""; financeDate.value = new Date().toISOString().slice(0,10); renderAll(); toast("Transaksi kas tersimpan.");
+    });
+
+    document.getElementById("achievementForm").addEventListener("submit", event => {
+      event.preventDefault();
+      const id = achievementId.value || uid("a");
+      const item = { id, name:achievementName.value.trim(), organizer:achievementOrganizer.value.trim(), year:Number(achievementYear.value), month:achievementMonth.value, award:achievementAward.value.trim() };
+      const index = appData.achievements.findIndex(a => a.id === id);
+      if (index >= 0) appData.achievements[index] = item; else appData.achievements.push(item);
+      saveData(); event.target.reset(); achievementId.value = ""; renderAll(); toast("Prestasi lomba tersimpan.");
+    });
+
+    document.getElementById("memberSearch").addEventListener("input", renderMembers);
+    document.getElementById("memberFilter").addEventListener("change", renderMembers);
+    document.getElementById("attendanceDate").addEventListener("change", renderAttendance);
+    document.getElementById("attendanceSearch").addEventListener("input", renderAttendance);
+    document.getElementById("achievementYearFilter").addEventListener("change", renderAchievements);
+
+    document.querySelectorAll(".menu-link").forEach(button => {
+      button.addEventListener("click", () => {
+        const view = button.dataset.view;
+        document.querySelectorAll(".menu-link").forEach(item => item.classList.remove("active"));
+        document.querySelectorAll(".view-section").forEach(item => item.classList.remove("active"));
+        button.classList.add("active"); document.getElementById(view).classList.add("active");
+        pageTitle.textContent = button.textContent.trim();
+        document.querySelector(".side-panel").classList.remove("open"); navBackdrop.classList.remove("open");
+        window.scrollTo({ top:0, behavior:"smooth" });
+      });
+    });
+
+    document.querySelectorAll("[data-go]").forEach(button => button.addEventListener("click", () => document.querySelector(`[data-view="${button.dataset.go}"]`).click()));
+    menuToggle.addEventListener("click", () => { document.querySelector(".side-panel").classList.add("open"); navBackdrop.classList.add("open"); });
+    navBackdrop.addEventListener("click", () => { document.querySelector(".side-panel").classList.remove("open"); navBackdrop.classList.remove("open"); });
+
+    updateClock(); setInterval(updateClock, 1000);
+    const now = new Date();
+    todayLabel.textContent = now.toLocaleDateString("id-ID", { weekday:"long", day:"numeric", month:"long", year:"numeric" });
+    attendanceDate.value = now.toISOString().slice(0,10);
+    financeDate.value = now.toISOString().slice(0,10);
+    loadData().then(renderAll);
+  </script>
+ 
+</body></html>
