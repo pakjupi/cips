@@ -1116,7 +1116,7 @@
       populateAttendanceBatchOptions();
       const dateValue = document.getElementById("attendanceDate").value;
       const printDateEl = document.getElementById("attendancePrintDate");
-      if (printDateEl) printDateEl.textContent = "Absensi Anggota — " + (dateValue ? new Date(dateValue + "T00:00:00").toLocaleDateString("id-ID", { weekday:"long", day:"numeric", month:"long", year:"numeric" }) : "");
+      if (printDateEl) printDateEl.textContent = "Pertemuan — " + (dateValue ? new Date(dateValue + "T00:00:00").toLocaleDateString("id-ID", { weekday:"long", day:"numeric", month:"long", year:"numeric" }) : "");
       const search = document.getElementById("attendanceSearch").value.toLowerCase();
       const batchFilter = document.getElementById("attendanceBatchFilter").value;
       const filteredMembers = appData.members.filter(m => `${m.name} ${m.nickname}`.toLowerCase().includes(search) && (!batchFilter || m.batch === batchFilter));
@@ -1181,7 +1181,7 @@
       const sizes = ["S","M","L","XL","XXL","XXXL"];
       const buildSummary = gender => sizes.map(size => [size, Object.values(records).filter(r => r.selected && r.size === size && r.gender === gender).length]);
       const cowok = buildSummary("Cowok"), cewek = buildSummary("Cewek");
-      const summaryBlock = (label, rows) => `<div class="mb-3"><div class="fw-bold mb-1" style="font-size:.78rem;color:#0F172A;">${label}</div>${rows.map(([size,total]) => `<div class="d-flex justify-content-between py-2 border-bottom" style="font-size:.78rem;"><span>Ukuran ${size}</span><strong>${total} pcs</strong></div>`).join("")}<div class="d-flex justify-content-between pt-2" style="font-size:.78rem;"><span>Total ${label}</span><strong>${rows.reduce((sum,[,t])=>sum+t,0)} pcs</strong></div></div>`;
+      const summaryBlock = (label, rows) => `<div class="mb-4"><div class="fw-bold mb-1" style="font-size:.78rem;color:#0F172A;">${label}</div>${rows.map(([size,total]) => `<div class="d-flex justify-content-between py-2 border-bottom" style="font-size:.78rem;"><span>Ukuran ${size}</span><strong>${total} pcs</strong></div>`).join("")}<div class="d-flex justify-content-between mt-3 pt-3" style="font-size:.85rem;font-weight:700;border-top:2px solid #E2E8F0;"><span>Total ${label}</span><strong>${rows.reduce((sum,[,t])=>sum+t,0)} pcs</strong></div></div>`;
       document.getElementById(type + "Summary").innerHTML = summaryBlock("Cowok", cowok) + summaryBlock("Cewek", cewek);
     }
 
