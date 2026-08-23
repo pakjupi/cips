@@ -261,15 +261,41 @@
       position: fixed; right: 1.2rem; bottom: 1.2rem; z-index: 1080;
       color: #FFFFFF; background: #0F172A; border-radius: 12px; padding: .8rem 1rem;
       font-size: .75rem; box-shadow: 0 12px 30px rgba(15,23,42,.2);
-      transform: translateY(130%); transition: .25s ease;
+      transform: translateY(130%); opacity: 0; visibility: hidden; pointer-events: none;
+      transition: transform .25s ease, opacity .25s ease, visibility .25s ease;
     }
-    .toast-note.show { transform: translateY(0); }
+    .toast-note.show { transform: translateY(0); opacity: 1; visibility: visible; pointer-events: auto; }
 
     .production-member {
       display: flex; gap: .75rem; align-items: center;
       border-bottom: 1px solid #F1F5F9; padding: .75rem 0;
     }
     .production-member:last-child { border-bottom: 0; }
+
+    .year-picker { position: relative; }
+    .year-picker-grid {
+      display: none; position: absolute; z-index: 30; top: calc(100% + 6px); left: 0;
+      background: #FFFFFF; border: 1px solid #CBD5E1; border-radius: 12px; padding: .6rem;
+      box-shadow: 0 14px 32px rgba(15,23,42,.14); grid-template-columns: repeat(2, 1fr); gap: .4rem; width: 180px;
+    }
+    .year-picker-grid.open { display: grid; }
+    .year-cell {
+      border: 1px solid transparent; background: #F8FAFC; border-radius: 9px; padding: .5rem 0;
+      font-size: .8rem; font-weight: 600; color: #334155; cursor: pointer; text-align: center;
+    }
+    .year-cell:hover { background: #EAF8FF; color: #0284C7; }
+    .year-cell.selected { background: #00B3FF; color: #FFFFFF; }
+
+    .login-overlay {
+      position: fixed; inset: 0; z-index: 2000; display: flex; align-items: center; justify-content: center;
+      padding: 1.2rem;
+      background: radial-gradient(circle at 92% 0%, rgba(0,179,255,.16), transparent 26rem), #F8FAFC;
+    }
+    .login-overlay.hide { display: none; }
+    .login-card {
+      width: min(100%, 360px); background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 20px;
+      padding: 2rem 1.6rem; box-shadow: 0 22px 60px rgba(15,23,42,.12); text-align: center;
+    }
 
     .mobile-toggle { display: none; }
 
@@ -298,6 +324,17 @@
   <script src="/_sdk/a27879be4562f807.resizing_sdk.js" type="text/javascript" integrity="sha512-trcxRwz+QLrzK0Dqg95xqVRryR7WtWui2YopXyzOIr3WMde3j/xCRgT63/b/EAg7klDsAOuHzoRgoryhwm8QFw=="></script>
  </head>
  <body data-template-id="__page-root" style="background: rgb(248, 250, 252);">
+  <div id="loginOverlay" class="login-overlay">
+   <form id="loginForm" class="login-card">
+    <div class="brand-mark mb-3" style="margin:0 auto 1rem;"><i class="bi bi-camera-reels-fill"></i></div>
+    <h1 class="section-title text-center mb-1" style="font-size:1.15rem;">CIPS SMANELA</h1>
+    <p class="section-copy text-center mb-3">Masuk untuk mengakses Sistem Informasi Ekstrakurikuler.</p>
+    <div class="mb-2 text-start"><label for="loginUsername" class="form-label">Username</label><input id="loginUsername" class="form-control" autocomplete="username" required=""></div>
+    <div class="mb-2 text-start"><label for="loginPassword" class="form-label">Password</label><input id="loginPassword" type="password" class="form-control" autocomplete="current-password" required=""></div>
+    <div id="loginError" class="text-danger mb-2" style="font-size:.75rem; display:none;">Username atau password salah.</div>
+    <button class="btn btn-cips w-100 mt-2" type="submit">Masuk</button>
+   </form>
+  </div>
   <div class="app-shell">
    <div class="nav-backdrop" id="navBackdrop"></div>
    <aside class="side-panel" aria-label="Navigasi utama">
@@ -316,13 +353,14 @@
      MENU UTAMA
     </div>
     <nav class="flex-grow-1" id="sideNavigation">
-     <button class="menu-link" data-view="members"><i class="bi bi-people-fill"></i><span data-template-id="nav-members" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Anggota CIPS</span></button> <button class="menu-link" data-view="divisions"><i class="bi bi-diagram-3-fill"></i><span data-template-id="nav-divisions" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Divisi Anggota</span></button> <button class="menu-link" data-view="programs"><i class="bi bi-calendar2-check-fill"></i><span data-template-id="nav-programs" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Program Kerja</span></button> <button class="menu-link" data-view="attendance"><i class="bi bi-clipboard2-check-fill"></i><span data-template-id="nav-attendance" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Absensi Anggota</span></button> <button class="menu-link" data-view="finance"><i class="bi bi-wallet2"></i><span data-template-id="nav-finance" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Uang Kas</span></button> <button class="menu-link" data-view="polo"><i class="bi bi-person-vcard-fill"></i><span data-template-id="nav-polo" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Produksi Polo</span></button> <button class="menu-link" data-view="jacket"><i class="bi bi-shield-fill"></i><span data-template-id="nav-jacket" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Produksi Jaket</span></button> <button class="menu-link" data-view="latdas"><i class="bi bi-flag-fill"></i><span data-template-id="nav-latdas" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">LATDAS CIPS</span></button> <button class="menu-link" data-view="grades"><i class="bi bi-award-fill"></i><span data-template-id="nav-grades" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Nilai Anggota</span></button> <button class="menu-link" data-view="dispensation"><i class="bi bi-file-earmark-medical-fill"></i><span data-template-id="nav-dispensation" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Dispensasi</span></button> <button class="menu-link" data-view="achievements"><i class="bi bi-trophy-fill"></i><span data-template-id="nav-achievements" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Prestasi Lomba</span></button>
+     <button class="menu-link" data-view="members"><i class="bi bi-people-fill"></i><span data-template-id="nav-members" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Anggota CIPS</span></button> <button class="menu-link" data-view="divisions"><i class="bi bi-diagram-3-fill"></i><span data-template-id="nav-divisions" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Divisi Anggota</span></button> <button class="menu-link" data-view="programs"><i class="bi bi-calendar2-check-fill"></i><span data-template-id="nav-programs" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Program Kerja</span></button> <button class="menu-link" data-view="attendance"><i class="bi bi-clipboard2-check-fill"></i><span data-template-id="nav-attendance" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Absensi Anggota</span></button> <button class="menu-link" data-view="finance"><i class="bi bi-wallet2"></i><span data-template-id="nav-finance" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Uang Kas</span></button> <button class="menu-link" data-view="polo"><i class="bi bi-person-vcard-fill"></i><span data-template-id="nav-polo" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Produksi Polo</span></button> <button class="menu-link" data-view="jacket"><i class="bi bi-shield-fill"></i><span data-template-id="nav-jacket" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Produksi Jaket</span></button> <button class="menu-link" data-view="latdas"><i class="bi bi-flag-fill"></i><span data-template-id="nav-latdas" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">LATDAS CIPS</span></button> <button class="menu-link" data-view="grades"><i class="bi bi-award-fill"></i><span data-template-id="nav-grades" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Nilai Anggota</span></button> <button class="menu-link" data-view="dispensation"><i class="bi bi-file-earmark-medical-fill"></i><span data-template-id="nav-dispensation" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Dispensasi</span></button> <button class="menu-link" data-view="achievements"><i class="bi bi-trophy-fill"></i><span data-template-id="nav-achievements" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Prestasi Lomba</span></button> <button class="menu-link" data-view="miminverse"><i class="bi bi-instagram"></i><span data-template-id="nav-miminverse" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Miminverse</span></button>
     </nav>
     <div class="nav-caption">
      DATA SINKRONISASI
     </div>
     <nav id="sideNavigationSync">
      <button class="menu-link" data-view="classes"><i class="bi bi-building"></i><span data-template-id="nav-classes" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Data Kelas</span></button>
+     <button class="menu-link" data-view="adminProfile"><i class="bi bi-person-gear"></i><span class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Profil Admin</span></button>
     </nav>
    </aside>
    <main class="main-area">
@@ -334,7 +372,10 @@
        <h1 id="pageTitle" class="page-heading">Dashboard</h1>
       </div>
      </div>
-     <div class="date-chip"><i class="bi bi-calendar3 me-1"></i><span id="todayLabel"></span>
+     <div class="d-flex align-items-center gap-2">
+      <div class="date-chip"><i class="bi bi-calendar3 me-1"></i><span id="todayLabel" class="d-none d-sm-inline"></span><span id="todayLabelShort" class="d-inline d-sm-none"></span>
+      </div>
+      <button id="logoutBtn" class="btn btn-soft no-print" type="button" title="Keluar"><i class="bi bi-box-arrow-right"></i></button>
      </div>
     </header>
     <section class="view-section active" id="dashboard">
@@ -518,7 +559,7 @@
          <input type="hidden" id="programId">
          <div class="mb-2"><label for="programName" class="form-label">Nama Program Kerja</label><input id="programName" class="form-control" required="">
          </div>
-         <div class="mb-2"><label for="programMonth" class="form-label">Bulan Pelaksanaan</label><input id="programMonth" class="form-control" placeholder="Januari" required="">
+         <div class="mb-2"><label for="programMonth" class="form-label">Bulan Pelaksanaan</label><select id="programMonth" class="form-select" required=""><option value="">Pilih bulan</option><option>Januari</option><option>Februari</option><option>Maret</option><option>April</option><option>Mei</option><option>Juni</option><option>Juli</option><option>Agustus</option><option>September</option><option>Oktober</option><option>November</option><option>Desember</option></select>
          </div>
          <div class="mb-2"><label for="programStatus" class="form-label">Status</label><select id="programStatus" class="form-select"><option>Rencana</option><option>Berjalan</option><option>Selesai</option></select>
          </div>
@@ -738,7 +779,11 @@
          </div>
          <div class="mb-2"><label for="achievementOrganizer" class="form-label">Penyelenggara</label><input id="achievementOrganizer" class="form-control" required="">
          </div>
-         <div class="mb-2"><label for="achievementYear" class="form-label">Tahun Lomba</label><input id="achievementYear" type="number" min="2000" max="2100" class="form-control" required="">
+         <div class="mb-2 year-picker">
+          <label for="achievementYearBtn" class="form-label">Tahun Lomba</label>
+          <button type="button" id="achievementYearBtn" class="form-control text-start">Pilih tahun</button>
+          <input type="hidden" id="achievementYear">
+          <div id="achievementYearGrid" class="year-picker-grid"></div>
          </div>
          <div class="mb-2"><label for="achievementMonth" class="form-label">Bulan Lomba</label><select id="achievementMonth" class="form-select" required=""><option value="">Pilih bulan</option><option>Januari</option><option>Februari</option><option>Maret</option><option>April</option><option>Mei</option><option>Juni</option><option>Juli</option><option>Agustus</option><option>September</option><option>Oktober</option><option>November</option><option>Desember</option></select>
          </div>
@@ -752,6 +797,49 @@
         <label for="achievementYearFilter" class="form-label mb-0">Filter Tahun</label> <select id="achievementYearFilter" class="form-select" style="width:auto;min-width:150px;"> <option value="">Semua Tahun</option> </select>
        </div>
        <div class="row g-3" id="achievementCards"></div>
+      </div>
+     </div>
+    </section>
+    <section class="view-section" id="miminverse">
+     <div class="row g-3">
+      <div class="col-lg-4">
+       <article class="surface-card">
+        <h2 class="section-title">Tambah Kegiatan Miminverse</h2>
+        <p class="section-copy mb-3">Catat rencana konten/kegiatan akun Miminverse.</p>
+        <form id="miminverseForm">
+         <input type="hidden" id="miminverseId">
+         <div class="mb-3"><label for="miminverseName" class="form-label">Nama Kegiatan</label><input id="miminverseName" class="form-control" required="">
+         </div><button class="btn btn-cips w-100" type="submit">Simpan Kegiatan</button>
+        </form>
+       </article>
+      </div>
+      <div class="col-lg-8">
+       <div class="surface-card table-wrap">
+        <table class="table">
+         <thead><tr><th>Nama Kegiatan</th><th class="text-center">Sudah Posting</th><th class="text-end">Aksi</th></tr></thead>
+         <tbody id="miminverseRows"></tbody>
+        </table>
+       </div>
+      </div>
+     </div>
+    </section>
+    <section class="view-section" id="adminProfile">
+     <div class="row g-3">
+      <div class="col-lg-5">
+       <article class="surface-card">
+        <h2 class="section-title">Ubah Username &amp; Password</h2>
+        <p class="section-copy mb-3">Masukkan password saat ini untuk mengubah data login admin.</p>
+        <form id="adminProfileForm">
+         <div class="mb-2"><label for="adminCurrentPassword" class="form-label">Password Saat Ini</label><input id="adminCurrentPassword" type="password" class="form-control" autocomplete="current-password" required="">
+         </div>
+         <div class="mb-2"><label for="adminNewUsername" class="form-label">Username Baru</label><input id="adminNewUsername" class="form-control" autocomplete="username" required="">
+         </div>
+         <div class="mb-2"><label for="adminNewPassword" class="form-label">Password Baru</label><input id="adminNewPassword" type="password" class="form-control" autocomplete="new-password" minlength="4" required="">
+         </div>
+         <div class="mb-3"><label for="adminConfirmPassword" class="form-label">Ulangi Password Baru</label><input id="adminConfirmPassword" type="password" class="form-control" autocomplete="new-password" minlength="4" required="">
+         </div><button class="btn btn-cips w-100" type="submit">Simpan Perubahan</button>
+        </form>
+       </article>
       </div>
      </div>
     </section>
@@ -817,6 +905,8 @@
 
   <script>
     const KEY = "cips-smanela-v1";
+    const MONTH_ORDER = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+    function monthIndex(name) { const i = MONTH_ORDER.indexOf(name); return i === -1 ? 99 : i; }
     const defaultData = {
       members: [
         { id: "m1", name: "Aulia Putri Maharani", nickname: "Aulia", absent: 1, className: "XI-10", division: "Creator" },
@@ -845,7 +935,9 @@
       achievements: [
         { id: "a1", name: "Festival Film Pelajar Bali", organizer: "Komunitas Film Bali", month: "Mei", award: "Juara 2 Film Pendek" },
         { id: "a2", name: "Lomba Fotografi Sekolah", organizer: "Dinas Pendidikan", month: "Agustus", award: "Juara Harapan 1" }
-      ]
+      ],
+      miminverse: [],
+      auth: { username: "admin", password: "admin123" }
     };
 
     let appData = {};
@@ -883,7 +975,7 @@
           appData = fillMissingKeys(remote);
           saveDataLocal();
           renderAll();
-          toast("Data sudah tersimpan online.");
+          toast("Data website CIPS berhasil tersimpan online.");
         });
       });
     }
@@ -905,6 +997,48 @@
       clearTimeout(window.toastTimer);
       window.toastTimer = setTimeout(() => el.classList.remove("show"), 2600);
     }
+
+    const AUTH_KEY = "cips-smanela-authed";
+    function checkAuth() {
+      if (localStorage.getItem(AUTH_KEY) === "yes") {
+        document.getElementById("loginOverlay").classList.add("hide");
+      } else {
+        document.getElementById("loginOverlay").classList.remove("hide");
+        document.getElementById("loginUsername").focus();
+      }
+    }
+    document.getElementById("loginForm").addEventListener("submit", event => {
+      event.preventDefault();
+      const username = document.getElementById("loginUsername").value.trim();
+      const password = document.getElementById("loginPassword").value;
+      const auth = appData.auth || { username: "admin", password: "admin123" };
+      if (username === auth.username && password === auth.password) {
+        localStorage.setItem(AUTH_KEY, "yes");
+        document.getElementById("loginOverlay").classList.add("hide");
+        document.getElementById("loginError").style.display = "none";
+        event.target.reset();
+      } else {
+        document.getElementById("loginError").style.display = "block";
+      }
+    });
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      localStorage.removeItem(AUTH_KEY);
+      checkAuth();
+    });
+    document.getElementById("adminProfileForm").addEventListener("submit", event => {
+      event.preventDefault();
+      const auth = appData.auth || { username: "admin", password: "admin123" };
+      const currentPassword = document.getElementById("adminCurrentPassword").value;
+      const newUsername = document.getElementById("adminNewUsername").value.trim();
+      const newPassword = document.getElementById("adminNewPassword").value;
+      const confirmPassword = document.getElementById("adminConfirmPassword").value;
+      if (currentPassword !== auth.password) { toast("Password saat ini salah."); return; }
+      if (newPassword !== confirmPassword) { toast("Password baru tidak cocok."); return; }
+      appData.auth = { username: newUsername, password: newPassword };
+      saveData();
+      event.target.reset();
+      toast("Username & password admin berhasil diperbarui.");
+    });
 
     function getBalance() {
       return appData.finance.reduce((total, item) => total + (item.type === "Pemasukan" ? Number(item.amount) : -Number(item.amount)), 0);
@@ -957,7 +1091,8 @@
     }
 
     function renderPrograms() {
-      document.getElementById("programCards").innerHTML = appData.programs.length ? appData.programs.map(p => `<div class="col-md-6"><article class="program-card"><div class="d-flex justify-content-between gap-2"><span class="badge-soft badge-creator">${escapeHtml(p.month)}</span><div class="d-flex gap-1"><button class="btn btn-sm btn-soft" onclick="editProgram('${p.id}')" aria-label="Edit program ${escapeHtml(p.name)}"><i class="bi bi-pencil"></i></button><button class="btn btn-sm btn-soft btn-danger-soft no-print" onclick="deleteItem('programs','${p.id}',this)"><i class="bi bi-trash"></i></button></div></div><h3 class="mt-3 mb-2" style="font-size:.95rem;font-weight:700;">${escapeHtml(p.name)}</h3><p class="text-secondary mb-3" style="font-size:.72rem;line-height:1.65;">${escapeHtml(p.description)}</p><span class="badge-soft ${p.status === "Selesai" ? "badge-income" : p.status === "Berjalan" ? "badge-creator" : "badge-creative"}">${escapeHtml(p.status)}</span></article></div>`).join("") : `<div class="col-12"><div class="empty-state"><i class="bi bi-calendar-x"></i>Belum ada program kerja.</div></div>`;
+      const sortedPrograms = [...appData.programs].sort((a, b) => monthIndex(a.month) - monthIndex(b.month));
+      document.getElementById("programCards").innerHTML = sortedPrograms.length ? sortedPrograms.map(p => `<div class="col-md-6"><article class="program-card"><div class="d-flex justify-content-between gap-2"><span class="badge-soft badge-creator">${escapeHtml(p.month)}</span><div class="d-flex gap-1"><button class="btn btn-sm btn-soft" onclick="editProgram('${p.id}')" aria-label="Edit program ${escapeHtml(p.name)}"><i class="bi bi-pencil"></i></button><button class="btn btn-sm btn-soft btn-danger-soft no-print" onclick="deleteItem('programs','${p.id}',this)"><i class="bi bi-trash"></i></button></div></div><h3 class="mt-3 mb-2" style="font-size:.95rem;font-weight:700;">${escapeHtml(p.name)}</h3><p class="text-secondary mb-3" style="font-size:.72rem;line-height:1.65;">${escapeHtml(p.description)}</p><span class="badge-soft ${p.status === "Selesai" ? "badge-income" : p.status === "Berjalan" ? "badge-creator" : "badge-creative"}">${escapeHtml(p.status)}</span></article></div>`).join("") : `<div class="col-12"><div class="empty-state"><i class="bi bi-calendar-x"></i>Belum ada program kerja.</div></div>`;
     }
 
     function renderAttendance() {
@@ -1065,13 +1200,14 @@
           filter.value = years.map(String).includes(selectedYear) ? selectedYear : "";
         }
       }
-      const achievements = selectedYear ? appData.achievements.filter(a => String(a.year) === selectedYear) : appData.achievements;
+      const achievements = (selectedYear ? appData.achievements.filter(a => String(a.year) === selectedYear) : [...appData.achievements])
+        .sort((a, b) => (Number(a.year) - Number(b.year)) || (monthIndex(a.month) - monthIndex(b.month)));
       document.getElementById("achievementCards").innerHTML = achievements.length ? achievements.map(a => `<div class="col-md-6"><article class="program-card"><div class="d-flex justify-content-between align-items-start"><span class="badge-soft badge-creative">${escapeHtml(a.month)} ${escapeHtml(a.year || "")}</span><div class="d-flex gap-1"><button class="btn btn-sm btn-soft" onclick="editAchievement('${a.id}')" aria-label="Edit prestasi ${escapeHtml(a.name)}"><i class="bi bi-pencil"></i></button><button class="btn btn-sm btn-soft btn-danger-soft" onclick="deleteItem('achievements','${a.id}',this)" aria-label="Hapus prestasi ${escapeHtml(a.name)}"><i class="bi bi-trash"></i></button></div></div><i class="bi bi-trophy-fill d-block mt-3" style="font-size:1.4rem;color:#D97706;"></i><h3 class="mt-2 mb-1" style="font-size:.94rem;font-weight:700;">${escapeHtml(a.name)}</h3><p class="text-secondary mb-2" style="font-size:.7rem;">${escapeHtml(a.organizer)}</p><span class="badge-soft badge-income">${escapeHtml(a.award)}</span></article></div>`).join("") : `<div class="col-12"><div class="empty-state">Belum ada prestasi lomba pada tahun yang dipilih.</div></div>`;
     }
 
     function editAchievement(id) {
       const item = appData.achievements.find(a => a.id === id); if (!item) return;
-      achievementId.value = item.id; achievementName.value = item.name; achievementOrganizer.value = item.organizer; achievementYear.value = item.year || ""; achievementMonth.value = item.month; achievementAward.value = item.award;
+      achievementId.value = item.id; achievementName.value = item.name; achievementOrganizer.value = item.organizer; setAchievementYear(item.year || ""); achievementMonth.value = item.month; achievementAward.value = item.award;
       document.querySelector("#achievements .surface-card").scrollIntoView({ behavior:"smooth", block:"start" });
     }
 
@@ -1184,8 +1320,30 @@
     function toggleDispensation(id, checked) { appData.dispensation = checked ? [...new Set([...appData.dispensation, id])] : appData.dispensation.filter(item => item !== id); saveData(); }
     function exportDispensation() { const rows = appData.members.filter(m => appData.dispensation.includes(m.id)); const content = toCSV(rows.map(m => ({"Nama Lengkap":m.name,"No Absen":m.absent,"Kelas":m.className,"Divisi":m.division}))); const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([content],{type:"text/csv;charset=utf-8;"})); a.download="cips-dispensasi.csv"; a.click(); URL.revokeObjectURL(a.href); toast("Data dispensasi diekspor."); }
     function renderAll() {
-      updateDashboard(); renderMembers(); renderDivisions(); renderPrograms(); renderAttendance(); renderFinance(); renderMemberPayments(); renderProduction("polo"); renderProduction("jacket"); renderLatdas(); renderGrades(); renderAchievements(); renderClasses(); renderDispensation();
+      updateDashboard(); renderMembers(); renderDivisions(); renderPrograms(); renderAttendance(); renderFinance(); renderMemberPayments(); renderProduction("polo"); renderProduction("jacket"); renderLatdas(); renderGrades(); renderAchievements(); renderClasses(); renderDispensation(); renderMiminverse();
     }
+
+    function renderMiminverse() {
+      document.getElementById("miminverseRows").innerHTML = appData.miminverse.length ? appData.miminverse.map(item => `<tr><td>${escapeHtml(item.name)}</td><td class="text-center"><input type="checkbox" class="form-check-input" ${item.posted ? "checked" : ""} onchange="toggleMiminversePosted('${item.id}', this.checked)" aria-label="Sudah posting ${escapeHtml(item.name)}"></td><td class="text-end"><div class="d-flex gap-1 justify-content-end"><button class="btn btn-sm btn-soft" onclick="editMiminverse('${item.id}')" aria-label="Edit ${escapeHtml(item.name)}"><i class="bi bi-pencil"></i></button><button class="btn btn-sm btn-soft btn-danger-soft" onclick="deleteItem('miminverse','${item.id}',this)" aria-label="Hapus ${escapeHtml(item.name)}"><i class="bi bi-trash"></i></button></div></td></tr>`).join("") : `<tr><td colspan="3"><div class="empty-state">Belum ada kegiatan Miminverse.</div></td></tr>`;
+    }
+    function editMiminverse(id) {
+      const item = appData.miminverse.find(m => m.id === id); if (!item) return;
+      miminverseId.value = item.id; miminverseName.value = item.name;
+      document.querySelector("#miminverse .surface-card").scrollIntoView({ behavior:"smooth", block:"start" });
+    }
+    function toggleMiminversePosted(id, checked) {
+      const item = appData.miminverse.find(m => m.id === id); if (!item) return;
+      item.posted = checked; saveData(); toast(checked ? "Ditandai sudah posting." : "Ditandai belum posting.");
+    }
+    document.getElementById("miminverseForm").addEventListener("submit", event => {
+      event.preventDefault();
+      const id = miminverseId.value || uid("mv");
+      const existing = appData.miminverse.find(m => m.id === id);
+      const item = { id, name: miminverseName.value.trim(), posted: existing ? existing.posted : false };
+      const index = appData.miminverse.findIndex(m => m.id === id);
+      if (index >= 0) appData.miminverse[index] = item; else appData.miminverse.push(item);
+      saveData(); event.target.reset(); miminverseId.value = ""; renderAll(); toast(index >= 0 ? "Kegiatan Miminverse diperbarui." : "Kegiatan Miminverse ditambahkan.");
+    });
 
     document.getElementById("classForm").addEventListener("submit", event => { event.preventDefault(); const name = classNameInput.value.trim(); if (!name) return; if (editingClassName) { closeClassEditModal(); return; } if (!appData.classes.includes(name)) appData.classes.push(name); saveData(); event.target.reset(); renderClasses(); toast("Kelas ditambahkan."); });
     document.getElementById("classEditSave").addEventListener("click", saveClassEdit);
@@ -1220,13 +1378,39 @@
       saveData(); event.target.reset(); financeId.value = ""; financeDate.value = new Date().toISOString().slice(0,10); renderAll(); toast("Transaksi kas tersimpan.");
     });
 
+    function renderYearGrid(centerYear, selectedYear) {
+      const grid = document.getElementById("achievementYearGrid");
+      const years = [centerYear-2, centerYear-1, centerYear, centerYear+1, centerYear+2, centerYear+3];
+      grid.innerHTML = years.map(y => `<button type="button" class="year-cell${String(y)===String(selectedYear)?" selected":""}" data-year="${y}">${y}</button>`).join("");
+    }
+    function setAchievementYear(year) {
+      achievementYear.value = year || "";
+      achievementYearBtn.textContent = year || "Pilih tahun";
+    }
+    achievementYearBtn.addEventListener("click", event => {
+      event.stopPropagation();
+      const grid = document.getElementById("achievementYearGrid");
+      if (grid.classList.contains("open")) { grid.classList.remove("open"); return; }
+      const center = Number(achievementYear.value) || new Date().getFullYear();
+      renderYearGrid(center, achievementYear.value);
+      grid.classList.add("open");
+    });
+    document.getElementById("achievementYearGrid").addEventListener("click", event => {
+      const cell = event.target.closest(".year-cell");
+      if (!cell) return;
+      setAchievementYear(cell.dataset.year);
+      document.getElementById("achievementYearGrid").classList.remove("open");
+    });
+    document.addEventListener("click", () => document.getElementById("achievementYearGrid").classList.remove("open"));
+
     document.getElementById("achievementForm").addEventListener("submit", event => {
       event.preventDefault();
+      if (!achievementYear.value) { toast("Pilih tahun lomba terlebih dahulu."); return; }
       const id = achievementId.value || uid("a");
       const item = { id, name:achievementName.value.trim(), organizer:achievementOrganizer.value.trim(), year:Number(achievementYear.value), month:achievementMonth.value, award:achievementAward.value.trim() };
       const index = appData.achievements.findIndex(a => a.id === id);
       if (index >= 0) appData.achievements[index] = item; else appData.achievements.push(item);
-      saveData(); event.target.reset(); achievementId.value = ""; renderAll(); toast("Prestasi lomba tersimpan.");
+      saveData(); event.target.reset(); achievementId.value = ""; setAchievementYear(""); renderAll(); toast("Prestasi lomba tersimpan.");
     });
 
     document.getElementById("memberSearch").addEventListener("input", renderMembers);
@@ -1254,9 +1438,11 @@
     loadData();
     const now = new Date();
     todayLabel.textContent = now.toLocaleDateString("id-ID", { weekday:"long", day:"numeric", month:"long", year:"numeric" });
+    todayLabelShort.textContent = now.toLocaleDateString("id-ID", { day:"numeric", month:"short", year:"numeric" });
     attendanceDate.value = now.toISOString().slice(0,10);
     financeDate.value = now.toISOString().slice(0,10);
     renderAll();
+    checkAuth();
   </script>
  
 </body></html>
