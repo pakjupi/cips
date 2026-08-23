@@ -328,7 +328,7 @@
    <form id="loginForm" class="login-card">
     <div class="brand-mark mb-3" style="margin:0 auto 1rem;"><i class="bi bi-camera-reels-fill"></i></div>
     <h1 class="section-title text-center mb-1" style="font-size:1.15rem;">CIPS SMANELA</h1>
-    <p class="section-copy text-center mb-3">Masuk untuk mengakses Sistem Informasi Ekstrakurikuler.</p>
+    <p class="section-copy text-center mb-3">Masuk untuk mengakses Sistem Informasi Ekstrakurikuler CIPS SMANELA.</p>
     <div class="mb-2 text-start"><label for="loginUsername" class="form-label">Username</label><input id="loginUsername" class="form-control" autocomplete="username" required=""></div>
     <div class="mb-2 text-start"><label for="loginPassword" class="form-label">Password</label><input id="loginPassword" type="password" class="form-control" autocomplete="current-password" required=""></div>
     <div id="loginError" class="text-danger mb-2" style="font-size:.75rem; display:none;">Username atau password salah.</div>
@@ -816,7 +816,7 @@
       <div class="col-lg-8">
        <div class="surface-card table-wrap">
         <table class="table">
-         <thead><tr><th>Nama Kegiatan</th><th class="text-center">Sudah Posting</th><th class="text-end">Aksi</th></tr></thead>
+         <thead><tr><th>Nama Kegiatan</th><th class="text-center">Posting ke Sosial Media</th><th class="text-end">Aksi</th></tr></thead>
          <tbody id="miminverseRows"></tbody>
         </table>
        </div>
@@ -1323,23 +1323,34 @@
       updateDashboard(); renderMembers(); renderDivisions(); renderPrograms(); renderAttendance(); renderFinance(); renderMemberPayments(); renderProduction("polo"); renderProduction("jacket"); renderLatdas(); renderGrades(); renderAchievements(); renderClasses(); renderDispensation(); renderMiminverse();
     }
 
+    const SOCIAL_PLATFORMS = [
+      { key: "instagram", label: "Instagram" },
+      { key: "tiktok", label: "TikTok" },
+      { key: "youtube", label: "YouTube" }
+    ];
     function renderMiminverse() {
-      document.getElementById("miminverseRows").innerHTML = appData.miminverse.length ? appData.miminverse.map(item => `<tr><td>${escapeHtml(item.name)}</td><td class="text-center"><input type="checkbox" class="form-check-input" ${item.posted ? "checked" : ""} onchange="toggleMiminversePosted('${item.id}', this.checked)" aria-label="Sudah posting ${escapeHtml(item.name)}"></td><td class="text-end"><div class="d-flex gap-1 justify-content-end"><button class="btn btn-sm btn-soft" onclick="editMiminverse('${item.id}')" aria-label="Edit ${escapeHtml(item.name)}"><i class="bi bi-pencil"></i></button><button class="btn btn-sm btn-soft btn-danger-soft" onclick="deleteItem('miminverse','${item.id}',this)" aria-label="Hapus ${escapeHtml(item.name)}"><i class="bi bi-trash"></i></button></div></td></tr>`).join("") : `<tr><td colspan="3"><div class="empty-state">Belum ada kegiatan Miminverse.</div></td></tr>`;
+      document.getElementById("miminverseRows").innerHTML = appData.miminverse.length ? appData.miminverse.map(item => {
+        const posted = item.posted && typeof item.posted === "object" ? item.posted : {};
+        const checkboxes = SOCIAL_PLATFORMS.map(p => `<label class="d-inline-flex align-items-center gap-1 me-2" style="font-size:.68rem;"><input type="checkbox" class="form-check-input" ${posted[p.key] ? "checked" : ""} onchange="toggleMiminversePosted('${item.id}','${p.key}', this.checked)" aria-label="${p.label} ${escapeHtml(item.name)}">${p.label}</label>`).join("");
+        return `<tr><td>${escapeHtml(item.name)}</td><td class="text-center">${checkboxes}</td><td class="text-end"><div class="d-flex gap-1 justify-content-end"><button class="btn btn-sm btn-soft" onclick="editMiminverse('${item.id}')" aria-label="Edit ${escapeHtml(item.name)}"><i class="bi bi-pencil"></i></button><button class="btn btn-sm btn-soft btn-danger-soft" onclick="deleteItem('miminverse','${item.id}',this)" aria-label="Hapus ${escapeHtml(item.name)}"><i class="bi bi-trash"></i></button></div></td></tr>`;
+      }).join("") : `<tr><td colspan="3"><div class="empty-state">Belum ada kegiatan Miminverse.</div></div></td></tr>`;
     }
     function editMiminverse(id) {
       const item = appData.miminverse.find(m => m.id === id); if (!item) return;
       miminverseId.value = item.id; miminverseName.value = item.name;
       document.querySelector("#miminverse .surface-card").scrollIntoView({ behavior:"smooth", block:"start" });
     }
-    function toggleMiminversePosted(id, checked) {
+    function toggleMiminversePosted(id, platform, checked) {
       const item = appData.miminverse.find(m => m.id === id); if (!item) return;
-      item.posted = checked; saveData(); toast(checked ? "Ditandai sudah posting." : "Ditandai belum posting.");
+      if (!item.posted || typeof item.posted !== "object") item.posted = {};
+      item.posted[platform] = checked; saveData();
+      toast(checked ? "Ditandai sudah posting di " + platform + "." : "Ditandai belum posting di " + platform + ".");
     }
     document.getElementById("miminverseForm").addEventListener("submit", event => {
       event.preventDefault();
       const id = miminverseId.value || uid("mv");
       const existing = appData.miminverse.find(m => m.id === id);
-      const item = { id, name: miminverseName.value.trim(), posted: existing ? existing.posted : false };
+      const item = { id, name: miminverseName.value.trim(), posted: existing && existing.posted ? existing.posted : {} };
       const index = appData.miminverse.findIndex(m => m.id === id);
       if (index >= 0) appData.miminverse[index] = item; else appData.miminverse.push(item);
       saveData(); event.target.reset(); miminverseId.value = ""; renderAll(); toast(index >= 0 ? "Kegiatan Miminverse diperbarui." : "Kegiatan Miminverse ditambahkan.");
