@@ -21,6 +21,7 @@
     }
 
     * { box-sizing: border-box; }
+    html, body { overflow-x: hidden; max-width: 100%; }
     body {
       margin: 0;
       width: 100%;
@@ -267,9 +268,11 @@
     .toast-note.show { transform: translateY(0); opacity: 1; visibility: visible; pointer-events: auto; }
 
     .production-member {
-      display: flex; gap: .75rem; align-items: center;
+      display: flex; flex-wrap: wrap; gap: .6rem .75rem; align-items: center;
       border-bottom: 1px solid #F1F5F9; padding: .75rem 0;
     }
+    .production-member label { min-width: 140px; flex: 1 1 140px; }
+    .production-member select { flex: 1 1 90px; min-width: 0; }
     .production-member:last-child { border-bottom: 0; }
 
     .year-picker { position: relative; }
@@ -508,6 +511,8 @@
           </div>
          </div>
          <div class="mt-2 mb-3"><label for="memberDivision" class="form-label">Divisi</label><select id="memberDivision" class="form-select" required=""><option value="Creator">Creator</option><option value="Editor">Editor</option><option value="Creative">Creative</option></select>
+         </div>
+         <div class="mb-3"><label for="memberBatch" class="form-label">Angkatan</label><input id="memberBatch" class="form-control" placeholder="Contoh: 2024" required="">
          </div><button data-template-id="member-save-button" class="canva-button btn btn-cips w-100" type="submit" style="background: rgb(0, 179, 255); color: rgb(255, 255, 255); font-weight: 600; font-style: normal; font-size: 14px;">Simpan Data Anggota</button>
         </form>
        </article>
@@ -535,6 +540,7 @@
            <tr>
             <th>Anggota</th>
             <th>Kelas</th>
+            <th>Angkatan</th>
             <th>Divisi</th>
             <th class="text-end">Aksi</th>
            </tr>
@@ -582,14 +588,17 @@
         <h2 data-template-id="attendance-title" class="canva-text section-title" style="color: rgb(15, 23, 42); font-weight: 700; font-style: normal; font-size: 21px;">Absensi Anggota</h2>
         <p data-template-id="attendance-copy" class="canva-text section-copy" style="color: rgb(100, 116, 139); font-weight: 400; font-style: normal; font-size: 14px;">Pilih tanggal lalu catat status kehadiran seluruh anggota.</p>
        </div>
-       <div class="d-flex gap-2 no-print">
-        <label for="attendanceDate" class="visually-hidden">Tanggal absensi</label><input id="attendanceDate" type="date" class="form-control"> <button class="btn btn-soft" type="button" onclick="printCurrent()"><i class="bi bi-printer"></i></button> <label class="btn btn-soft mb-0">Import<input type="file" class="d-none" accept=".json" onchange="importData(event,'attendance')"></label> <button class="btn btn-soft" type="button" onclick="exportData('attendance','csv')">Export</button> <button class="btn btn-soft btn-danger-soft" type="button" onclick="resetCollection('attendance')">Reset</button>
+       <div class="d-flex gap-2 no-print flex-wrap">
+        <label for="attendanceDate" class="visually-hidden">Tanggal absensi</label><input id="attendanceDate" type="date" class="form-control"> <button class="btn btn-soft" type="button" onclick="printCurrent()"><i class="bi bi-printer"></i></button> <button class="btn btn-soft" type="button" onclick="exportData('attendance','csv')">Export</button> <button class="btn btn-soft btn-danger-soft" type="button" onclick="resetAttendanceSession()">Reset</button>
        </div>
       </div>
       <div class="row g-2 mt-3 no-print">
        <div class="col-md-6"><label for="attendanceSearch" class="visually-hidden">Cari nama anggota</label><input id="attendanceSearch" class="form-control" placeholder="Cari nama panggilan atau nama lengkap...">
        </div>
+       <div class="col-md-3"><label for="attendanceBatchFilter" class="visually-hidden">Filter angkatan</label><select id="attendanceBatchFilter" class="form-select"><option value="">Semua Angkatan</option></select>
+       </div>
       </div>
+      <p class="section-copy mt-2 mb-0" style="font-size:.68rem;">Catatan: data absensi di halaman ini hanya untuk keperluan cetak pada tanggal yang dipilih dan tidak disimpan permanen ke database.</p>
      </article>
      <article class="surface-card">
       <div class="table-wrap">
@@ -682,7 +691,7 @@
      <div id="jacketContent"></div>
     </section>
     <section class="view-section" id="latdas">
-     <div class="d-flex justify-content-end gap-2 mb-3 no-print"><button class="btn btn-soft" type="button" onclick="printCurrent()"><i class="bi bi-printer"></i></button><label class="btn btn-soft mb-0">Import<input type="file" class="d-none" accept=".json" onchange="importData(event,'latdas')"></label><button class="btn btn-soft" type="button" onclick="exportExcel('latdas')">Export</button>
+     <div class="d-flex justify-content-end gap-2 mb-3 no-print"><button class="btn btn-soft" type="button" onclick="printCurrent()"><i class="bi bi-printer"></i></button><label class="btn btn-soft mb-0">Import<input type="file" class="d-none" accept=".json" onchange="importData(event,'latdas')"></label><button class="btn btn-soft" type="button" onclick="exportExcel('latdas')">Export</button><button class="btn btn-soft btn-danger-soft" type="button" onclick="resetCollection('latdas')">Reset</button>
      </div>
      <article class="surface-card">
       <div class="mb-3">
@@ -922,7 +931,6 @@
         { id: "p2", name: "CIPS Short Movie Project", month: "Juli", status: "Berjalan", description: "Produksi film pendek kolaboratif untuk karya tahunan CIPS." },
         { id: "p3", name: "Pameran Fotografi", month: "November", status: "Rencana", description: "Pameran karya fotografi siswa di lingkungan sekolah." }
       ],
-      attendance: {},
       finance: [
         { id: "f1", date: "2026-07-10", type: "Pemasukan", description: "Kas Semester 1", amount: 250000 },
         { id: "f2", date: "2026-07-18", type: "Pengeluaran", description: "Kebutuhan latihan produksi", amount: 75000 }
@@ -1074,14 +1082,14 @@
       document.getElementById("memberRows").innerHTML = list.length ? list.map(m => `
         <tr>
           <td><div class="d-flex align-items-center gap-2"><span class="member-initial">${escapeHtml(m.nickname.slice(0,1))}</span><div><strong>${escapeHtml(m.name)}</strong><div class="text-secondary" style="font-size:.67rem;">${escapeHtml(m.nickname)} · No. ${m.absent}</div></div></div></td>
-          <td>${escapeHtml(m.className)}</td><td>${badge(m.division)}</td>
+          <td>${escapeHtml(m.className)}</td><td>${escapeHtml(m.batch || "-")}</td><td>${badge(m.division)}</td>
           <td class="text-end"><button class="btn btn-sm btn-soft me-1" onclick="editMember('${m.id}')"><i class="bi bi-pencil"></i></button><button class="btn btn-sm btn-soft btn-danger-soft" onclick="deleteItem('members','${m.id}',this)"><i class="bi bi-trash"></i></button></td>
-        </tr>`).join("") : `<tr><td colspan="4"><div class="empty-state"><i class="bi bi-search"></i>Data anggota tidak ditemukan.</div></td></tr>`;
+        </tr>`).join("") : `<tr><td colspan="5"><div class="empty-state"><i class="bi bi-search"></i>Data anggota tidak ditemukan.</div></td></tr>`;
     }
 
     function editMember(id) {
       const item = appData.members.find(m => m.id === id); if (!item) return;
-      memberId.value = item.id; memberName.value = item.name; memberNickname.value = item.nickname; memberAbsent.value = item.absent; memberClass.value = item.className; memberDivision.value = item.division;
+      memberId.value = item.id; memberName.value = item.name; memberNickname.value = item.nickname; memberAbsent.value = item.absent; memberClass.value = item.className; memberDivision.value = item.division; memberBatch.value = item.batch || "";
       document.querySelector("#members .surface-card").scrollIntoView({ behavior:"smooth", block:"start" });
     }
 
@@ -1097,21 +1105,33 @@
       document.getElementById("programCards").innerHTML = sortedPrograms.length ? sortedPrograms.map(p => `<div class="col-md-6"><article class="program-card"><div class="d-flex justify-content-between gap-2"><span class="badge-soft badge-creator">${escapeHtml(p.month)}</span><div class="d-flex gap-1"><button class="btn btn-sm btn-soft" onclick="editProgram('${p.id}')" aria-label="Edit program ${escapeHtml(p.name)}"><i class="bi bi-pencil"></i></button><button class="btn btn-sm btn-soft btn-danger-soft no-print" onclick="deleteItem('programs','${p.id}',this)"><i class="bi bi-trash"></i></button></div></div><h3 class="mt-3 mb-2" style="font-size:.95rem;font-weight:700;">${escapeHtml(p.name)}</h3><p class="text-secondary mb-3" style="font-size:.72rem;line-height:1.65;">${escapeHtml(p.description)}</p><span class="badge-soft ${p.status === "Selesai" ? "badge-income" : p.status === "Berjalan" ? "badge-creator" : "badge-creative"}">${escapeHtml(p.status)}</span></article></div>`).join("") : `<div class="col-12"><div class="empty-state"><i class="bi bi-calendar-x"></i>Belum ada program kerja.</div></div>`;
     }
 
+    let attendanceSession = {};
+    function populateAttendanceBatchOptions() {
+      const select = document.getElementById("attendanceBatchFilter");
+      const current = select.value;
+      const batches = [...new Set(appData.members.map(m => m.batch).filter(Boolean))].sort();
+      select.innerHTML = `<option value="">Semua Angkatan</option>${batches.map(b => `<option value="${escapeHtml(b)}">${escapeHtml(b)}</option>`).join("")}`;
+      select.value = batches.includes(current) ? current : "";
+    }
     function renderAttendance() {
-      const date = document.getElementById("attendanceDate").value;
-      const search = document.getElementById("attendanceSearch").value.toLowerCase().trim();
-      const records = appData.attendance[date] || {};
-      const filteredMembers = appData.members.filter(m => `${m.name} ${m.nickname}`.toLowerCase().includes(search));
+      populateAttendanceBatchOptions();
+      const search = document.getElementById("attendanceSearch").value.toLowerCase();
+      const batchFilter = document.getElementById("attendanceBatchFilter").value;
+      const filteredMembers = appData.members.filter(m => `${m.name} ${m.nickname}`.toLowerCase().includes(search) && (!batchFilter || m.batch === batchFilter));
       document.getElementById("attendanceRows").innerHTML = filteredMembers.length ? filteredMembers.map(m => `
-        <tr><td><strong>${escapeHtml(m.name)}</strong><div class="text-secondary" style="font-size:.67rem;">${escapeHtml(m.nickname)} · ${escapeHtml(m.className)}</div></td><td>${badge(m.division)}</td>
-        <td><label for="att-${m.id}" class="visually-hidden">Status kehadiran ${escapeHtml(m.name)}</label><select id="att-${m.id}" class="form-select" style="max-width:160px;" onchange="saveAttendance('${m.id}',this.value)"><option ${records[m.id] === "Hadir" ? "selected" : ""}>Hadir</option><option ${records[m.id] !== "Hadir" ? "selected" : ""}>Tidak Hadir</option></select></td></tr>`).join("") : `<tr><td colspan="3"><div class="empty-state">${search ? "Nama anggota tidak ditemukan." : "Tambahkan anggota terlebih dahulu."}</div></td></tr>`;
+        <tr><td><strong>${escapeHtml(m.name)}</strong><div class="text-secondary" style="font-size:.67rem;">${escapeHtml(m.nickname)} · ${escapeHtml(m.className)} · Angkatan ${escapeHtml(m.batch || "-")}</div></td><td>${badge(m.division)}</td>
+        <td><label for="att-${m.id}" class="visually-hidden">Status kehadiran ${escapeHtml(m.name)}</label><select id="att-${m.id}" class="form-select" style="max-width:160px;" onchange="saveAttendance('${m.id}',this.value)"><option ${attendanceSession[m.id] === "Hadir" ? "selected" : ""}>Hadir</option><option ${attendanceSession[m.id] !== "Hadir" ? "selected" : ""}>Tidak Hadir</option></select></td></tr>`).join("") : `<tr><td colspan="3"><div class="empty-state">${search ? "Nama anggota tidak ditemukan." : "Tambahkan anggota terlebih dahulu."}</div></td></tr>`;
     }
 
     function saveAttendance(memberId, status) {
-      const date = attendanceDate.value;
-      if (!appData.attendance[date]) appData.attendance[date] = {};
-      appData.attendance[date][memberId] = status; saveData(); toast("Absensi tersimpan.");
+      attendanceSession[memberId] = status;
     }
+    function resetAttendanceSession() {
+      attendanceSession = {};
+      renderAttendance();
+      toast("Status kehadiran direset ke Tidak Hadir.");
+    }
+    document.getElementById("attendanceDate").addEventListener("change", () => { attendanceSession = {}; renderAttendance(); });
 
     function renderFinance() {
       document.getElementById("financeRows").innerHTML = appData.finance.length ? [...appData.finance].sort((a,b) => b.date.localeCompare(a.date)).map(f => `
@@ -1149,15 +1169,18 @@
       const target = document.getElementById(type + "Content");
       const records = appData[type];
       const title = type === "polo" ? "Produksi Polo" : "Produksi Jaket";
-      target.innerHTML = `<div class="row g-3"><div class="col-lg-8"><article class="surface-card"><div class="d-flex justify-content-between align-items-start mb-3"><div><h2 class="section-title">${title}</h2><p class="section-copy">Pilih anggota dan lengkapi kebutuhan pesanan.</p></div><div class="d-flex gap-2 no-print"><button class="btn btn-soft" type="button" onclick="printCurrent()">Print</button><label class="btn btn-soft mb-0">Import<input type="file" class="d-none" accept=".json" onchange="importData(event,'${type}')"></label><button class="btn btn-soft" type="button" onclick="exportExcel('${type}')">Export</button></div></div><div id="${type}MemberList"></div></article></div><div class="col-lg-4"><article class="surface-card"><h2 class="section-title">Rekap Ukuran</h2><p class="section-copy mb-3">Total pesanan aktif berdasarkan ukuran.</p><div id="${type}Summary"></div></article></div></div>`;
+      target.innerHTML = `<div class="row g-3"><div class="col-lg-8"><article class="surface-card"><div class="d-flex justify-content-between align-items-start mb-3"><div><h2 class="section-title">${title}</h2><p class="section-copy">Pilih anggota dan lengkapi kebutuhan pesanan.</p></div><div class="d-flex gap-2 no-print"><button class="btn btn-soft" type="button" onclick="printCurrent()">Print</button><label class="btn btn-soft mb-0">Import<input type="file" class="d-none" accept=".json" onchange="importData(event,'${type}')"></label><button class="btn btn-soft" type="button" onclick="exportExcel('${type}')">Export</button><button class="btn btn-soft btn-danger-soft" type="button" onclick="resetCollection('${type}')">Reset</button></div></div><div id="${type}MemberList"></div></article></div><div class="col-lg-4"><article class="surface-card"><h2 class="section-title">Rekap Ukuran</h2><p class="section-copy mb-3">Total pesanan aktif berdasarkan ukuran (real-time).</p><div id="${type}Summary"></div></article></div></div>`;
 
       document.getElementById(type + "MemberList").innerHTML = appData.members.length ? appData.members.map(m => {
         const r = records[m.id] || { selected:false, payment:"Belum Bayar", size:"M", gender:"Cowok" };
-        return `<div class="production-member"><input class="form-check-input" type="checkbox" id="${type}-${m.id}" ${r.selected ? "checked" : ""} onchange="updateProduction('${type}','${m.id}','selected',this.checked)"><label class="flex-grow-1 mb-0" for="${type}-${m.id}"><strong style="font-size:.78rem;">${escapeHtml(m.name)}</strong><small class="d-block text-secondary">${escapeHtml(m.className)} · ${escapeHtml(m.division)}</small></label><select class="form-select" style="width:120px;" onchange="updateProduction('${type}','${m.id}','payment',this.value)"><option ${r.payment==="Belum Bayar"?"selected":""}>Belum Bayar</option><option ${r.payment==="Tunai"?"selected":""}>Tunai</option><option ${r.payment==="QRIS"?"selected":""}>QRIS</option><option ${r.payment==="DANA"?"selected":""}>DANA</option></select><select class="form-select" style="width:72px;" onchange="updateProduction('${type}','${m.id}','size',this.value)">${["S","M","L","XL","XXL","XXXL"].map(s=>`<option ${r.size===s?"selected":""}>${s}</option>`).join("")}</select><select class="form-select" style="width:95px;" onchange="updateProduction('${type}','${m.id}','gender',this.value)"><option ${r.gender==="Cowok"?"selected":""}>Cowok</option><option ${r.gender==="Cewek"?"selected":""}>Cewek</option></select></div>`;
+        return `<div class="production-member"><input class="form-check-input" type="checkbox" id="${type}-${m.id}" ${r.selected ? "checked" : ""} onchange="updateProduction('${type}','${m.id}','selected',this.checked)"><label class="flex-grow-1 mb-0" for="${type}-${m.id}"><strong style="font-size:.78rem;">${escapeHtml(m.name)}</strong><small class="d-block text-secondary">${escapeHtml(m.className)} · ${escapeHtml(m.division)}</small></label><select class="form-select" onchange="updateProduction('${type}','${m.id}','payment',this.value)"><option ${r.payment==="Belum Bayar"?"selected":""}>Belum Bayar</option><option ${r.payment==="Tunai"?"selected":""}>Tunai</option><option ${r.payment==="QRIS"?"selected":""}>QRIS</option><option ${r.payment==="DANA"?"selected":""}>DANA</option></select><select class="form-select" onchange="updateProduction('${type}','${m.id}','size',this.value)">${["S","M","L","XL","XXL","XXXL"].map(s=>`<option ${r.size===s?"selected":""}>${s}</option>`).join("")}</select><select class="form-select" onchange="updateProduction('${type}','${m.id}','gender',this.value)"><option ${r.gender==="Cowok"?"selected":""}>Cowok</option><option ${r.gender==="Cewek"?"selected":""}>Cewek</option></select></div>`;
       }).join("") : `<div class="empty-state">Tambahkan anggota terlebih dahulu.</div>`;
 
-      const totals = ["S","M","L","XL","XXL","XXXL"].map(size => [size, Object.values(records).filter(r => r.selected && r.size === size).length]);
-      document.getElementById(type + "Summary").innerHTML = totals.map(([size,total]) => `<div class="d-flex justify-content-between py-2 border-bottom" style="font-size:.78rem;"><span>Ukuran ${size}</span><strong>${total} pcs</strong></div>`).join("");
+      const sizes = ["S","M","L","XL","XXL","XXXL"];
+      const buildSummary = gender => sizes.map(size => [size, Object.values(records).filter(r => r.selected && r.size === size && r.gender === gender).length]);
+      const cowok = buildSummary("Cowok"), cewek = buildSummary("Cewek");
+      const summaryBlock = (label, rows) => `<div class="mb-3"><div class="fw-bold mb-1" style="font-size:.78rem;color:#0F172A;">${label}</div>${rows.map(([size,total]) => `<div class="d-flex justify-content-between py-2 border-bottom" style="font-size:.78rem;"><span>Ukuran ${size}</span><strong>${total} pcs</strong></div>`).join("")}<div class="d-flex justify-content-between pt-2" style="font-size:.78rem;"><span>Total ${label}</span><strong>${rows.reduce((sum,[,t])=>sum+t,0)} pcs</strong></div></div>`;
+      document.getElementById(type + "Summary").innerHTML = summaryBlock("Cowok", cowok) + summaryBlock("Cewek", cewek);
     }
 
     function updateProduction(type, memberId, field, value) {
@@ -1235,14 +1258,18 @@
     }
 
     function exportExcel(collection) {
-      const data = collection === "attendance" ? Object.entries(appData.attendance).map(([date, records]) => ({ date, records: JSON.stringify(records) })) : collection === "dispensation" ? appData.members.filter(m => appData.dispensation.includes(m.id)).map(m => ({ name:m.name, absent:m.absent, className:m.className, division:m.division })) : collection === "polo" || collection === "jacket" ? appData.members.filter(m => appData[collection][m.id]?.selected).map(m => ({ name:m.name, className:m.className, division:m.division, payment:appData[collection][m.id].payment, size:appData[collection][m.id].size, gender:appData[collection][m.id].gender })) : appData[collection];
+      const data = collection === "dispensation" ? appData.members.filter(m => appData.dispensation.includes(m.id)).map(m => ({ name:m.name, absent:m.absent, className:m.className, division:m.division })) : collection === "polo" || collection === "jacket" ? appData.members.filter(m => appData[collection][m.id]?.selected).map(m => ({ name:m.name, className:m.className, division:m.division, payment:appData[collection][m.id].payment, size:appData[collection][m.id].size, gender:appData[collection][m.id].gender })) : appData[collection];
       const content = toCSV(data);
       const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([content], {type:"application/vnd.ms-excel"})); a.download = `cips-${collection}.xls`; a.click(); URL.revokeObjectURL(a.href); toast(`Data ${collection} berhasil diekspor ke Excel.`);
     }
 
     function exportData(collection, format) {
-      let data = appData[collection];
-      if (collection === "attendance") data = Object.entries(data).map(([date, records]) => ({ date, records }));
+      let data;
+      if (collection === "attendance") {
+        data = appData.members.map(m => ({ tanggal: attendanceDate.value, nama: m.name, kelas: m.className, angkatan: m.batch || "", divisi: m.division, status: attendanceSession[m.id] === "Hadir" ? "Hadir" : "Tidak Hadir" }));
+      } else {
+        data = appData[collection];
+      }
       const content = format === "csv" ? toCSV(data) : JSON.stringify(data, null, 2);
       const blob = new Blob([content], { type: format === "csv" ? "text/csv" : "application/json" });
       const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `cips-${collection}.${format}`; a.click(); URL.revokeObjectURL(a.href);
@@ -1261,10 +1288,7 @@
       reader.onload = () => {
         try {
           const parsed = JSON.parse(reader.result);
-          if (collection === "attendance") {
-            appData.attendance = {};
-            parsed.forEach(item => { if (item.date && item.records) appData.attendance[item.date] = item.records; });
-          } else if (Array.isArray(parsed)) appData[collection] = parsed;
+          if (Array.isArray(parsed)) appData[collection] = parsed;
           else throw new Error();
           saveData(); renderAll(); toast("Data berhasil diimpor.");
         } catch { toast("File JSON tidak dapat dibaca."); }
@@ -1334,7 +1358,7 @@
       document.getElementById("miminverseRows").innerHTML = appData.miminverse.length ? appData.miminverse.map(item => {
         const posted = item.posted && typeof item.posted === "object" ? item.posted : {};
         const checkboxes = SOCIAL_PLATFORMS.map(p => `<label class="d-inline-flex align-items-center gap-1 me-2" style="font-size:.68rem;"><input type="checkbox" class="form-check-input" ${posted[p.key] ? "checked" : ""} onchange="toggleMiminversePosted('${item.id}','${p.key}', this.checked)" aria-label="${p.label} ${escapeHtml(item.name)}">${p.label}</label>`).join("");
-        return `<tr><td>${escapeHtml(item.name)}</td><td class="text-center">${checkboxes}</td><td class="text-end"><div class="d-flex gap-1 justify-content-end"><button class="btn btn-sm btn-soft" onclick="editMiminverse('${item.id}')" aria-label="Edit ${escapeHtml(item.name)}"><i class="bi bi-pencil"></i></button><button class="btn btn-sm btn-soft btn-danger-soft" onclick="deleteItem('miminverse','${item.id}',this)" aria-label="Hapus ${escapeHtml(item.name)}"><i class="bi bi-trash"></i></button></div></td></tr>`;
+        return `<tr><td>${escapeHtml(item.name)}</td><td class="text-center">${checkboxes}</td><td class="text-end"><div class="d-flex gap-1 justify-content-end"><button class="btn btn-sm btn-soft" onclick="editMiminverse('${item.id}')" aria-label="Edit ${escapeHtml(item.name)}"><i class="bi bi-pencil"></i></button><button class="btn btn-sm btn-soft" onclick="resetMiminversePosted('${item.id}')" aria-label="Reset centang ${escapeHtml(item.name)}" title="Reset centang"><i class="bi bi-arrow-counterclockwise"></i></button><button class="btn btn-sm btn-soft btn-danger-soft" onclick="deleteItem('miminverse','${item.id}',this)" aria-label="Hapus ${escapeHtml(item.name)}"><i class="bi bi-trash"></i></button></div></td></tr>`;
       }).join("") : `<tr><td colspan="3"><div class="empty-state">Belum ada kegiatan Miminverse.</div></div></td></tr>`;
     }
     function editMiminverse(id) {
@@ -1347,6 +1371,10 @@
       if (!item.posted || typeof item.posted !== "object") item.posted = {};
       item.posted[platform] = checked; saveData();
       toast(checked ? "Ditandai sudah posting di " + platform + "." : "Ditandai belum posting di " + platform + ".");
+    }
+    function resetMiminversePosted(id) {
+      const item = appData.miminverse.find(m => m.id === id); if (!item) return;
+      item.posted = {}; saveData(); renderMiminverse(); toast("Centang posting direset.");
     }
     document.getElementById("miminverseForm").addEventListener("submit", event => {
       event.preventDefault();
@@ -1366,7 +1394,7 @@
     document.getElementById("memberForm").addEventListener("submit", event => {
       event.preventDefault();
       const id = memberId.value || uid("m");
-      const item = { id, name:memberName.value.trim(), nickname:memberNickname.value.trim(), absent:Number(memberAbsent.value), className:memberClass.value.trim(), division:memberDivision.value };
+      const item = { id, name:memberName.value.trim(), nickname:memberNickname.value.trim(), absent:Number(memberAbsent.value), className:memberClass.value.trim(), division:memberDivision.value, batch:memberBatch.value.trim() };
       const index = appData.members.findIndex(m => m.id === id);
       if (index >= 0) appData.members[index] = item; else appData.members.push(item);
       if (!appData.classes.includes(item.className)) appData.classes.push(item.className);
@@ -1428,8 +1456,8 @@
 
     document.getElementById("memberSearch").addEventListener("input", renderMembers);
     document.getElementById("memberFilter").addEventListener("change", renderMembers);
-    document.getElementById("attendanceDate").addEventListener("change", renderAttendance);
     document.getElementById("attendanceSearch").addEventListener("input", renderAttendance);
+    document.getElementById("attendanceBatchFilter").addEventListener("change", renderAttendance);
     document.getElementById("achievementYearFilter").addEventListener("change", renderAchievements);
 
     document.querySelectorAll(".menu-link").forEach(button => {
