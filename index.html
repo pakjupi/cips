@@ -452,8 +452,11 @@
          <div class="stat-icon"><i class="bi bi-cash-stack"></i>
          </div>
         </div>
-        <div class="stat-value" id="statBalance">
-         Rp0
+        <div class="d-flex align-items-center gap-2">
+         <div class="stat-value" id="statBalance">
+          Rp0
+         </div>
+         <button type="button" class="btn btn-soft no-print" id="toggleBalanceBtn" style="padding:.25rem .5rem;" title="Tampilkan/sembunyikan saldo" onclick="toggleBalanceVisibility()"><i class="bi bi-eye-slash" id="toggleBalanceIcon"></i></button>
         </div>
        </article>
       </div>
@@ -1063,6 +1066,12 @@
       return appData.finance.reduce((total, item) => total + (item.type === "Pemasukan" ? Number(item.amount) : -Number(item.amount)), 0);
     }
 
+    let balanceVisible = false;
+    function toggleBalanceVisibility() {
+      balanceVisible = !balanceVisible;
+      document.getElementById("statBalance").textContent = balanceVisible ? money(getBalance()) : "*****";
+      document.getElementById("toggleBalanceIcon").className = balanceVisible ? "bi bi-eye" : "bi bi-eye-slash";
+    }
     function updateDashboard() {
       const members = appData.members;
       document.getElementById("statMembers").textContent = members.length;
@@ -1070,7 +1079,7 @@
       document.getElementById("statEditor").textContent = members.filter(m => m.division === "Editor").length;
       document.getElementById("statCreative").textContent = members.filter(m => m.division === "Creative").length;
       document.getElementById("statAchievements").textContent = appData.achievements.length;
-      document.getElementById("statBalance").textContent = money(getBalance());
+      document.getElementById("statBalance").textContent = balanceVisible ? money(getBalance()) : "*****";
       document.getElementById("financeBalance").textContent = money(getBalance());
 
       const max = Math.max(members.length, 1);
@@ -1192,7 +1201,8 @@
       const buildSummary = gender => sizes.map(size => [size, Object.values(records).filter(r => r.selected && r.size === size && r.gender === gender).length]);
       const cowok = buildSummary("Cowok"), cewek = buildSummary("Cewek");
       const summaryBlock = (label, rows) => `<div class="mb-4"><div class="fw-bold mb-1" style="font-size:.78rem;color:#0F172A;">${label}</div>${rows.map(([size,total]) => `<div class="d-flex justify-content-between py-2 border-bottom" style="font-size:.78rem;"><span>Ukuran ${size}</span><strong>${total} pcs</strong></div>`).join("")}<div class="d-flex justify-content-between mt-3 pt-3" style="font-size:.85rem;font-weight:700;border-top:2px solid #E2E8F0;"><span>Total ${label}</span><strong>${rows.reduce((sum,[,t])=>sum+t,0)} pcs</strong></div></div>`;
-      document.getElementById(type + "Summary").innerHTML = summaryBlock("Cowok", cowok) + summaryBlock("Cewek", cewek);
+      const totalProduksi = cowok.reduce((sum,[,t])=>sum+t,0) + cewek.reduce((sum,[,t])=>sum+t,0);
+      document.getElementById(type + "Summary").innerHTML = summaryBlock("Cowok", cowok) + summaryBlock("Cewek", cewek) + `<div class="d-flex justify-content-between pt-3 mt-1" style="font-size:.95rem;font-weight:700;border-top:2px solid #0F172A;color:#0F172A;"><span>Total Produksi</span><strong>${totalProduksi} pcs</strong></div>`;
     }
 
     function updateProduction(type, memberId, field, value) {
@@ -1311,7 +1321,8 @@
     function printCurrent() { window.print(); }
 
     function getClassOptions() {
-      return [...new Set([...appData.classes, ...appData.members.map(m => m.className).filter(Boolean)])].sort();
+      return [...new Set([...appData.classes, ...appData.members.map(m => m.className).filter(Boolean)])]
+        .sort((a, b) => classSortKey(a) - classSortKey(b) || a.localeCompare(b, "id"));
     }
     function populateMemberClassOptions(selectedValue = "") {
       const select = document.getElementById("memberClass");
@@ -1323,7 +1334,15 @@
     function renderClasses() {
       const classes = getClassOptions();
       populateMemberClassOptions(memberClass.value);
-      document.getElementById("classCards").innerHTML = classes.length ? classes.map(name => `<div class="col-md-4"><div class="program-card d-flex justify-content-between align-items-center"><div><strong>${escapeHtml(name)}</strong><div class="section-copy">${appData.members.filter(m => m.className === name).length} anggota</div></div><div class="d-flex gap-1"><button class="btn btn-sm btn-soft" type="button" onclick="editClass('${encodeURIComponent(name)}')" aria-label="Edit kelas ${escapeHtml(name)}"><i class="bi bi-pencil"></i></button><button class="btn btn-sm btn-soft btn-danger-soft" type="button" onclick="deleteClass('${encodeURIComponent(name)}')" aria-label="Hapus kelas ${escapeHtml(name)}"><i class="bi bi-trash"></i></button></div></div></div>`).join("") : `<div class="col-12"><div class="empty-state">Belum ada data kelas.</div></div>`;
+      const classCard = name => `<div class="col-md-4"><div class="program-card d-flex justify-content-between align-items-center"><div><strong>${escapeHtml(name)}</strong><div class="section-copy">${appData.members.filter(m => m.className === name).length} anggota</div></div><div class="d-flex gap-1"><button class="btn btn-sm btn-soft" type="button" onclick="editClass('${encodeURIComponent(name)}')" aria-label="Edit kelas ${escapeHtml(name)}"><i class="bi bi-pencil"></i></button><button class="btn btn-sm btn-soft btn-danger-soft" type="button" onclick="deleteClass('${encodeURIComponent(name)}')" aria-label="Hapus kelas ${escapeHtml(name)}"><i class="bi bi-trash"></i></button></div></div></div>`;
+      if (!classes.length) { document.getElementById("classCards").innerHTML = `<div class="col-12"><div class="empty-state">Belum ada data kelas.</div></div>`; return; }
+      const groups = { "X": [], "XI": [], "XII": [], "Lainnya": [] };
+      classes.forEach(name => {
+        const match = /^(X|XI|XII)\s*-?\s*\d+/i.exec(name.trim());
+        const key = match ? match[1].toUpperCase() : "Lainnya";
+        (groups[key] || groups["Lainnya"]).push(name);
+      });
+      document.getElementById("classCards").innerHTML = ["X", "XI", "XII", "Lainnya"].filter(g => groups[g].length).map(g => `<div class="col-12"><div class="nav-caption" style="margin:0 0 .6rem;">Jenjang Kelas ${g === "Lainnya" ? "Lainnya" : g}</div></div>` + groups[g].map(classCard).join("")).join("");
     }
     let editingClassName = "";
     function setClassButtonMode(editing) {
