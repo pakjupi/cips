@@ -585,8 +585,7 @@
      <article class="surface-card mb-3">
       <div class="d-flex flex-wrap justify-content-between gap-3">
        <div>
-        <h2 data-template-id="attendance-title" class="canva-text section-title" style="color: rgb(15, 23, 42); font-weight: 700; font-style: normal; font-size: 21px;">Absensi Anggota</h2>
-        <p data-template-id="attendance-copy" class="canva-text section-copy" style="color: rgb(100, 116, 139); font-weight: 400; font-style: normal; font-size: 14px;">Pilih tanggal lalu catat status kehadiran seluruh anggota.</p>
+        <p id="attendancePrintDate" class="canva-text section-title mb-0" style="color: rgb(15, 23, 42); font-weight: 700; font-style: normal; font-size: 21px;"></p>
        </div>
        <div class="d-flex gap-2 no-print flex-wrap">
         <label for="attendanceDate" class="visually-hidden">Tanggal absensi</label><input id="attendanceDate" type="date" class="form-control"> <button class="btn btn-soft" type="button" onclick="printCurrent()"><i class="bi bi-printer"></i></button> <button class="btn btn-soft" type="button" onclick="exportData('attendance','csv')">Export</button> <button class="btn btn-soft btn-danger-soft" type="button" onclick="resetAttendanceSession()">Reset</button>
@@ -598,7 +597,7 @@
        <div class="col-md-3"><label for="attendanceBatchFilter" class="visually-hidden">Filter angkatan</label><select id="attendanceBatchFilter" class="form-select"><option value="">Semua Angkatan</option></select>
        </div>
       </div>
-      <p class="section-copy mt-2 mb-0" style="font-size:.68rem;">Catatan: data absensi di halaman ini hanya untuk keperluan cetak pada tanggal yang dipilih dan tidak disimpan permanen ke database.</p>
+      <p class="section-copy mt-2 mb-0 no-print" style="font-size:.68rem;">Catatan: data absensi di halaman ini hanya untuk keperluan cetak pada tanggal yang dipilih dan tidak disimpan permanen ke database.</p>
      </article>
      <article class="surface-card">
       <div class="table-wrap">
@@ -714,7 +713,7 @@
      </article>
     </section>
     <section class="view-section" id="grades">
-     <div class="d-flex justify-content-end gap-2 mb-3 no-print"><button class="btn btn-soft" type="button" onclick="printCurrent()" aria-label="Cetak nilai"><i class="bi bi-printer"></i></button><label class="btn btn-soft mb-0">Import<input type="file" class="d-none" accept=".json" onchange="importData(event,'grades')"></label><button class="btn btn-soft" type="button" onclick="exportExcel('grades')">Export</button>
+     <div class="d-flex justify-content-end gap-2 mb-3 no-print"><button class="btn btn-soft" type="button" onclick="printCurrent()" aria-label="Cetak nilai"><i class="bi bi-printer"></i></button><label class="btn btn-soft mb-0">Import<input type="file" class="d-none" accept=".json" onchange="importData(event,'grades')"></label><button class="btn btn-soft" type="button" onclick="exportExcel('grades')">Export</button><button class="btn btn-soft btn-danger-soft" type="button" onclick="resetCollection('grades')">Reset</button>
      </div>
      <article class="surface-card">
       <div class="mb-3">
@@ -753,7 +752,7 @@
      </article>
     </section>
     <section class="view-section" id="dispensation">
-     <div class="d-flex justify-content-end gap-2 mb-3 no-print"><button class="btn btn-soft" type="button" onclick="printCurrent()" aria-label="Cetak dispensasi"><i class="bi bi-printer"></i></button><label class="btn btn-soft mb-0">Import<input type="file" class="d-none" accept=".json" onchange="importData(event,'dispensation')"></label><button class="btn btn-soft" type="button" onclick="exportExcel('dispensation')">Export</button>
+     <div class="d-flex justify-content-end gap-2 mb-3 no-print"><button class="btn btn-soft" type="button" onclick="printCurrent()" aria-label="Cetak dispensasi"><i class="bi bi-printer"></i></button><label class="btn btn-soft mb-0">Import<input type="file" class="d-none" accept=".json" onchange="importData(event,'dispensation')"></label><button class="btn btn-soft" type="button" onclick="exportExcel('dispensation')">Export</button><button class="btn btn-soft btn-danger-soft" type="button" onclick="resetCollection('dispensation')">Reset</button>
      </div>
      <article class="surface-card">
       <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
@@ -1115,6 +1114,9 @@
     }
     function renderAttendance() {
       populateAttendanceBatchOptions();
+      const dateValue = document.getElementById("attendanceDate").value;
+      const printDateEl = document.getElementById("attendancePrintDate");
+      if (printDateEl) printDateEl.textContent = "Absensi Anggota — " + (dateValue ? new Date(dateValue + "T00:00:00").toLocaleDateString("id-ID", { weekday:"long", day:"numeric", month:"long", year:"numeric" }) : "");
       const search = document.getElementById("attendanceSearch").value.toLowerCase();
       const batchFilter = document.getElementById("attendanceBatchFilter").value;
       const filteredMembers = appData.members.filter(m => `${m.name} ${m.nickname}`.toLowerCase().includes(search) && (!batchFilter || m.batch === batchFilter));
