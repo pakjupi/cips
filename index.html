@@ -512,7 +512,7 @@
          </div>
          <div class="mt-2 mb-3"><label for="memberDivision" class="form-label">Divisi</label><select id="memberDivision" class="form-select" required=""><option value="Creator">Creator</option><option value="Editor">Editor</option><option value="Creative">Creative</option></select>
          </div>
-         <div class="mb-3"><label for="memberBatch" class="form-label">Angkatan</label><input id="memberBatch" class="form-control" placeholder="Contoh: 2024" required="">
+         <div class="mb-3"><label for="memberBatch" class="form-label">Angkatan</label><input id="memberBatch" class="form-control" placeholder="Contoh: 51" required="">
          </div><button data-template-id="member-save-button" class="canva-button btn btn-cips w-100" type="submit" style="background: rgb(0, 179, 255); color: rgb(255, 255, 255); font-weight: 600; font-style: normal; font-size: 14px;">Simpan Data Anggota</button>
         </form>
        </article>
@@ -1172,8 +1172,8 @@
       target.innerHTML = `<div class="row g-3"><div class="col-lg-8"><article class="surface-card"><div class="d-flex justify-content-between align-items-start mb-3"><div><h2 class="section-title">${title}</h2><p class="section-copy">Pilih anggota dan lengkapi kebutuhan pesanan.</p></div><div class="d-flex gap-2 no-print"><button class="btn btn-soft" type="button" onclick="printCurrent()">Print</button><label class="btn btn-soft mb-0">Import<input type="file" class="d-none" accept=".json" onchange="importData(event,'${type}')"></label><button class="btn btn-soft" type="button" onclick="exportExcel('${type}')">Export</button><button class="btn btn-soft btn-danger-soft" type="button" onclick="resetCollection('${type}')">Reset</button></div></div><div id="${type}MemberList"></div></article></div><div class="col-lg-4"><article class="surface-card"><h2 class="section-title">Rekap Ukuran</h2><p class="section-copy mb-3">Total pesanan aktif berdasarkan ukuran (real-time).</p><div id="${type}Summary"></div></article></div></div>`;
 
       document.getElementById(type + "MemberList").innerHTML = appData.members.length ? appData.members.map(m => {
-        const r = records[m.id] || { selected:false, payment:"Belum Bayar", size:"M", gender:"Cowok" };
-        return `<div class="production-member"><input class="form-check-input" type="checkbox" id="${type}-${m.id}" ${r.selected ? "checked" : ""} onchange="updateProduction('${type}','${m.id}','selected',this.checked)"><label class="flex-grow-1 mb-0" for="${type}-${m.id}"><strong style="font-size:.78rem;">${escapeHtml(m.name)}</strong><small class="d-block text-secondary">${escapeHtml(m.className)} · ${escapeHtml(m.division)}</small></label><select class="form-select" onchange="updateProduction('${type}','${m.id}','payment',this.value)"><option ${r.payment==="Belum Bayar"?"selected":""}>Belum Bayar</option><option ${r.payment==="Tunai"?"selected":""}>Tunai</option><option ${r.payment==="QRIS"?"selected":""}>QRIS</option><option ${r.payment==="DANA"?"selected":""}>DANA</option></select><select class="form-select" onchange="updateProduction('${type}','${m.id}','size',this.value)">${["S","M","L","XL","XXL","XXXL"].map(s=>`<option ${r.size===s?"selected":""}>${s}</option>`).join("")}</select><select class="form-select" onchange="updateProduction('${type}','${m.id}','gender',this.value)"><option ${r.gender==="Cowok"?"selected":""}>Cowok</option><option ${r.gender==="Cewek"?"selected":""}>Cewek</option></select></div>`;
+        const r = records[m.id] || { selected:false, payment:"Belum Bayar", size:"M", gender:"" };
+        return `<div class="production-member"><input class="form-check-input" type="checkbox" id="${type}-${m.id}" ${r.selected ? "checked" : ""} onchange="updateProduction('${type}','${m.id}','selected',this.checked)"><label class="flex-grow-1 mb-0" for="${type}-${m.id}"><strong style="font-size:.78rem;">${escapeHtml(m.name)}</strong><small class="d-block text-secondary">${escapeHtml(m.className)} · ${escapeHtml(m.division)}</small></label><select class="form-select" onchange="updateProduction('${type}','${m.id}','payment',this.value)"><option ${r.payment==="Belum Bayar"?"selected":""}>Belum Bayar</option><option ${r.payment==="Tunai"?"selected":""}>Tunai</option><option ${r.payment==="QRIS"?"selected":""}>QRIS</option><option ${r.payment==="DANA"?"selected":""}>DANA</option></select><select class="form-select" onchange="updateProduction('${type}','${m.id}','size',this.value)">${["S","M","L","XL","XXL","XXXL"].map(s=>`<option ${r.size===s?"selected":""}>${s}</option>`).join("")}</select><select class="form-select" onchange="updateProduction('${type}','${m.id}','gender',this.value)"><option value="" ${!r.gender?"selected":""}>Pilih Gender</option><option ${r.gender==="Cowok"?"selected":""}>Cowok</option><option ${r.gender==="Cewek"?"selected":""}>Cewek</option></select></div>`;
       }).join("") : `<div class="empty-state">Tambahkan anggota terlebih dahulu.</div>`;
 
       const sizes = ["S","M","L","XL","XXL","XXXL"];
@@ -1184,7 +1184,7 @@
     }
 
     function updateProduction(type, memberId, field, value) {
-      if (!appData[type][memberId]) appData[type][memberId] = { selected:false, payment:"Belum Bayar", size:"M", gender:"Cowok" };
+      if (!appData[type][memberId]) appData[type][memberId] = { selected:false, payment:"Belum Bayar", size:"M", gender:"" };
       appData[type][memberId][field] = value; saveData(); renderProduction(type);
     }
 
