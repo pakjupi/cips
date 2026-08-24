@@ -273,6 +273,10 @@
     }
     .production-member label { min-width: 140px; flex: 1 1 140px; }
     .production-member select { flex: 1 1 90px; min-width: 0; }
+    .production-member .production-size { flex: 0 1 66px; }
+    .production-member .production-gender { flex: 0 1 96px; }
+    .production-member .production-status { flex: 1 1 120px; }
+    .production-member .production-method { flex: 0 1 92px; }
     .production-member:last-child { border-bottom: 0; }
 
     .year-picker { position: relative; }
@@ -696,9 +700,12 @@
      <div class="d-flex justify-content-end gap-2 mb-3 no-print"><button class="btn btn-soft" type="button" onclick="printCurrent()"><i class="bi bi-printer"></i></button><label class="btn btn-soft mb-0">Import<input type="file" class="d-none" accept=".json" onchange="importData(event,'latdas')"></label><button class="btn btn-soft" type="button" onclick="exportExcel('latdas')">Export</button><button class="btn btn-soft btn-danger-soft" type="button" onclick="resetCollection('latdas')">Reset</button>
      </div>
      <article class="surface-card">
-      <div class="mb-3">
-       <h2 data-template-id="latdas-title" class="canva-text section-title" style="color: rgb(15, 23, 42); font-weight: 700; font-style: normal; font-size: 21px;">Data LATDAS</h2>
-       <p data-template-id="latdas-copy" class="canva-text section-copy" style="color: rgb(100, 116, 139); font-weight: 400; font-style: normal; font-size: 14px;">Kelola keikutsertaan dan kehadiran Latihan Dasar anggota.</p>
+      <div class="mb-3 d-flex flex-wrap justify-content-between align-items-start gap-2">
+       <div>
+        <h2 data-template-id="latdas-title" class="canva-text section-title" style="color: rgb(15, 23, 42); font-weight: 700; font-style: normal; font-size: 21px;">Data LATDAS CIPS SMANELA</h2>
+        <p data-template-id="latdas-copy" class="canva-text section-copy" style="color: rgb(100, 116, 139); font-weight: 400; font-style: normal; font-size: 14px;">Daftar nama kelulusan anggota Latihan Dasar (LATDAS) CIPS SMANELA.</p>
+       </div>
+       <div class="no-print" style="min-width:180px;"><label for="latdasBatchFilter" class="visually-hidden">Filter angkatan</label><select id="latdasBatchFilter" class="form-select"><option value="">Semua Angkatan</option></select></div>
       </div>
       <div class="table-wrap">
        <table class="table">
@@ -708,6 +715,7 @@
           <th>Divisi</th>
           <th>Keikutsertaan</th>
           <th>Kehadiran</th>
+          <th>Kelulusan</th>
          </tr>
         </thead>
         <tbody id="latdasRows"></tbody>
@@ -763,6 +771,7 @@
         <h2 class="section-title">Dispensasi</h2>
         <p class="section-copy">Centang anggota yang mengajukan dispensasi.</p>
        </div>
+       <div class="no-print" style="min-width:220px;"><label for="dispensationSearch" class="visually-hidden">Cari nama anggota</label><input id="dispensationSearch" class="form-control" placeholder="Cari nama lengkap atau nama panggilan..."></div>
       </div>
       <div class="table-wrap">
        <table class="table">
@@ -806,10 +815,7 @@
        </article>
       </div>
       <div class="col-lg-8">
-       <div class="d-flex flex-wrap justify-content-end align-items-center gap-2 mb-3 no-print">
-        <label for="achievementYearFilter" class="form-label mb-0">Filter Tahun</label> <select id="achievementYearFilter" class="form-select" style="width:auto;min-width:150px;"> <option value="">Semua Tahun</option> </select>
-       </div>
-       <div class="row g-3" id="achievementCards"></div>
+       <div id="achievementCards"></div>
       </div>
      </div>
     </section>
@@ -829,7 +835,7 @@
       <div class="col-lg-8">
        <div class="surface-card table-wrap">
         <table class="table">
-         <thead><tr><th>Nama Konten Sosial Media</th><th class="text-center">Posting ke Sosial Media</th><th class="text-end">Aksi</th></tr></thead>
+         <thead><tr><th>Nama Konten Sosial Media</th><th class="text-center">Publish</th><th class="text-center">Posting ke Sosial Media</th><th class="text-end">Aksi</th></tr></thead>
          <tbody id="miminverseRows"></tbody>
         </table>
        </div>
@@ -1192,9 +1198,13 @@
       const title = type === "polo" ? "Produksi Polo" : "Produksi Jaket";
       target.innerHTML = `<div class="row g-3"><div class="col-lg-8"><article class="surface-card"><div class="d-flex justify-content-between align-items-start mb-3"><div><h2 class="section-title">${title}</h2><p class="section-copy">Pilih anggota dan lengkapi kebutuhan pesanan.</p></div><div class="d-flex gap-2 no-print"><button class="btn btn-soft" type="button" onclick="printCurrent()">Print</button><label class="btn btn-soft mb-0">Import<input type="file" class="d-none" accept=".json" onchange="importData(event,'${type}')"></label><button class="btn btn-soft" type="button" onclick="exportExcel('${type}')">Export</button><button class="btn btn-soft btn-danger-soft" type="button" onclick="resetCollection('${type}')">Reset</button></div></div><div id="${type}MemberList"></div></article></div><div class="col-lg-4"><article class="surface-card"><h2 class="section-title">Rekap Ukuran</h2><p class="section-copy mb-3">Total pesanan aktif berdasarkan ukuran (real-time).</p><div id="${type}Summary"></div></article></div></div>`;
 
-      document.getElementById(type + "MemberList").innerHTML = appData.members.length ? sortByClass(appData.members).map(m => {
-        const r = records[m.id] || { selected:false, payment:"Belum Bayar", size:"M", gender:"" };
-        return `<div class="production-member"><input class="form-check-input" type="checkbox" id="${type}-${m.id}" ${r.selected ? "checked" : ""} onchange="updateProduction('${type}','${m.id}','selected',this.checked)"><label class="flex-grow-1 mb-0" for="${type}-${m.id}"><strong style="font-size:.78rem;">${escapeHtml(m.name)}</strong><small class="d-block text-secondary">${escapeHtml(m.className)} · ${escapeHtml(m.division)}</small></label><select class="form-select" onchange="updateProduction('${type}','${m.id}','payment',this.value)"><option ${r.payment==="Belum Bayar"?"selected":""}>Belum Bayar</option><option ${r.payment==="Tunai"?"selected":""}>Tunai</option><option ${r.payment==="QRIS"?"selected":""}>QRIS</option><option ${r.payment==="DANA"?"selected":""}>DANA</option></select><select class="form-select" onchange="updateProduction('${type}','${m.id}','size',this.value)">${["S","M","L","XL","XXL","XXXL"].map(s=>`<option ${r.size===s?"selected":""}>${s}</option>`).join("")}</select><select class="form-select" onchange="updateProduction('${type}','${m.id}','gender',this.value)"><option value="" ${!r.gender?"selected":""}>Pilih Gender</option><option ${r.gender==="Cowok"?"selected":""}>Cowok</option><option ${r.gender==="Cewek"?"selected":""}>Cewek</option></select></div>`;
+      const memberSort = sortByClass(appData.members).sort((a, b) => {
+        const aSel = records[a.id]?.selected ? 1 : 0, bSel = records[b.id]?.selected ? 1 : 0;
+        return bSel - aSel;
+      });
+      document.getElementById(type + "MemberList").innerHTML = appData.members.length ? memberSort.map(m => {
+        const r = records[m.id] || { selected:false, statusBayar:"Belum Bayar", metode:"Tunai", size:"M", gender:"" };
+        return `<div class="production-member"><input class="form-check-input" type="checkbox" id="${type}-${m.id}" ${r.selected ? "checked" : ""} onchange="updateProduction('${type}','${m.id}','selected',this.checked)"><label class="flex-grow-1 mb-0" for="${type}-${m.id}"><strong style="font-size:.78rem;">${escapeHtml(m.name)}</strong><small class="d-block text-secondary">${escapeHtml(m.className)} · ${escapeHtml(m.division)}</small></label><select class="form-select production-status" onchange="updateProduction('${type}','${m.id}','statusBayar',this.value)"><option ${r.statusBayar==="Belum Bayar"?"selected":""}>Belum Bayar</option><option ${r.statusBayar==="Sudah Bayar DP"?"selected":""}>Sudah Bayar DP</option><option ${r.statusBayar==="Sudah LUNAS"?"selected":""}>Sudah LUNAS</option></select><select class="form-select production-method" onchange="updateProduction('${type}','${m.id}','metode',this.value)"><option ${r.metode==="Tunai"?"selected":""}>Tunai</option><option ${r.metode==="QRIS"?"selected":""}>QRIS</option><option ${r.metode==="DANA"?"selected":""}>DANA</option></select><select class="form-select production-size" onchange="updateProduction('${type}','${m.id}','size',this.value)">${["S","M","L","XL","XXL","XXXL"].map(s=>`<option ${r.size===s?"selected":""}>${s}</option>`).join("")}</select><select class="form-select production-gender" onchange="updateProduction('${type}','${m.id}','gender',this.value)"><option value="" ${!r.gender?"selected":""}>Pilih Gender</option><option ${r.gender==="Cowok"?"selected":""}>Cowok</option><option ${r.gender==="Cewek"?"selected":""}>Cewek</option></select></div>`;
       }).join("") : `<div class="empty-state">Tambahkan anggota terlebih dahulu.</div>`;
 
       const sizes = ["S","M","L","XL","XXL","XXXL"];
@@ -1202,23 +1212,40 @@
       const cowok = buildSummary("Cowok"), cewek = buildSummary("Cewek");
       const summaryBlock = (label, rows) => `<div class="mb-4"><div class="fw-bold mb-1" style="font-size:.78rem;color:#0F172A;">${label}</div>${rows.map(([size,total]) => `<div class="d-flex justify-content-between py-2 border-bottom" style="font-size:.78rem;"><span>Ukuran ${size}</span><strong>${total} pcs</strong></div>`).join("")}<div class="d-flex justify-content-between mt-3 pt-3" style="font-size:.85rem;font-weight:700;border-top:2px solid #E2E8F0;"><span>Total ${label}</span><strong>${rows.reduce((sum,[,t])=>sum+t,0)} pcs</strong></div></div>`;
       const totalProduksi = cowok.reduce((sum,[,t])=>sum+t,0) + cewek.reduce((sum,[,t])=>sum+t,0);
-      document.getElementById(type + "Summary").innerHTML = summaryBlock("Cowok", cowok) + summaryBlock("Cewek", cewek) + `<div class="d-flex justify-content-between pt-3 mt-1" style="font-size:.95rem;font-weight:700;border-top:2px solid #0F172A;color:#0F172A;"><span>Total Produksi</span><strong>${totalProduksi} pcs</strong></div>`;
+      const selectedRecords = Object.values(records).filter(r => r.selected);
+      const countBayar = status => selectedRecords.filter(r => (r.statusBayar || "Belum Bayar") === status).length;
+      const paymentBlock = `<div class="mt-4 pt-3" style="border-top:2px dashed #E2E8F0;"><div class="fw-bold mb-2" style="font-size:.8rem;color:#0F172A;">Rekap Status Bayar</div>
+        <div class="d-flex justify-content-between py-1" style="font-size:.78rem;"><span>Belum Bayar</span><strong>${countBayar("Belum Bayar")} orang</strong></div>
+        <div class="d-flex justify-content-between py-1" style="font-size:.78rem;"><span>Sudah Bayar DP</span><strong>${countBayar("Sudah Bayar DP")} orang</strong></div>
+        <div class="d-flex justify-content-between py-1" style="font-size:.78rem;"><span>Sudah LUNAS</span><strong>${countBayar("Sudah LUNAS")} orang</strong></div></div>`;
+      document.getElementById(type + "Summary").innerHTML = summaryBlock("Cowok", cowok) + summaryBlock("Cewek", cewek) + `<div class="d-flex justify-content-between pt-3 mt-1" style="font-size:.95rem;font-weight:700;border-top:2px solid #0F172A;color:#0F172A;"><span>Total Produksi</span><strong>${totalProduksi} pcs</strong></div>` + paymentBlock;
     }
 
     function updateProduction(type, memberId, field, value) {
-      if (!appData[type][memberId]) appData[type][memberId] = { selected:false, payment:"Belum Bayar", size:"M", gender:"" };
+      if (!appData[type][memberId]) appData[type][memberId] = { selected:false, statusBayar:"Belum Bayar", metode:"Tunai", size:"M", gender:"" };
       appData[type][memberId][field] = value; saveData(); renderProduction(type);
     }
 
-    function renderLatdas() {
-      document.getElementById("latdasRows").innerHTML = sortByClass(appData.members).map(m => {
-        const r = appData.latdas[m.id] || { participation:"Ikut", attendance:"Hadir" };
-        return `<tr><td><strong>${escapeHtml(m.name)}</strong></td><td>${badge(m.division)}</td><td><select class="form-select" onchange="updateLatdas('${m.id}','participation',this.value)"><option ${r.participation==="Ikut"?"selected":""}>Ikut</option><option ${r.participation==="Tidak Ikut"?"selected":""}>Tidak Ikut</option></select></td><td><select class="form-select" onchange="updateLatdas('${m.id}','attendance',this.value)"><option ${r.attendance==="Hadir"?"selected":""}>Hadir</option><option ${r.attendance==="Tidak Hadir"?"selected":""}>Tidak Hadir</option></select></td></tr>`;
-      }).join("") || `<tr><td colspan="4"><div class="empty-state">Tambahkan anggota terlebih dahulu.</div></td></tr>`;
+    function populateLatdasBatchOptions() {
+      const select = document.getElementById("latdasBatchFilter");
+      const current = select.value;
+      const batches = [...new Set(appData.members.map(m => m.batch).filter(Boolean))].sort();
+      select.innerHTML = `<option value="">Semua Angkatan</option>${batches.map(b => `<option value="${escapeHtml(b)}">${escapeHtml(b)}</option>`).join("")}`;
+      select.value = batches.includes(current) ? current : "";
     }
+    function renderLatdas() {
+      populateLatdasBatchOptions();
+      const batchFilter = document.getElementById("latdasBatchFilter").value;
+      const members = sortByClass(appData.members.filter(m => !batchFilter || m.batch === batchFilter));
+      document.getElementById("latdasRows").innerHTML = members.length ? members.map(m => {
+        const r = appData.latdas[m.id] || { participation:"Ikut", attendance:"Hadir", graduation:"Lulus" };
+        return `<tr><td><strong>${escapeHtml(m.name)}</strong></td><td>${badge(m.division)}</td><td><select class="form-select" onchange="updateLatdas('${m.id}','participation',this.value)"><option ${r.participation==="Ikut"?"selected":""}>Ikut</option><option ${r.participation==="Tidak Ikut"?"selected":""}>Tidak Ikut</option></select></td><td><select class="form-select" onchange="updateLatdas('${m.id}','attendance',this.value)"><option ${r.attendance==="Hadir"?"selected":""}>Hadir</option><option ${r.attendance==="Tidak Hadir"?"selected":""}>Tidak Hadir</option></select></td><td><select class="form-select" onchange="updateLatdas('${m.id}','graduation',this.value)"><option ${(r.graduation||"Lulus")==="Lulus"?"selected":""}>Lulus</option><option ${r.graduation==="Tidak Lulus"?"selected":""}>Tidak Lulus</option></select></td></tr>`;
+      }).join("") : `<tr><td colspan="5"><div class="empty-state">Tambahkan anggota terlebih dahulu.</div></td></tr>`;
+    }
+    document.getElementById("latdasBatchFilter").addEventListener("change", renderLatdas);
 
     function updateLatdas(memberId, field, value) {
-      if (!appData.latdas[memberId]) appData.latdas[memberId] = { participation:"Ikut", attendance:"Hadir" };
+      if (!appData.latdas[memberId]) appData.latdas[memberId] = { participation:"Ikut", attendance:"Hadir", graduation:"Lulus" };
       appData.latdas[memberId][field] = value; saveData();
     }
 
@@ -1237,19 +1264,13 @@
     }
 
     function renderAchievements() {
-      const filter = document.getElementById("achievementYearFilter");
-      const selectedYear = filter ? filter.value : "";
       const years = [...new Set(appData.achievements.map(a => a.year).filter(Boolean))].sort((a, b) => b - a);
-      if (filter) {
-        const currentOptions = [...filter.options].map(option => option.value).slice(1);
-        if (currentOptions.join(",") !== years.map(String).join(",")) {
-          filter.innerHTML = `<option value="">Semua Tahun</option>${years.map(year => `<option value="${year}">${year}</option>`).join("")}`;
-          filter.value = years.map(String).includes(selectedYear) ? selectedYear : "";
-        }
-      }
-      const achievements = (selectedYear ? appData.achievements.filter(a => String(a.year) === selectedYear) : [...appData.achievements])
-        .sort((a, b) => (Number(a.year) - Number(b.year)) || (monthIndex(a.month) - monthIndex(b.month)));
-      document.getElementById("achievementCards").innerHTML = achievements.length ? achievements.map(a => `<div class="col-md-6"><article class="program-card"><div class="d-flex justify-content-between align-items-start"><span class="badge-soft badge-creative">${escapeHtml(a.month)} ${escapeHtml(a.year || "")}</span><div class="d-flex gap-1"><button class="btn btn-sm btn-soft" onclick="editAchievement('${a.id}')" aria-label="Edit prestasi ${escapeHtml(a.name)}"><i class="bi bi-pencil"></i></button><button class="btn btn-sm btn-soft btn-danger-soft" onclick="deleteItem('achievements','${a.id}',this)" aria-label="Hapus prestasi ${escapeHtml(a.name)}"><i class="bi bi-trash"></i></button></div></div><i class="bi bi-trophy-fill d-block mt-3" style="font-size:1.4rem;color:#D97706;"></i><h3 class="mt-2 mb-1" style="font-size:.94rem;font-weight:700;">${escapeHtml(a.name)}</h3><p class="text-secondary mb-2" style="font-size:.7rem;">${escapeHtml(a.organizer)}</p><span class="badge-soft badge-income">${escapeHtml(a.award)}</span></article></div>`).join("") : `<div class="col-12"><div class="empty-state">Belum ada prestasi lomba pada tahun yang dipilih.</div></div>`;
+      const cardHtml = a => `<div class="col-md-6"><article class="program-card"><div class="d-flex justify-content-between align-items-start"><span class="badge-soft badge-creative">${escapeHtml(a.month)} ${escapeHtml(a.year || "")}</span><div class="d-flex gap-1"><button class="btn btn-sm btn-soft" onclick="editAchievement('${a.id}')" aria-label="Edit prestasi ${escapeHtml(a.name)}"><i class="bi bi-pencil"></i></button><button class="btn btn-sm btn-soft btn-danger-soft" onclick="deleteItem('achievements','${a.id}',this)" aria-label="Hapus prestasi ${escapeHtml(a.name)}"><i class="bi bi-trash"></i></button></div></div><i class="bi bi-trophy-fill d-block mt-3" style="font-size:1.4rem;color:#D97706;"></i><h3 class="mt-2 mb-1" style="font-size:.94rem;font-weight:700;">${escapeHtml(a.name)}</h3><p class="text-secondary mb-2" style="font-size:.7rem;">${escapeHtml(a.organizer)}</p><span class="badge-soft badge-income">${escapeHtml(a.award)}</span></article></div>`;
+      if (!years.length) { document.getElementById("achievementCards").innerHTML = `<div class="empty-state">Belum ada prestasi lomba.</div>`; return; }
+      document.getElementById("achievementCards").innerHTML = years.map(year => {
+        const items = appData.achievements.filter(a => a.year === year).sort((a, b) => monthIndex(a.month) - monthIndex(b.month));
+        return `<div class="nav-caption" style="margin:0 0 .6rem;">Tahun ${year}</div><div class="row g-3 mb-4">${items.map(cardHtml).join("")}</div>`;
+      }).join("");
     }
 
     function editAchievement(id) {
@@ -1280,7 +1301,7 @@
     }
 
     function exportExcel(collection) {
-      const data = collection === "dispensation" ? sortByClass(appData.members.filter(m => appData.dispensation.includes(m.id))).map(m => ({ name:m.name, absent:m.absent, className:m.className, division:m.division })) : collection === "polo" || collection === "jacket" ? sortByClass(appData.members.filter(m => appData[collection][m.id]?.selected)).map(m => ({ name:m.name, className:m.className, division:m.division, payment:appData[collection][m.id].payment, size:appData[collection][m.id].size, gender:appData[collection][m.id].gender })) : appData[collection];
+      const data = collection === "dispensation" ? sortByClass(appData.members.filter(m => appData.dispensation.includes(m.id))).map(m => ({ name:m.name, absent:m.absent, className:m.className, division:m.division })) : collection === "polo" || collection === "jacket" ? sortByClass(appData.members.filter(m => appData[collection][m.id]?.selected)).map(m => ({ name:m.name, className:m.className, division:m.division, statusBayar:appData[collection][m.id].statusBayar, metode:appData[collection][m.id].metode, size:appData[collection][m.id].size, gender:appData[collection][m.id].gender })) : appData[collection];
       const content = toCSV(data);
       const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([content], {type:"application/vnd.ms-excel"})); a.download = `cips-${collection}.xls`; a.click(); URL.revokeObjectURL(a.href); toast(`Data ${collection} berhasil diekspor ke Excel.`);
     }
@@ -1373,8 +1394,14 @@
       saveData(); closeClassEditModal(); renderAll(); toast("Nama kelas diperbarui.");
     }
     function deleteClass(encoded) { const name = decodeURIComponent(encoded); appData.classes = appData.classes.filter(c => c !== name); saveData(); renderClasses(); toast("Kelas dihapus dari daftar."); }
-    function renderDispensation() { document.getElementById("dispensationRows").innerHTML = appData.members.length ? sortByClass(appData.members).map(m => `<tr><td><input class="form-check-input" type="checkbox" ${appData.dispensation.includes(m.id)?"checked":""} onchange="toggleDispensation('${m.id}',this.checked)"></td><td>${escapeHtml(m.name)}</td><td>${m.absent}</td><td>${escapeHtml(m.className)}</td><td>${badge(m.division)}</td></tr>`).join("") : `<tr><td colspan="5"><div class="empty-state">Tambahkan anggota terlebih dahulu.</div></td></tr>`; }
-    function toggleDispensation(id, checked) { appData.dispensation = checked ? [...new Set([...appData.dispensation, id])] : appData.dispensation.filter(item => item !== id); saveData(); }
+    function renderDispensation() {
+      const search = (document.getElementById("dispensationSearch")?.value || "").toLowerCase();
+      const list = sortByClass(appData.members.filter(m => `${m.name} ${m.nickname}`.toLowerCase().includes(search)))
+        .sort((a, b) => (appData.dispensation.includes(b.id) ? 1 : 0) - (appData.dispensation.includes(a.id) ? 1 : 0));
+      document.getElementById("dispensationRows").innerHTML = list.length ? list.map(m => `<tr><td><input class="form-check-input" type="checkbox" ${appData.dispensation.includes(m.id)?"checked":""} onchange="toggleDispensation('${m.id}',this.checked)"></td><td>${escapeHtml(m.name)}</td><td>${m.absent}</td><td>${escapeHtml(m.className)}</td><td>${badge(m.division)}</td></tr>`).join("") : `<tr><td colspan="5"><div class="empty-state">${search ? "Nama anggota tidak ditemukan." : "Tambahkan anggota terlebih dahulu."}</div></td></tr>`;
+    }
+    document.getElementById("dispensationSearch").addEventListener("input", renderDispensation);
+    function toggleDispensation(id, checked) { appData.dispensation = checked ? [...new Set([...appData.dispensation, id])] : appData.dispensation.filter(item => item !== id); saveData(); renderDispensation(); }
     function exportDispensation() { const rows = sortByClass(appData.members.filter(m => appData.dispensation.includes(m.id))); const content = toCSV(rows.map(m => ({"Nama Lengkap":m.name,"No Absen":m.absent,"Kelas":m.className,"Divisi":m.division}))); const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([content],{type:"text/csv;charset=utf-8;"})); a.download="cips-dispensasi.csv"; a.click(); URL.revokeObjectURL(a.href); toast("Data dispensasi diekspor."); }
     function renderAll() {
       updateDashboard(); renderMembers(); renderDivisions(); renderPrograms(); renderAttendance(); renderFinance(); renderMemberPayments(); renderProduction("polo"); renderProduction("jacket"); renderLatdas(); renderGrades(); renderAchievements(); renderClasses(); renderDispensation(); renderMiminverse();
@@ -1386,11 +1413,24 @@
       { key: "youtube", label: "YouTube" }
     ];
     function renderMiminverse() {
-      document.getElementById("miminverseRows").innerHTML = appData.miminverse.length ? appData.miminverse.map(item => {
+      const list = [...appData.miminverse].sort((a, b) => (a.publish === "Sudah" ? 1 : 0) - (b.publish === "Sudah" ? 1 : 0));
+      document.getElementById("miminverseRows").innerHTML = list.length ? list.map(item => {
         const posted = item.posted && typeof item.posted === "object" ? item.posted : {};
+        const publish = item.publish === "Sudah" ? "Sudah" : "Belum";
         const checkboxes = SOCIAL_PLATFORMS.map(p => `<label class="d-inline-flex align-items-center gap-1 me-2" style="font-size:.68rem;"><input type="checkbox" class="form-check-input" ${posted[p.key] ? "checked" : ""} onchange="toggleMiminversePosted('${item.id}','${p.key}', this.checked)" aria-label="${p.label} ${escapeHtml(item.name)}">${p.label}</label>`).join("");
-        return `<tr><td>${escapeHtml(item.name)}</td><td class="text-center">${checkboxes}</td><td class="text-end"><div class="d-flex gap-1 justify-content-end"><button class="btn btn-sm btn-soft" onclick="editMiminverse('${item.id}')" aria-label="Edit ${escapeHtml(item.name)}"><i class="bi bi-pencil"></i></button><button class="btn btn-sm btn-soft" onclick="resetMiminversePosted('${item.id}')" aria-label="Reset centang ${escapeHtml(item.name)}" title="Reset centang"><i class="bi bi-arrow-counterclockwise"></i></button><button class="btn btn-sm btn-soft btn-danger-soft" onclick="deleteItem('miminverse','${item.id}',this)" aria-label="Hapus ${escapeHtml(item.name)}"><i class="bi bi-trash"></i></button></div></td></tr>`;
-      }).join("") : `<tr><td colspan="3"><div class="empty-state">Belum ada kegiatan Miminverse.</div></div></td></tr>`;
+        return `<tr><td>${escapeHtml(item.name)}</td><td class="text-center"><label for="pub-${item.id}" class="visually-hidden">Status publish ${escapeHtml(item.name)}</label><select id="pub-${item.id}" class="form-select" style="min-width:110px;" onchange="setMiminversePublish('${item.id}',this.value)"><option ${publish==="Belum"?"selected":""}>Belum</option><option ${publish==="Sudah"?"selected":""}>Sudah</option></select></td><td class="text-center">${checkboxes}</td><td class="text-end"><div class="d-flex gap-1 justify-content-end"><button class="btn btn-sm btn-soft" onclick="editMiminverse('${item.id}')" aria-label="Edit ${escapeHtml(item.name)}"><i class="bi bi-pencil"></i></button><button class="btn btn-sm btn-soft" onclick="resetMiminversePosted('${item.id}')" aria-label="Reset centang ${escapeHtml(item.name)}" title="Reset centang"><i class="bi bi-arrow-counterclockwise"></i></button><button class="btn btn-sm btn-soft btn-danger-soft" onclick="deleteItem('miminverse','${item.id}',this)" aria-label="Hapus ${escapeHtml(item.name)}"><i class="bi bi-trash"></i></button></div></td></tr>`;
+      }).join("") : `<tr><td colspan="4"><div class="empty-state">Belum ada kegiatan Miminverse.</div></td></tr>`;
+    }
+    function setMiminversePublish(id, value) {
+      const item = appData.miminverse.find(m => m.id === id); if (!item) return;
+      item.publish = value === "Sudah" ? "Sudah" : "Belum";
+      if (item.publish === "Sudah") {
+        item.posted = {}; SOCIAL_PLATFORMS.forEach(p => { item.posted[p.key] = true; });
+      } else {
+        item.posted = {};
+      }
+      saveData(); renderMiminverse();
+      toast(item.publish === "Sudah" ? "Konten ditandai sudah publish." : "Konten ditandai belum publish.");
     }
     function editMiminverse(id) {
       const item = appData.miminverse.find(m => m.id === id); if (!item) return;
@@ -1400,18 +1440,21 @@
     function toggleMiminversePosted(id, platform, checked) {
       const item = appData.miminverse.find(m => m.id === id); if (!item) return;
       if (!item.posted || typeof item.posted !== "object") item.posted = {};
-      item.posted[platform] = checked; saveData();
+      item.posted[platform] = checked;
+      const allChecked = SOCIAL_PLATFORMS.every(p => item.posted[p.key]);
+      item.publish = allChecked ? "Sudah" : "Belum";
+      saveData(); renderMiminverse();
       toast(checked ? "Ditandai sudah posting di " + platform + "." : "Ditandai belum posting di " + platform + ".");
     }
     function resetMiminversePosted(id) {
       const item = appData.miminverse.find(m => m.id === id); if (!item) return;
-      item.posted = {}; saveData(); renderMiminverse(); toast("Centang posting direset.");
+      item.posted = {}; item.publish = "Belum"; saveData(); renderMiminverse(); toast("Centang posting direset.");
     }
     document.getElementById("miminverseForm").addEventListener("submit", event => {
       event.preventDefault();
       const id = miminverseId.value || uid("mv");
       const existing = appData.miminverse.find(m => m.id === id);
-      const item = { id, name: miminverseName.value.trim(), posted: existing && existing.posted ? existing.posted : {} };
+      const item = { id, name: miminverseName.value.trim(), posted: existing && existing.posted ? existing.posted : {}, publish: existing ? existing.publish : "Belum" };
       const index = appData.miminverse.findIndex(m => m.id === id);
       if (index >= 0) appData.miminverse[index] = item; else appData.miminverse.push(item);
       saveData(); event.target.reset(); miminverseId.value = ""; renderAll(); toast(index >= 0 ? "Kegiatan Miminverse diperbarui." : "Kegiatan Miminverse ditambahkan.");
@@ -1489,7 +1532,6 @@
     document.getElementById("memberFilter").addEventListener("change", renderMembers);
     document.getElementById("attendanceSearch").addEventListener("input", renderAttendance);
     document.getElementById("attendanceBatchFilter").addEventListener("change", renderAttendance);
-    document.getElementById("achievementYearFilter").addEventListener("change", renderAchievements);
 
     document.querySelectorAll(".menu-link").forEach(button => {
       button.addEventListener("click", () => {
