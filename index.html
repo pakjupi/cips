@@ -304,6 +304,10 @@
       padding: 2rem 1.6rem; box-shadow: 0 22px 60px rgba(15,23,42,.12); text-align: center;
     }
 
+    .side-panel-sticky-top {
+      position: sticky; top: 0; z-index: 5; background: #FFFFFF; padding-bottom: .6rem; margin-bottom: .2rem;
+    }
+
     .mobile-toggle { display: none; }
 
     @media (max-width: 991px) {
@@ -345,22 +349,24 @@
   <div class="app-shell">
    <div class="nav-backdrop" id="navBackdrop"></div>
    <aside class="side-panel" aria-label="Navigasi utama">
-    <div class="d-flex align-items-center gap-3 px-2">
-     <div class="brand-mark"><i class="bi bi-camera-reels-fill"></i>
+    <div class="side-panel-sticky-top">
+     <div class="d-flex align-items-center gap-3 px-2">
+      <div class="brand-mark"><i class="bi bi-camera-reels-fill"></i>
+      </div>
+      <div>
+       <div data-template-id="brand-name" class="canva-text brand-title" style="color: rgb(15, 23, 42); font-weight: 800; font-style: normal; font-size: 14px;">CIPS SMANELA</div>
+       <div data-template-id="brand-caption" class="canva-text brand-subtitle" style="color: rgb(100, 116, 139); font-weight: 600; font-style: normal; font-size: 14px;">CINEMA &amp; PHOTOGRAPHY</div>
+      </div>
      </div>
-     <div>
-      <div data-template-id="brand-name" class="canva-text brand-title" style="color: rgb(15, 23, 42); font-weight: 800; font-style: normal; font-size: 14px;">CIPS SMANELA</div>
-      <div data-template-id="brand-caption" class="canva-text brand-subtitle" style="color: rgb(100, 116, 139); font-weight: 600; font-style: normal; font-size: 14px;">CINEMA &amp; PHOTOGRAPHY</div>
-     </div>
+     <nav style="margin-top:1.4rem;">
+      <button class="menu-link active" data-view="dashboard"><i class="bi bi-grid-1x2-fill"></i><span data-template-id="nav-dashboard" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Dashboard</span></button>
+     </nav>
     </div>
-    <nav style="margin-top:1.4rem;">
-     <button class="menu-link active" data-view="dashboard"><i class="bi bi-grid-1x2-fill"></i><span data-template-id="nav-dashboard" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Dashboard</span></button>
-    </nav>
     <div class="nav-caption">
      MENU UTAMA
     </div>
     <nav class="flex-grow-1" id="sideNavigation">
-     <button class="menu-link" data-view="members"><i class="bi bi-people-fill"></i><span data-template-id="nav-members" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Anggota CIPS</span></button> <button class="menu-link" data-view="divisions"><i class="bi bi-diagram-3-fill"></i><span data-template-id="nav-divisions" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Divisi Anggota</span></button> <button class="menu-link" data-view="programs"><i class="bi bi-calendar2-check-fill"></i><span data-template-id="nav-programs" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Program Kerja</span></button> <button class="menu-link" data-view="attendance"><i class="bi bi-clipboard2-check-fill"></i><span data-template-id="nav-attendance" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Absensi Anggota</span></button> <button class="menu-link" data-view="finance"><i class="bi bi-wallet2"></i><span data-template-id="nav-finance" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Uang Kas</span></button> <button class="menu-link" data-view="miminverse"><i class="bi bi-instagram"></i><span data-template-id="nav-miminverse" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Miminverse</span></button> <button class="menu-link" data-view="polo"><i class="bi bi-person-vcard-fill"></i><span data-template-id="nav-polo" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Produksi Polo</span></button> <button class="menu-link" data-view="jacket"><i class="bi bi-shield-fill"></i><span data-template-id="nav-jacket" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Produksi Jaket</span></button> <button class="menu-link" data-view="latdas"><i class="bi bi-flag-fill"></i><span data-template-id="nav-latdas" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">LATDAS CIPS</span></button> <button class="menu-link" data-view="grades"><i class="bi bi-award-fill"></i><span data-template-id="nav-grades" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Nilai Anggota</span></button> <button class="menu-link" data-view="dispensation"><i class="bi bi-file-earmark-medical-fill"></i><span data-template-id="nav-dispensation" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Dispensasi</span></button> <button class="menu-link" data-view="achievements"><i class="bi bi-trophy-fill"></i><span data-template-id="nav-achievements" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Prestasi Lomba</span></button>
+     <button class="menu-link" data-view="attendance"><i class="bi bi-clipboard2-check-fill"></i><span data-template-id="nav-attendance" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Absensi Anggota</span></button> <button class="menu-link" data-view="members"><i class="bi bi-people-fill"></i><span data-template-id="nav-members" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Anggota CIPS</span></button> <button class="menu-link" data-view="divisions"><i class="bi bi-diagram-3-fill"></i><span data-template-id="nav-divisions" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Divisi Anggota</span></button> <button class="menu-link" data-view="programs"><i class="bi bi-calendar2-check-fill"></i><span data-template-id="nav-programs" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Program Kerja</span></button> <button class="menu-link" data-view="finance"><i class="bi bi-wallet2"></i><span data-template-id="nav-finance" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Uang Kas</span></button> <button class="menu-link" data-view="miminverse"><i class="bi bi-instagram"></i><span data-template-id="nav-miminverse" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Miminverse</span></button> <button class="menu-link" data-view="polo"><i class="bi bi-person-vcard-fill"></i><span data-template-id="nav-polo" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Produksi Polo</span></button> <button class="menu-link" data-view="jacket"><i class="bi bi-shield-fill"></i><span data-template-id="nav-jacket" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Produksi Jaket</span></button> <button class="menu-link" data-view="latdas"><i class="bi bi-flag-fill"></i><span data-template-id="nav-latdas" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">LATDAS CIPS</span></button> <button class="menu-link" data-view="grades"><i class="bi bi-award-fill"></i><span data-template-id="nav-grades" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Nilai Anggota</span></button> <button class="menu-link" data-view="dispensation"><i class="bi bi-file-earmark-medical-fill"></i><span data-template-id="nav-dispensation" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Dispensasi</span></button> <button class="menu-link" data-view="achievements"><i class="bi bi-trophy-fill"></i><span data-template-id="nav-achievements" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Prestasi Lomba</span></button>
     </nav>
     <div class="nav-caption">
      DATA SINKRONISASI
@@ -379,8 +385,9 @@
      <div class="d-flex align-items-center gap-3">
       <button class="btn btn-soft mobile-toggle" type="button" id="menuToggle" aria-label="Buka menu"><i class="bi bi-list"></i></button>
       <div>
-       <div data-template-id="header-kicker" class="canva-text page-kicker" style="color: rgb(2, 132, 199); font-weight: 700; font-style: normal; font-size: 14px;">SISTEM INFORMASI EKSTRAKURIKULER</div>
+       <div data-template-id="header-kicker" class="canva-text page-kicker" style="color: rgb(2, 132, 199); font-weight: 700; font-style: normal; font-size: 14px;">WEBSITE CIPS SMANELA</div>
        <h1 id="pageTitle" class="page-heading">Dashboard</h1>
+       <div id="headerDateTime" class="canva-text" style="font-size:.75rem; color:#64748B; margin-top:.15rem;"></div>
       </div>
      </div>
      <div class="d-flex align-items-center gap-2">
@@ -673,6 +680,10 @@
        <article class="surface-card">
         <h2 data-template-id="finance-member-payment-title" class="canva-text section-title" style="color: rgb(15, 23, 42); font-weight: 700; font-style: normal; font-size: 21px;">Status Pembayaran Anggota</h2>
         <p data-template-id="finance-member-payment-copy" class="canva-text section-copy mb-3" style="color: rgb(100, 116, 139); font-weight: 400; font-style: normal; font-size: 14px;">Catatan pembayaran anggota tidak memengaruhi saldo kas akhir.</p>
+        <div class="row g-2 mb-3 no-print">
+         <div class="col-md-8"><label for="memberPaymentSearch" class="visually-hidden">Cari nama anggota</label><input id="memberPaymentSearch" class="form-control" placeholder="Cari nama lengkap atau nama panggilan..."></div>
+         <div class="col-md-4"><label for="memberPaymentBatchFilter" class="visually-hidden">Filter angkatan</label><select id="memberPaymentBatchFilter" class="form-select"><option value="">Semua Angkatan</option></select></div>
+        </div>
         <div class="table-wrap">
          <table class="table">
           <thead>
@@ -702,8 +713,8 @@
      <article class="surface-card">
       <div class="mb-3 d-flex flex-wrap justify-content-between align-items-start gap-2">
        <div>
-        <h2 data-template-id="latdas-title" class="canva-text section-title" style="color: rgb(15, 23, 42); font-weight: 700; font-style: normal; font-size: 21px;">Data LATDAS CIPS SMANELA</h2>
-        <p data-template-id="latdas-copy" class="canva-text section-copy" style="color: rgb(100, 116, 139); font-weight: 400; font-style: normal; font-size: 14px;">Daftar nama kelulusan anggota Latihan Dasar (LATDAS) CIPS SMANELA.</p>
+        <h2 data-template-id="latdas-title" class="canva-text section-title" style="color: rgb(15, 23, 42); font-weight: 700; font-style: normal; font-size: 21px;">Kelulusan LATDAS CIPS SMANELA</h2>
+        <p data-template-id="latdas-copy" class="canva-text section-copy" style="color: rgb(100, 116, 139); font-weight: 400; font-style: normal; font-size: 14px;">Daftar nama kelulusan anggota pada kegiatan Latihan Dasar (LATDAS) CIPS SMANELA.</p>
        </div>
        <div class="no-print" style="min-width:180px;"><label for="latdasBatchFilter" class="visually-hidden">Filter angkatan</label><select id="latdasBatchFilter" class="form-select"><option value="">Semua Angkatan</option></select></div>
       </div>
@@ -728,19 +739,20 @@
      </div>
      <article class="surface-card">
       <div class="mb-3">
-       <h2 data-template-id="grades-title" class="canva-text section-title" style="color: rgb(15, 23, 42); font-weight: 700; font-style: normal; font-size: 21px;">Penilaian Anggota</h2>
-       <p data-template-id="grades-copy" class="canva-text section-copy" style="color: rgb(100, 116, 139); font-weight: 400; font-style: normal; font-size: 14px;">Nilai akhir dihitung otomatis dari Keaktifan 40%, Project 30%, dan LATDAS 30%.</p>
+       <h2 data-template-id="grades-title" class="canva-text section-title" style="color: rgb(15, 23, 42); font-weight: 700; font-style: normal; font-size: 21px;">Nilai Anggota CIPS SMANELA</h2>
+       <p data-template-id="grades-copy" class="canva-text section-copy" style="color: rgb(100, 116, 139); font-weight: 400; font-style: normal; font-size: 14px;">Penilaian anggota dihitung dari Keaktifan + Project + LATDAS.</p>
       </div>
       <div class="table-wrap">
        <table class="table">
         <thead>
          <tr>
           <th>Anggota</th>
-          <th>Keaktifan (40%)</th>
-          <th>Project (30%)</th>
-          <th>LATDAS (30%)</th>
+          <th>Keaktifan</th>
+          <th>Project</th>
+          <th>LATDAS</th>
           <th>Nilai Akhir</th>
           <th>Grade</th>
+          <th>Keterangan</th>
          </tr>
         </thead>
         <tbody id="gradeRows"></tbody>
@@ -1165,14 +1177,29 @@
         <tr><td>${new Date(f.date + "T00:00:00").toLocaleDateString("id-ID")}</td><td>${escapeHtml(f.description)}</td><td><span class="badge-soft ${f.type === "Pemasukan" ? "badge-income" : "badge-expense"}">${escapeHtml(f.type)}</span></td><td class="fw-bold">${money(f.amount)}</td><td class="text-end"><button class="btn btn-sm btn-soft me-1" onclick="editFinance('${f.id}')"><i class="bi bi-pencil"></i></button><button class="btn btn-sm btn-soft btn-danger-soft" onclick="deleteItem('finance','${f.id}',this)"><i class="bi bi-trash"></i></button></td></tr>`).join("") : `<tr><td colspan="5"><div class="empty-state">Belum ada transaksi kas.</div></td></tr>`;
     }
 
+    function populateBatchFilter(selectId, currentValue) {
+      const select = document.getElementById(selectId);
+      if (!select) return;
+      const batches = [...new Set(appData.members.map(m => m.batch).filter(Boolean))].sort();
+      select.innerHTML = `<option value="">Semua Angkatan</option>${batches.map(b => `<option value="${escapeHtml(b)}">${escapeHtml(b)}</option>`).join("")}`;
+      select.value = batches.includes(currentValue) ? currentValue : "";
+    }
     function renderMemberPayments() {
       const target = document.getElementById("financeMemberPaymentRows");
       if (!target) return;
-      target.innerHTML = appData.members.length ? sortByClass(appData.members).map(m => {
+      const searchEl = document.getElementById("memberPaymentSearch");
+      const batchEl = document.getElementById("memberPaymentBatchFilter");
+      populateBatchFilter("memberPaymentBatchFilter", batchEl ? batchEl.value : "");
+      const search = (searchEl ? searchEl.value : "").toLowerCase();
+      const batchFilter = batchEl ? batchEl.value : "";
+      const list = sortByClass(appData.members.filter(m => `${m.name} ${m.nickname}`.toLowerCase().includes(search) && (!batchFilter || m.batch === batchFilter)));
+      target.innerHTML = list.length ? list.map(m => {
         const note = appData.memberPayments[m.id] || "";
         return `<tr><td><strong>${escapeHtml(m.name)}</strong><div class="text-secondary" style="font-size:.67rem;">${escapeHtml(m.nickname)}</div></td><td>${escapeHtml(m.className)}</td><td>${badge(m.division)}</td><td><label for="payment-note-${m.id}" class="visually-hidden">Catatan pembayaran ${escapeHtml(m.name)}</label><input id="payment-note-${m.id}" class="form-control" value="${escapeHtml(note)}" placeholder="Tulis catatan pembayaran..." onchange="saveMemberPayment('${m.id}',this.value)"></td></tr>`;
-      }).join("") : `<tr><td colspan="4"><div class="empty-state">Tambahkan anggota terlebih dahulu.</div></td></tr>`;
+      }).join("") : `<tr><td colspan="4"><div class="empty-state">${search || batchFilter ? "Anggota tidak ditemukan." : "Tambahkan anggota terlebih dahulu."}</div></td></tr>`;
     }
+    document.getElementById("memberPaymentSearch").addEventListener("input", renderMemberPayments);
+    document.getElementById("memberPaymentBatchFilter").addEventListener("change", renderMemberPayments);
 
     function saveMemberPayment(memberId, note) {
       if (note.trim()) appData.memberPayments[memberId] = note.trim();
@@ -1196,16 +1223,30 @@
       const target = document.getElementById(type + "Content");
       const records = appData[type];
       const title = type === "polo" ? "Produksi Polo" : "Produksi Jaket";
-      target.innerHTML = `<div class="row g-3"><div class="col-lg-8"><article class="surface-card"><div class="d-flex justify-content-between align-items-start mb-3"><div><h2 class="section-title">${title}</h2><p class="section-copy">Pilih anggota dan lengkapi kebutuhan pesanan.</p></div><div class="d-flex gap-2 no-print"><button class="btn btn-soft" type="button" onclick="printCurrent()">Print</button><label class="btn btn-soft mb-0">Import<input type="file" class="d-none" accept=".json" onchange="importData(event,'${type}')"></label><button class="btn btn-soft" type="button" onclick="exportExcel('${type}')">Export</button><button class="btn btn-soft btn-danger-soft" type="button" onclick="resetCollection('${type}')">Reset</button></div></div><div id="${type}MemberList"></div></article></div><div class="col-lg-4"><article class="surface-card"><h2 class="section-title">Rekap Ukuran</h2><p class="section-copy mb-3">Total pesanan aktif berdasarkan ukuran (real-time).</p><div id="${type}Summary"></div></article></div></div>`;
+      const prevSearch = document.getElementById(type + "Search")?.value || "";
+      const prevBatch = document.getElementById(type + "BatchFilter")?.value || "";
+      target.innerHTML = `<div class="row g-3"><div class="col-lg-8"><article class="surface-card"><div class="d-flex justify-content-between align-items-start mb-3"><div><h2 class="section-title">${title}</h2><p class="section-copy">Pilih anggota dan lengkapi kebutuhan pesanan.</p></div><div class="d-flex gap-2 no-print"><button class="btn btn-soft" type="button" onclick="printCurrent()">Print</button><label class="btn btn-soft mb-0">Import<input type="file" class="d-none" accept=".json" onchange="importData(event,'${type}')"></label><button class="btn btn-soft" type="button" onclick="exportExcel('${type}')">Export</button><button class="btn btn-soft btn-danger-soft" type="button" onclick="resetCollection('${type}')">Reset</button></div></div><div class="row g-2 mb-3 no-print"><div class="col-md-8"><label for="${type}Search" class="visually-hidden">Cari nama anggota</label><input id="${type}Search" class="form-control" placeholder="Cari nama lengkap atau nama panggilan..."></div><div class="col-md-4"><label for="${type}BatchFilter" class="visually-hidden">Filter angkatan</label><select id="${type}BatchFilter" class="form-select"><option value="">Semua Angkatan</option></select></div></div><div id="${type}MemberList"></div></article></div><div class="col-lg-4"><article class="surface-card"><h2 class="section-title">Rekap Ukuran</h2><p class="section-copy mb-3">Total pesanan aktif berdasarkan ukuran (real-time).</p><div id="${type}Summary"></div></article></div></div>`;
+      document.getElementById(type + "Search").value = prevSearch;
+      populateBatchFilter(type + "BatchFilter", prevBatch);
+      document.getElementById(type + "Search").addEventListener("input", () => renderProductionList(type));
+      document.getElementById(type + "BatchFilter").addEventListener("change", () => renderProductionList(type));
 
-      const memberSort = sortByClass(appData.members).sort((a, b) => {
-        const aSel = records[a.id]?.selected ? 1 : 0, bSel = records[b.id]?.selected ? 1 : 0;
-        return bSel - aSel;
-      });
-      document.getElementById(type + "MemberList").innerHTML = appData.members.length ? memberSort.map(m => {
+      renderProductionList(type);
+    }
+
+    function renderProductionList(type) {
+      const records = appData[type];
+      const search = (document.getElementById(type + "Search")?.value || "").toLowerCase();
+      const batchFilter = document.getElementById(type + "BatchFilter")?.value || "";
+      const memberSort = sortByClass(appData.members.filter(m => `${m.name} ${m.nickname}`.toLowerCase().includes(search) && (!batchFilter || m.batch === batchFilter)))
+        .sort((a, b) => {
+          const aSel = records[a.id]?.selected ? 1 : 0, bSel = records[b.id]?.selected ? 1 : 0;
+          return bSel - aSel;
+        });
+      document.getElementById(type + "MemberList").innerHTML = memberSort.length ? memberSort.map(m => {
         const r = records[m.id] || { selected:false, statusBayar:"Belum Bayar", metode:"Tunai", size:"M", gender:"" };
         return `<div class="production-member"><input class="form-check-input" type="checkbox" id="${type}-${m.id}" ${r.selected ? "checked" : ""} onchange="updateProduction('${type}','${m.id}','selected',this.checked)"><label class="flex-grow-1 mb-0" for="${type}-${m.id}"><strong style="font-size:.78rem;">${escapeHtml(m.name)}</strong><small class="d-block text-secondary">${escapeHtml(m.className)} · ${escapeHtml(m.division)}</small></label><select class="form-select production-status" onchange="updateProduction('${type}','${m.id}','statusBayar',this.value)"><option ${r.statusBayar==="Belum Bayar"?"selected":""}>Belum Bayar</option><option ${r.statusBayar==="Sudah Bayar DP"?"selected":""}>Sudah Bayar DP</option><option ${r.statusBayar==="Sudah LUNAS"?"selected":""}>Sudah LUNAS</option></select><select class="form-select production-method" onchange="updateProduction('${type}','${m.id}','metode',this.value)"><option ${r.metode==="Tunai"?"selected":""}>Tunai</option><option ${r.metode==="QRIS"?"selected":""}>QRIS</option><option ${r.metode==="DANA"?"selected":""}>DANA</option></select><select class="form-select production-size" onchange="updateProduction('${type}','${m.id}','size',this.value)">${["S","M","L","XL","XXL","XXXL"].map(s=>`<option ${r.size===s?"selected":""}>${s}</option>`).join("")}</select><select class="form-select production-gender" onchange="updateProduction('${type}','${m.id}','gender',this.value)"><option value="" ${!r.gender?"selected":""}>Pilih Gender</option><option ${r.gender==="Cowok"?"selected":""}>Cowok</option><option ${r.gender==="Cewek"?"selected":""}>Cewek</option></select></div>`;
-      }).join("") : `<div class="empty-state">Tambahkan anggota terlebih dahulu.</div>`;
+      }).join("") : `<div class="empty-state">${search || batchFilter ? "Anggota tidak ditemukan." : "Tambahkan anggota terlebih dahulu."}</div>`;
 
       const sizes = ["S","M","L","XL","XXL","XXXL"];
       const buildSummary = gender => sizes.map(size => [size, Object.values(records).filter(r => r.selected && r.size === size && r.gender === gender).length]);
@@ -1223,7 +1264,7 @@
 
     function updateProduction(type, memberId, field, value) {
       if (!appData[type][memberId]) appData[type][memberId] = { selected:false, statusBayar:"Belum Bayar", metode:"Tunai", size:"M", gender:"" };
-      appData[type][memberId][field] = value; saveData(); renderProduction(type);
+      appData[type][memberId][field] = value; saveData(); renderProductionList(type);
     }
 
     function populateLatdasBatchOptions() {
@@ -1254,8 +1295,9 @@
         const r = appData.grades[m.id] || { activity:0, project:0, latdas:0 };
         const final = (Number(r.activity)*.4) + (Number(r.project)*.3) + (Number(r.latdas)*.3);
         const grade = final >= 70 ? "A" : "B";
-        return `<tr><td><strong>${escapeHtml(m.name)}</strong><div class="text-secondary" style="font-size:.67rem;">${escapeHtml(m.division)}</div></td>${["activity","project","latdas"].map(field => `<td class="text-center"><label class="visually-hidden">Nilai ${field} ${escapeHtml(m.name)}</label><input type="checkbox" class="form-check-input" style="width:1.3em;height:1.3em;" ${Number(r[field]) >= 100 ? "checked" : ""} onchange="updateGrade('${m.id}','${field}',this.checked)"></td>`).join("")}<td><strong>${final.toFixed(1)}</strong></td><td><span class="badge-soft ${grade==="A"?"badge-income":"badge-creative"}">Grade ${grade}</span></td></tr>`;
-      }).join("") || `<tr><td colspan="6"><div class="empty-state">Tambahkan anggota terlebih dahulu.</div></td></tr>`;
+        const keterangan = grade === "A" ? "Kehadiran sangat baik, partisipasi dalam mengikuti segala kegiatan sangat aktif." : "Kehadiran baik, aktif dalam mengikuti kegiatan.";
+        return `<tr><td><strong>${escapeHtml(m.name)}</strong><div class="text-secondary" style="font-size:.67rem;">${escapeHtml(m.division)}</div></td>${["activity","project","latdas"].map(field => `<td class="text-center"><label class="visually-hidden">Nilai ${field} ${escapeHtml(m.name)}</label><input type="checkbox" class="form-check-input" style="width:1.3em;height:1.3em;" ${Number(r[field]) >= 100 ? "checked" : ""} onchange="updateGrade('${m.id}','${field}',this.checked)"></td>`).join("")}<td><strong>${final.toFixed(1)}</strong></td><td><span class="badge-soft ${grade==="A"?"badge-income":"badge-creative"}">Grade ${grade}</span></td><td style="font-size:.72rem;max-width:220px;">${keterangan}</td></tr>`;
+      }).join("") || `<tr><td colspan="7"><div class="empty-state">Tambahkan anggota terlebih dahulu.</div></td></tr>`;
     }
 
     function updateGrade(memberId, field, checked) {
@@ -1418,7 +1460,7 @@
         const posted = item.posted && typeof item.posted === "object" ? item.posted : {};
         const publish = item.publish === "Sudah" ? "Sudah" : "Belum";
         const checkboxes = SOCIAL_PLATFORMS.map(p => `<label class="d-inline-flex align-items-center gap-1 me-2" style="font-size:.68rem;"><input type="checkbox" class="form-check-input" ${posted[p.key] ? "checked" : ""} onchange="toggleMiminversePosted('${item.id}','${p.key}', this.checked)" aria-label="${p.label} ${escapeHtml(item.name)}">${p.label}</label>`).join("");
-        return `<tr><td>${escapeHtml(item.name)}</td><td class="text-center"><label for="pub-${item.id}" class="visually-hidden">Status publish ${escapeHtml(item.name)}</label><select id="pub-${item.id}" class="form-select" style="min-width:110px;" onchange="setMiminversePublish('${item.id}',this.value)"><option ${publish==="Belum"?"selected":""}>Belum</option><option ${publish==="Sudah"?"selected":""}>Sudah</option></select></td><td class="text-center">${checkboxes}</td><td class="text-end"><div class="d-flex gap-1 justify-content-end"><button class="btn btn-sm btn-soft" onclick="editMiminverse('${item.id}')" aria-label="Edit ${escapeHtml(item.name)}"><i class="bi bi-pencil"></i></button><button class="btn btn-sm btn-soft" onclick="resetMiminversePosted('${item.id}')" aria-label="Reset centang ${escapeHtml(item.name)}" title="Reset centang"><i class="bi bi-arrow-counterclockwise"></i></button><button class="btn btn-sm btn-soft btn-danger-soft" onclick="deleteItem('miminverse','${item.id}',this)" aria-label="Hapus ${escapeHtml(item.name)}"><i class="bi bi-trash"></i></button></div></td></tr>`;
+        return `<tr><td>${escapeHtml(item.name)}</td><td class="text-center"><label for="pub-${item.id}" class="visually-hidden">Status publish ${escapeHtml(item.name)}</label><select id="pub-${item.id}" class="form-select" style="min-width:130px;" onchange="setMiminversePublish('${item.id}',this.value)"><option value="Belum" ${publish==="Belum"?"selected":""}>Belum Semua</option><option value="Sudah" ${publish==="Sudah"?"selected":""}>Sudah Semua</option></select></td><td class="text-center">${checkboxes}</td><td class="text-end"><div class="d-flex gap-1 justify-content-end"><button class="btn btn-sm btn-soft" onclick="editMiminverse('${item.id}')" aria-label="Edit ${escapeHtml(item.name)}"><i class="bi bi-pencil"></i></button><button class="btn btn-sm btn-soft" onclick="resetMiminversePosted('${item.id}')" aria-label="Reset centang ${escapeHtml(item.name)}" title="Reset centang"><i class="bi bi-arrow-counterclockwise"></i></button><button class="btn btn-sm btn-soft btn-danger-soft" onclick="deleteItem('miminverse','${item.id}',this)" aria-label="Hapus ${escapeHtml(item.name)}"><i class="bi bi-trash"></i></button></div></td></tr>`;
       }).join("") : `<tr><td colspan="4"><div class="empty-state">Belum ada kegiatan Miminverse.</div></td></tr>`;
     }
     function setMiminversePublish(id, value) {
@@ -1552,12 +1594,14 @@
     loadData();
     const now = new Date();
     function updateClock() {
-      const el = document.getElementById("liveDateTime");
-      if (!el) return;
       const n = new Date();
       const datePart = n.toLocaleDateString("id-ID", { weekday:"long", day:"numeric", month:"long", year:"numeric" });
       const timePart = n.toLocaleTimeString("id-ID", { hour:"2-digit", minute:"2-digit" });
-      el.textContent = datePart + " • " + timePart;
+      const text = datePart + " • " + timePart;
+      const sideEl = document.getElementById("liveDateTime");
+      if (sideEl) sideEl.textContent = text;
+      const headerEl = document.getElementById("headerDateTime");
+      if (headerEl) headerEl.textContent = text;
     }
     updateClock();
     setInterval(updateClock, 30000);
