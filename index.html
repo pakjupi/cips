@@ -377,7 +377,8 @@
     </nav>
     <div class="mt-3 p-3 rounded-4" style="background:#EAF8FF;">
      <div class="canva-text fw-bold" style="font-size: 14px; color: rgb(15, 23, 42); font-weight: 700; font-style: normal;">DATE &amp; TIME</div>
-     <div id="liveDateTime" class="canva-text mt-1" style="font-size:.65rem; line-height:1.6;"></div>
+     <div id="liveTime" class="canva-text mt-2" style="font-size:1.35rem; font-weight:800; color:#0F172A; line-height:1.2;"></div>
+     <div id="liveDate" class="canva-text mt-1" style="font-size:.68rem; color:#475569; line-height:1.5;"></div>
     </div>
    </aside>
    <main class="main-area">
@@ -489,17 +490,17 @@
         <h2 data-template-id="dashboard-welcome-title" class="canva-text section-title" style="color: rgb(15, 23, 42); font-weight: 700; font-style: normal; font-size: 21px;">Ruang Kerja CIPS</h2>
         <p data-template-id="dashboard-welcome-copy" class="canva-text section-copy mb-3" style="color: rgb(100, 116, 139); font-weight: 400; font-style: normal; font-size: 14px;">Kelola aktivitas, produksi, kas, dan perkembangan anggota dalam satu dashboard.</p>
         <div class="row g-2" aria-label="Menu ruang kerja CIPS">
-         <div class="col-6"><button class="btn btn-soft w-100 d-flex align-items-center gap-2 text-start" type="button" data-go="members"><i class="bi bi-people-fill text-info"></i><span data-template-id="workspace-members" class="canva-text" style="color: rgb(51, 65, 85); font-weight: 600; font-style: normal; font-size: 14px;">Anggota</span></button>
-         </div>
-         <div class="col-6"><button class="btn btn-soft w-100 d-flex align-items-center gap-2 text-start" type="button" data-go="programs"><i class="bi bi-calendar2-check-fill text-info"></i><span data-template-id="workspace-programs" class="canva-text" style="color: rgb(51, 65, 85); font-weight: 600; font-style: normal; font-size: 14px;">Program</span></button>
-         </div>
          <div class="col-6"><button class="btn btn-soft w-100 d-flex align-items-center gap-2 text-start" type="button" data-go="attendance"><i class="bi bi-clipboard2-check-fill text-info"></i><span data-template-id="workspace-attendance" class="canva-text" style="color: rgb(51, 65, 85); font-weight: 600; font-style: normal; font-size: 14px;">Absensi</span></button>
          </div>
          <div class="col-6"><button class="btn btn-soft w-100 d-flex align-items-center gap-2 text-start" type="button" data-go="finance"><i class="bi bi-wallet2 text-info"></i><span data-template-id="workspace-finance" class="canva-text" style="color: rgb(51, 65, 85); font-weight: 600; font-style: normal; font-size: 14px;">Uang Kas</span></button>
          </div>
+         <div class="col-6"><button class="btn btn-soft w-100 d-flex align-items-center gap-2 text-start" type="button" data-go="members"><i class="bi bi-people-fill text-info"></i><span data-template-id="workspace-members" class="canva-text" style="color: rgb(51, 65, 85); font-weight: 600; font-style: normal; font-size: 14px;">Anggota</span></button>
+         </div>
+         <div class="col-6"><button class="btn btn-soft w-100 d-flex align-items-center gap-2 text-start" type="button" data-go="grades"><i class="bi bi-award-fill text-info"></i><span data-template-id="workspace-grades" class="canva-text" style="color: rgb(51, 65, 85); font-weight: 600; font-style: normal; font-size: 14px;">Nilai Anggota</span></button>
+         </div>
          <div class="col-6"><button class="btn btn-soft w-100 d-flex align-items-center gap-2 text-start" type="button" data-go="achievements"><i class="bi bi-trophy-fill text-info"></i><span data-template-id="workspace-achievements" class="canva-text" style="color: rgb(51, 65, 85); font-weight: 600; font-style: normal; font-size: 14px;">Prestasi</span></button>
          </div>
-         <div class="col-6"><button class="btn btn-soft w-100 d-flex align-items-center gap-2 text-start" type="button" data-go="classes"><i class="bi bi-building text-info"></i><span data-template-id="workspace-classes" class="canva-text" style="color: rgb(51, 65, 85); font-weight: 600; font-style: normal; font-size: 14px;">Data Kelas</span></button>
+         <div class="col-6"><button class="btn btn-soft w-100 d-flex align-items-center gap-2 text-start" type="button" data-go="miminverse"><i class="bi bi-instagram text-info"></i><span data-template-id="workspace-miminverse" class="canva-text" style="color: rgb(51, 65, 85); font-weight: 600; font-style: normal; font-size: 14px;">Miminverse</span></button>
          </div>
         </div>
        </article>
@@ -510,8 +511,8 @@
      <div class="row g-3">
       <div class="col-lg-4">
        <article class="surface-card">
-        <h2 data-template-id="members-form-title" class="canva-text section-title" style="color: rgb(15, 23, 42); font-weight: 700; font-style: normal; font-size: 21px;">Tambah Anggota</h2>
-        <p data-template-id="members-form-copy" class="canva-text section-copy mb-3" style="color: rgb(100, 116, 139); font-weight: 400; font-style: normal; font-size: 14px;">Isi data anggota CIPS yang baru.</p>
+        <h2 data-template-id="members-form-title" class="canva-text section-title" style="color: rgb(15, 23, 42); font-weight: 700; font-style: normal; font-size: 21px;">Data Anggota</h2>
+        <p data-template-id="members-form-copy" class="canva-text section-copy mb-3" style="color: rgb(100, 116, 139); font-weight: 400; font-style: normal; font-size: 14px;">Kelola data anggota CIPS dari semua angkatan dan divisi.</p>
         <form id="memberForm">
          <input type="hidden" id="memberId">
          <div class="mb-2"><label for="memberName" class="form-label">Nama Lengkap</label><input id="memberName" class="form-control" required="">
@@ -543,9 +544,11 @@
          </div>
         </div>
         <div class="row g-2 mb-3 no-print">
-         <div class="col-md-7"><label for="memberSearch" class="visually-hidden">Cari anggota</label><input id="memberSearch" class="form-control" placeholder="Cari nama, kelas, atau panggilan...">
+         <div class="col-md-5"><label for="memberSearch" class="visually-hidden">Cari anggota</label><input id="memberSearch" class="form-control" placeholder="Cari nama, kelas, atau panggilan...">
          </div>
-         <div class="col-md-5"><label for="memberFilter" class="visually-hidden">Filter divisi</label><select id="memberFilter" class="form-select"><option value="">Semua Divisi</option><option>Creator</option><option>Editor</option><option>Creative</option></select>
+         <div class="col-md-3"><label for="memberBatchFilter" class="visually-hidden">Filter angkatan</label><select id="memberBatchFilter" class="form-select"><option value="">Semua Angkatan</option></select>
+         </div>
+         <div class="col-md-4"><label for="memberFilter" class="visually-hidden">Filter divisi</label><select id="memberFilter" class="form-select"><option value="">Semua Divisi</option><option>Creator</option><option>Editor</option><option>Creative</option></select>
          </div>
         </div>
         <div class="table-wrap">
@@ -575,8 +578,8 @@
      <div class="row g-3">
       <div class="col-lg-4">
        <article class="surface-card">
-        <h2 data-template-id="program-form-title" class="canva-text section-title" style="color: rgb(15, 23, 42); font-weight: 700; font-style: normal; font-size: 21px;">Tambah Program Kerja</h2>
-        <p data-template-id="program-form-copy" class="canva-text section-copy mb-3" style="color: rgb(100, 116, 139); font-weight: 400; font-style: normal; font-size: 14px;">Rencanakan program kerja satu tahun CIPS.</p>
+        <h2 data-template-id="program-form-title" class="canva-text section-title" style="color: rgb(15, 23, 42); font-weight: 700; font-style: normal; font-size: 21px;">Program Kerja</h2>
+        <p data-template-id="program-form-copy" class="canva-text section-copy mb-3" style="color: rgb(100, 116, 139); font-weight: 400; font-style: normal; font-size: 14px;">Rencanakan dan kelola program kerja CIPS dalam satu tahun.</p>
         <form id="programForm">
          <input type="hidden" id="programId">
          <div class="mb-2"><label for="programName" class="form-label">Nama Program Kerja</label><input id="programName" class="form-control" required="">
@@ -632,8 +635,8 @@
      <div class="row g-3">
       <div class="col-lg-4">
        <article class="surface-card">
-        <h2 data-template-id="finance-form-title" class="canva-text section-title" style="color: rgb(15, 23, 42); font-weight: 700; font-style: normal; font-size: 21px;">Catat Transaksi Kas</h2>
-        <p data-template-id="finance-form-copy" class="canva-text section-copy mb-3" style="color: rgb(100, 116, 139); font-weight: 400; font-style: normal; font-size: 14px;">Masukkan pemasukan kas atau pengeluaran kegiatan.</p>
+        <h2 data-template-id="finance-form-title" class="canva-text section-title" style="color: rgb(15, 23, 42); font-weight: 700; font-style: normal; font-size: 21px;">Catatan Transaksi Uang Kas</h2>
+        <p data-template-id="finance-form-copy" class="canva-text section-copy mb-3" style="color: rgb(100, 116, 139); font-weight: 400; font-style: normal; font-size: 14px;">Kelola pemasukan uang kas atau pengeluaran kegiatan CIPS.</p>
         <form id="financeForm">
          <input type="hidden" id="financeId">
          <div class="mb-2"><label for="financeDate" class="form-label">Tanggal</label><input id="financeDate" type="date" class="form-control" required="">
@@ -1110,9 +1113,12 @@
     function renderMembers() {
       const search = document.getElementById("memberSearch").value.toLowerCase();
       const filter = document.getElementById("memberFilter").value;
+      const batchFilterEl = document.getElementById("memberBatchFilter");
+      populateBatchFilter("memberBatchFilter", batchFilterEl.value);
+      const batchFilter = batchFilterEl.value;
       const list = sortByClass(appData.members.filter(m => {
         const text = `${m.name} ${m.nickname} ${m.className}`.toLowerCase();
-        return text.includes(search) && (!filter || m.division === filter);
+        return text.includes(search) && (!filter || m.division === filter) && (!batchFilter || m.batch === batchFilter);
       }));
 
       document.getElementById("memberRows").innerHTML = list.length ? list.map(m => `
@@ -1572,6 +1578,7 @@
 
     document.getElementById("memberSearch").addEventListener("input", renderMembers);
     document.getElementById("memberFilter").addEventListener("change", renderMembers);
+    document.getElementById("memberBatchFilter").addEventListener("change", renderMembers);
     document.getElementById("attendanceSearch").addEventListener("input", renderAttendance);
     document.getElementById("attendanceBatchFilter").addEventListener("change", renderAttendance);
 
@@ -1596,12 +1603,13 @@
     function updateClock() {
       const n = new Date();
       const datePart = n.toLocaleDateString("id-ID", { weekday:"long", day:"numeric", month:"long", year:"numeric" });
-      const timePart = n.toLocaleTimeString("id-ID", { hour:"2-digit", minute:"2-digit" });
-      const text = datePart + " • " + timePart;
-      const sideEl = document.getElementById("liveDateTime");
-      if (sideEl) sideEl.textContent = text;
+      const timePart = n.toLocaleTimeString("en-US", { hour:"2-digit", minute:"2-digit", hour12:true });
+      const timeEl = document.getElementById("liveTime");
+      if (timeEl) timeEl.textContent = timePart;
+      const dateEl = document.getElementById("liveDate");
+      if (dateEl) dateEl.textContent = datePart;
       const headerEl = document.getElementById("headerDateTime");
-      if (headerEl) headerEl.textContent = text;
+      if (headerEl) headerEl.textContent = datePart;
     }
     updateClock();
     setInterval(updateClock, 30000);
