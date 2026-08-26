@@ -559,7 +559,7 @@
          </div>
         </div>
         <div class="row g-2 mb-3 no-print">
-         <div class="col-md-5"><label for="memberSearch" class="visually-hidden">Cari anggota</label><input id="memberSearch" class="form-control" placeholder="Cari nama, kelas, atau panggilan...">
+         <div class="col-md-5"><label for="memberSearch" class="visually-hidden">Cari anggota</label><input id="memberSearch" class="form-control" placeholder="Cari nama, kelas, panggilan, atau nomor WhatsApp...">
          </div>
          <div class="col-md-3"><label for="memberBatchFilter" class="visually-hidden">Filter angkatan</label><select id="memberBatchFilter" class="form-select"><option value="">Semua Angkatan</option></select>
          </div>
@@ -1161,13 +1161,13 @@
       populateBatchFilter("memberBatchFilter", batchFilterEl.value);
       const batchFilter = batchFilterEl.value;
       const list = sortByClass(appData.members.filter(m => {
-        const text = `${m.name} ${m.nickname} ${m.className}`.toLowerCase();
+        const text = `${m.name} ${m.nickname} ${m.className} ${m.whatsapp || ""}`.toLowerCase();
         return text.includes(search) && (!filter || m.division === filter) && (!batchFilter || m.batch === batchFilter);
       }));
 
       document.getElementById("memberRows").innerHTML = list.length ? list.map(m => `
         <tr>
-          <td><div class="d-flex align-items-center gap-2"><span class="member-initial">${escapeHtml(m.nickname.slice(0,1))}</span><div><strong>${escapeHtml(m.name)}</strong><div class="text-secondary" style="font-size:.67rem;">${escapeHtml(m.nickname)} · No. ${m.absent}</div></div></div></td>
+          <td><div class="d-flex align-items-center gap-2"><span class="member-initial">${escapeHtml(m.nickname.slice(0,1))}</span><div><strong>${escapeHtml(m.name)}</strong><div class="text-secondary" style="font-size:.67rem;">${escapeHtml(m.nickname)} · No. ${m.absent}${m.whatsapp ? ` (${escapeHtml(m.whatsapp)})` : ""}</div></div></div></td>
           <td>${escapeHtml(m.className)}</td><td>${escapeHtml(m.batch || "-")}</td><td>${badge(m.division)}</td>
           <td class="text-end"><button class="btn btn-sm btn-soft me-1" onclick="editMember('${m.id}')"><i class="bi bi-pencil"></i></button><button class="btn btn-sm btn-soft btn-danger-soft" onclick="deleteItem('members','${m.id}',this)"><i class="bi bi-trash"></i></button></td>
         </tr>`).join("") : `<tr><td colspan="5"><div class="empty-state"><i class="bi bi-search"></i>Data anggota tidak ditemukan.</div></td></tr>`;
