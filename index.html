@@ -337,6 +337,7 @@
       .view-section.active { display: block !important; }
       .surface-card, .stat-card { box-shadow: none; border: 1px solid #CBD5E1; }
       .production-member:not(.selected) { display: none !important; }
+      .attendance-tidak-hadir { display: none !important; }
     }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js" type="text/javascript"></script>
@@ -555,7 +556,7 @@
           <p data-template-id="members-table-copy" class="canva-text section-copy" style="color: rgb(100, 116, 139); font-weight: 400; font-style: normal; font-size: 14px;">Cari, filter, edit, atau kelola data anggota.</p>
          </div>
          <div class="d-flex flex-wrap gap-2 no-print">
-          <button class="btn btn-soft" type="button" onclick="printCurrent()"><i class="bi bi-printer"></i></button> <label class="btn btn-soft mb-0">Import<input type="file" class="d-none" accept=".json" onchange="importData(event,'members')"></label> <button class="btn btn-soft" type="button" onclick="exportExcel('members')">Export</button> <button class="btn btn-soft btn-danger-soft" type="button" onclick="resetCollection('members')">Reset</button>
+          <button class="btn btn-soft" type="button" onclick="printCurrent()"><i class="bi bi-printer"></i></button> <button class="btn btn-soft" type="button" onclick="downloadMemberTemplate()">Template Excel</button> <label class="btn btn-soft mb-0">Import<input type="file" class="d-none" accept=".csv,.json" onchange="importData(event,'members')"></label> <button class="btn btn-soft" type="button" onclick="exportExcel('members')">Export</button> <button class="btn btn-soft btn-danger-soft" type="button" onclick="resetCollection('members')">Reset</button>
          </div>
         </div>
         <div class="row g-2 mb-3 no-print">
@@ -768,9 +769,9 @@
         <thead>
          <tr>
           <th>Anggota</th>
-          <th>Keaktifan</th>
-          <th>Project</th>
-          <th>LATDAS</th>
+          <th class="no-print">Keaktifan</th>
+          <th class="no-print">Project</th>
+          <th class="no-print">LATDAS</th>
           <th>Nilai Akhir</th>
           <th>Grade</th>
           <th>Keterangan</th>
@@ -779,6 +780,7 @@
         <tbody id="gradeRows"></tbody>
        </table>
       </div>
+      <p id="gradesPrintTotal" class="print-only mt-3" style="font-weight:700;font-size:.85rem;"></p>
      </article>
     </section>
     <section class="view-section" id="classes">
@@ -1024,6 +1026,7 @@
       ],
       miminverse: [],
       cipsproject: [],
+      productionPricing: { polo: { lunas:0, dp:0 }, jacket: { lunas:0, dp:0 } },
       auth: { username: "admin", password: "admin123" }
     };
 
@@ -1212,7 +1215,7 @@
       const batchFilter = document.getElementById("attendanceBatchFilter").value;
       const filteredMembers = sortByClass(appData.members.filter(m => `${m.name} ${m.nickname}`.toLowerCase().includes(search) && (!batchFilter || m.batch === batchFilter)));
       document.getElementById("attendanceRows").innerHTML = filteredMembers.length ? filteredMembers.map(m => `
-        <tr><td><strong>${escapeHtml(m.name)}</strong><div class="text-secondary" style="font-size:.67rem;">${escapeHtml(m.nickname)} · ${escapeHtml(m.className)} · Angkatan ${escapeHtml(m.batch || "-")}</div></td><td>${badge(m.division)}</td>
+        <tr class="${attendanceSession[m.id] === "Hadir" ? "attendance-hadir" : "attendance-tidak-hadir"}"><td><strong>${escapeHtml(m.name)}</strong><div class="text-secondary" style="font-size:.67rem;">${escapeHtml(m.nickname)} · ${escapeHtml(m.className)} · Angkatan ${escapeHtml(m.batch || "-")}</div></td><td>${badge(m.division)}</td>
         <td><label for="att-${m.id}" class="visually-hidden">Status kehadiran ${escapeHtml(m.name)}</label><select id="att-${m.id}" class="form-select" style="max-width:160px;" onchange="saveAttendance('${m.id}',this.value)"><option ${attendanceSession[m.id] === "Hadir" ? "selected" : ""}>Hadir</option><option ${attendanceSession[m.id] !== "Hadir" ? "selected" : ""}>Tidak Hadir</option></select></td></tr>`).join("") : `<tr><td colspan="3"><div class="empty-state">${search ? "Nama anggota tidak ditemukan." : "Tambahkan anggota terlebih dahulu."}</div></td></tr>`;
     }
 
@@ -1281,11 +1284,16 @@
       const prevBatch = document.getElementById(type + "BatchFilter")?.value || "";
       const noun = type === "jacket" ? "Jaket" : "Polo";
       const nounLower = type === "jacket" ? "jaket" : "polo";
-      target.innerHTML = `<div class="row g-3"><div class="col-lg-8"><article class="surface-card"><div class="d-flex justify-content-between align-items-start mb-3"><div><h2 class="section-title">${title}</h2><p class="section-copy">Catatan rekap produksi ${nounLower} anggota CIPS SMANELA.</p></div><div class="d-flex gap-2 no-print"><button class="btn btn-soft" type="button" onclick="printCurrent()">Print</button><label class="btn btn-soft mb-0">Import<input type="file" class="d-none" accept=".json" onchange="importData(event,'${type}')"></label><button class="btn btn-soft" type="button" onclick="exportExcel('${type}')">Export</button><button class="btn btn-soft btn-danger-soft" type="button" onclick="resetCollection('${type}')">Reset</button></div></div><div class="row g-2 mb-3 no-print"><div class="col-md-8"><label for="${type}Search" class="visually-hidden">Cari nama anggota</label><input id="${type}Search" class="form-control" placeholder="Cari nama lengkap atau nama panggilan..."></div><div class="col-md-4"><label for="${type}BatchFilter" class="visually-hidden">Filter angkatan</label><select id="${type}BatchFilter" class="form-select"><option value="">Semua Angkatan</option></select></div></div><div id="${type}MemberList" class="${type === "jacket" ? "no-print" : ""}"></div><div id="${type}PrintGroups" class="print-only"></div></article></div><div class="col-lg-4"><article class="surface-card"><h2 class="section-title">Rekap Pemesanan</h2><p class="section-copy mb-3">Total pesanan aktif anggota CIPS SMANELA.</p><div id="${type}Summary"></div></article></div></div>`;
+      target.innerHTML = `<div class="row g-3"><div class="col-lg-8"><article class="surface-card"><div class="d-flex justify-content-between align-items-start mb-3"><div><h2 class="section-title">${title}</h2><p class="section-copy">Catatan rekap produksi ${nounLower} anggota CIPS SMANELA.</p></div><div class="d-flex gap-2 no-print"><button class="btn btn-soft" type="button" onclick="printCurrent()">Print</button><label class="btn btn-soft mb-0">Import<input type="file" class="d-none" accept=".json" onchange="importData(event,'${type}')"></label><button class="btn btn-soft" type="button" onclick="exportExcel('${type}')">Export</button><button class="btn btn-soft btn-danger-soft" type="button" onclick="resetCollection('${type}')">Reset</button></div></div><div class="row g-2 mb-3 no-print"><div class="col-md-8"><label for="${type}Search" class="visually-hidden">Cari nama anggota</label><input id="${type}Search" class="form-control" placeholder="Cari nama lengkap atau nama panggilan..."></div><div class="col-md-4"><label for="${type}BatchFilter" class="visually-hidden">Filter angkatan</label><select id="${type}BatchFilter" class="form-select"><option value="">Semua Angkatan</option></select></div></div><div id="${type}MemberList" class="${type === "jacket" ? "no-print" : ""}"></div><div id="${type}PrintGroups" class="print-only"></div></article></div><div class="col-lg-4"><article class="surface-card"><h2 class="section-title">Rekap Pemesanan</h2><p class="section-copy mb-3">Total pesanan aktif anggota CIPS SMANELA.</p><div class="row g-2 mb-3 no-print"><div class="col-6"><label for="${type}PriceLunas" class="form-label" style="font-size:.68rem;">Harga LUNAS ${noun}</label><input id="${type}PriceLunas" type="number" min="0" class="form-control" placeholder="0"></div><div class="col-6"><label for="${type}PriceDp" class="form-label" style="font-size:.68rem;">Harga DP ${noun}</label><input id="${type}PriceDp" type="number" min="0" class="form-control" placeholder="0"></div></div><div id="${type}Summary"></div></article></div></div>`;
       document.getElementById(type + "Search").value = prevSearch;
       populateBatchFilter(type + "BatchFilter", prevBatch);
       document.getElementById(type + "Search").addEventListener("input", () => renderProductionList(type));
       document.getElementById(type + "BatchFilter").addEventListener("change", () => renderProductionList(type));
+      const pricing = appData.productionPricing[type] || { lunas:0, dp:0 };
+      document.getElementById(type + "PriceLunas").value = pricing.lunas || "";
+      document.getElementById(type + "PriceDp").value = pricing.dp || "";
+      document.getElementById(type + "PriceLunas").addEventListener("input", event => { appData.productionPricing[type].lunas = Number(event.target.value) || 0; saveData(); renderProductionList(type); });
+      document.getElementById(type + "PriceDp").addEventListener("input", event => { appData.productionPricing[type].dp = Number(event.target.value) || 0; saveData(); renderProductionList(type); });
 
       renderProductionList(type);
     }
@@ -1312,10 +1320,16 @@
       const totalProduksi = cowok.reduce((sum,[,t])=>sum+t,0) + cewek.reduce((sum,[,t])=>sum+t,0);
       const selectedRecords = Object.values(records).filter(r => r.selected);
       const countBayar = status => selectedRecords.filter(r => (r.statusBayar || "Belum Bayar") === status).length;
+      const pricing = appData.productionPricing[type] || { lunas:0, dp:0 };
+      const totalLunas = countBayar("Sudah LUNAS") * (pricing.lunas || 0);
+      const totalDp = countBayar("Sudah Bayar DP") * (pricing.dp || 0);
       const paymentBlock = `<div class="mt-4 pt-3 no-print" style="border-top:2px dashed #E2E8F0;"><div class="fw-bold mb-2" style="font-size:.8rem;color:#0F172A;">Rekap Status Bayar</div>
         <div class="d-flex justify-content-between py-1" style="font-size:.78rem;"><span>Belum Bayar</span><strong>${countBayar("Belum Bayar")} orang</strong></div>
         <div class="d-flex justify-content-between py-1" style="font-size:.78rem;"><span>Sudah Bayar DP</span><strong>${countBayar("Sudah Bayar DP")} orang</strong></div>
-        <div class="d-flex justify-content-between py-1" style="font-size:.78rem;"><span>Sudah LUNAS</span><strong>${countBayar("Sudah LUNAS")} orang</strong></div></div>`;
+        <div class="d-flex justify-content-between py-1" style="font-size:.78rem;"><span>Sudah LUNAS</span><strong>${countBayar("Sudah LUNAS")} orang</strong></div>
+        <div class="d-flex justify-content-between py-1 mt-2 pt-2" style="font-size:.75rem;border-top:1px solid #E2E8F0;"><span>Total Nominal DP</span><strong>${money(totalDp)}</strong></div>
+        <div class="d-flex justify-content-between py-1" style="font-size:.75rem;"><span>Total Nominal LUNAS</span><strong>${money(totalLunas)}</strong></div>
+        <div class="d-flex justify-content-between py-1 fw-bold" style="font-size:.8rem;color:#0F172A;"><span>Total Nominal Masuk</span><strong>${money(totalDp + totalLunas)}</strong></div></div>`;
       document.getElementById(type + "Summary").innerHTML = summaryBlock("Cowok", cowok) + summaryBlock("Cewek", cewek) + `<div class="d-flex justify-content-between pt-3 mt-1" style="font-size:.95rem;font-weight:700;border-top:2px solid #0F172A;color:#0F172A;"><span>Total Produksi</span><strong>${totalProduksi} pcs</strong></div>` + paymentBlock;
 
       const printGroupsEl = document.getElementById(type + "PrintGroups");
@@ -1364,13 +1378,16 @@
     }
 
     function renderGrades() {
-      document.getElementById("gradeRows").innerHTML = sortByClass(appData.members).map(m => {
+      const members = sortByClass(appData.members);
+      document.getElementById("gradeRows").innerHTML = members.map(m => {
         const r = appData.grades[m.id] || { activity:0, project:0, latdas:0 };
         const final = (Number(r.activity)*.4) + (Number(r.project)*.3) + (Number(r.latdas)*.3);
-        const grade = final >= 70 ? "A" : "B";
+        const grade = final >= 81 ? "A" : "B";
         const keterangan = grade === "A" ? "Kehadiran sangat baik, partisipasi dalam mengikuti segala kegiatan sangat aktif." : "Kehadiran baik, aktif dalam mengikuti kegiatan.";
-        return `<tr><td><strong>${escapeHtml(m.name)}</strong><div class="text-secondary" style="font-size:.67rem;">${escapeHtml(m.division)}</div></td>${["activity","project","latdas"].map(field => `<td class="text-center"><label class="visually-hidden">Nilai ${field} ${escapeHtml(m.name)}</label><input type="checkbox" class="form-check-input" style="width:1.3em;height:1.3em;" ${Number(r[field]) >= 100 ? "checked" : ""} onchange="updateGrade('${m.id}','${field}',this.checked)"></td>`).join("")}<td><strong>${final.toFixed(1)}</strong></td><td><span class="badge-soft ${grade==="A"?"badge-income":"badge-creative"}">Grade ${grade}</span></td><td style="font-size:.72rem;max-width:220px;">${keterangan}</td></tr>`;
+        return `<tr><td><strong>${escapeHtml(m.name)}</strong><div class="text-secondary no-print" style="font-size:.67rem;">${escapeHtml(m.division)}</div></td>${["activity","project","latdas"].map(field => `<td class="text-center no-print"><label class="visually-hidden">Nilai ${field} ${escapeHtml(m.name)}</label><input type="checkbox" class="form-check-input" style="width:1.3em;height:1.3em;" ${Number(r[field]) >= 100 ? "checked" : ""} onchange="updateGrade('${m.id}','${field}',this.checked)"></td>`).join("")}<td><strong>${final.toFixed(1)}</strong></td><td><span class="badge-soft ${grade==="A"?"badge-income":"badge-creative"}">Grade ${grade}</span></td><td style="font-size:.72rem;max-width:220px;">${keterangan}</td></tr>`;
       }).join("") || `<tr><td colspan="7"><div class="empty-state">Tambahkan anggota terlebih dahulu.</div></td></tr>`;
+      const totalEl = document.getElementById("gradesPrintTotal");
+      if (totalEl) totalEl.textContent = `Total Anggota: ${members.length} orang`;
     }
 
     function updateGrade(memberId, field, checked) {
@@ -1440,16 +1457,74 @@
       return [keys.join(","), ...data.map(row => keys.map(key => `"${String(row[key] ?? "").replaceAll('"','""')}"`).join(","))].join("\n");
     }
 
+    function parseCSV(text) {
+      const lines = text.replace(/^\uFEFF/, "").replace(/\r/g, "").split("\n").filter(l => l.trim().length);
+      if (!lines.length) return [];
+      const splitLine = line => {
+        const result = []; let cur = ""; let inQuotes = false;
+        for (let i = 0; i < line.length; i++) {
+          const ch = line[i];
+          if (inQuotes) {
+            if (ch === '"') { if (line[i+1] === '"') { cur += '"'; i++; } else inQuotes = false; }
+            else cur += ch;
+          } else if (ch === '"') inQuotes = true;
+          else if (ch === ",") { result.push(cur); cur = ""; }
+          else cur += ch;
+        }
+        result.push(cur);
+        return result;
+      };
+      const headers = splitLine(lines[0]).map(h => h.trim());
+      return lines.slice(1).map(line => {
+        const values = splitLine(line);
+        const obj = {};
+        headers.forEach((h, i) => obj[h] = (values[i] ?? "").trim());
+        return obj;
+      });
+    }
+
+    function downloadMemberTemplate() {
+      const headers = ["Nama Lengkap","Nama Panggilan","No Absen","Kelas","Angkatan","Jenjang Kelas","Divisi","WhatsApp"];
+      const examples = [
+        ["Contoh Nama Anggota","Contoh","1","X-1","51","Kelas X","Creator","081234567890"],
+        ["","","","","","","",""]
+      ];
+      const content = headers.map(h => `"${h}"`).join(",") + "\n" + examples.map(row => row.map(v => `"${v}"`).join(",")).join("\n");
+      const blob = new Blob(["\uFEFF" + content], { type: "text/csv;charset=utf-8;" });
+      const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "template-import-anggota-cips.csv"; a.click(); URL.revokeObjectURL(a.href);
+      toast("Template Excel berhasil diunduh. Jenjang Kelas: Kelas X / Kelas XI / Kelas XII. Divisi: Creator / Editor / Creative.");
+    }
+
     function importData(event, collection) {
       const file = event.target.files[0]; if (!file) return;
       const reader = new FileReader();
       reader.onload = () => {
         try {
-          const parsed = JSON.parse(reader.result);
-          if (Array.isArray(parsed)) appData[collection] = parsed;
-          else throw new Error();
+          const text = reader.result;
+          if (collection === "members" && !file.name.toLowerCase().endsWith(".json")) {
+            const rows = parseCSV(text);
+            const divisions = ["Creator","Editor","Creative"];
+            const grades = ["Kelas X","Kelas XI","Kelas XII"];
+            const imported = rows.map(row => ({
+              id: uid("m"),
+              name: row["Nama Lengkap"] || "",
+              nickname: row["Nama Panggilan"] || "",
+              absent: Number(row["No Absen"]) || 0,
+              className: row["Kelas"] || "",
+              batch: row["Angkatan"] || "",
+              gradeLevel: grades.includes(row["Jenjang Kelas"]) ? row["Jenjang Kelas"] : "Kelas X",
+              division: divisions.includes(row["Divisi"]) ? row["Divisi"] : "Creator",
+              whatsapp: row["WhatsApp"] || ""
+            })).filter(m => m.name);
+            if (!imported.length) throw new Error("kosong");
+            appData.members = imported;
+          } else {
+            const parsed = JSON.parse(text);
+            if (Array.isArray(parsed)) appData[collection] = parsed;
+            else throw new Error();
+          }
           saveData(); renderAll(); toast("Data berhasil diimpor.");
-        } catch { toast("File JSON tidak dapat dibaca."); }
+        } catch { toast("File tidak dapat dibaca. Pastikan format sesuai template."); }
       };
       reader.readAsText(file); event.target.value = "";
     }
@@ -1675,6 +1750,10 @@
     document.getElementById("memberSearch").addEventListener("input", renderMembers);
     document.getElementById("memberFilter").addEventListener("change", renderMembers);
     document.getElementById("memberBatchFilter").addEventListener("change", renderMembers);
+    document.getElementById("memberClass").addEventListener("change", event => {
+      const match = /^(XII|XI|X)\s*-?\s*\d+/i.exec(event.target.value.trim());
+      if (match) memberGradeLevel.value = "Kelas " + match[1].toUpperCase();
+    });
     document.getElementById("attendanceSearch").addEventListener("input", renderAttendance);
     document.getElementById("attendanceBatchFilter").addEventListener("change", renderAttendance);
 
