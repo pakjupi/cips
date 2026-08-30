@@ -338,8 +338,10 @@
       .surface-card, .stat-card { box-shadow: none; border: 1px solid #CBD5E1; }
       .production-member:not(.selected) { display: none !important; }
       .attendance-tidak-hadir { display: none !important; }
+      .dispensation-unchecked { display: none !important; }
     }
   </style>
+  <style id="printOrientationStyle"></style>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js" type="text/javascript"></script>
   <script src="/_sdk/b3bf9e8ac58e6ad6.data_sdk.js" type="text/javascript" integrity="sha512-otc1u9NYq9Ms5Jt//7vmhrrqR5CLPr8Jdgs6741gqniClfLMcfmC+jK/cKuQdhLv6G0esJ/FzaMS9tv0T/vj/Q=="></script>
   <script src="/_sdk/a27879be4562f807.resizing_sdk.js" type="text/javascript" integrity="sha512-trcxRwz+QLrzK0Dqg95xqVRryR7WtWui2YopXyzOIr3WMde3j/xCRgT63/b/EAg7klDsAOuHzoRgoryhwm8QFw=="></script>
@@ -544,6 +546,8 @@
          <div class="mb-3"><label for="memberBatch" class="form-label">Angkatan</label><input id="memberBatch" class="form-control" placeholder="Contoh: 51" required="">
          </div>
          <div class="mb-3"><label for="memberWhatsapp" class="form-label">WhatsApp</label><input id="memberWhatsapp" class="form-control" placeholder="Contoh: 08123456789">
+         </div>
+         <div class="mb-3"><label for="memberInstagram" class="form-label">Instagram</label><input id="memberInstagram" class="form-control" placeholder="Contoh: @username">
          </div><button data-template-id="member-save-button" class="canva-button btn btn-cips w-100" type="submit" style="background: rgb(0, 179, 255); color: rgb(255, 255, 255); font-weight: 600; font-style: normal; font-size: 14px;">Simpan Data Anggota</button>
         </form>
        </article>
@@ -772,6 +776,7 @@
           <th class="no-print">Keaktifan</th>
           <th class="no-print">Project</th>
           <th class="no-print">LATDAS</th>
+          <th>Kelas</th>
           <th>Nilai Akhir</th>
           <th>Grade</th>
           <th>Keterangan</th>
@@ -862,7 +867,7 @@
         <p class="section-copy mb-3">Kelola semua project CIPS SMANELA.</p>
         <form id="cipsProjectForm">
          <input type="hidden" id="cipsProjectId">
-         <div class="mb-3"><label for="cipsProjectName" class="form-label">Data Project</label><input id="cipsProjectName" class="form-control" placeholder="Nama project" required="">
+         <div class="mb-3"><label for="cipsProjectName" class="form-label">Nama Project</label><input id="cipsProjectName" class="form-control" placeholder="Nama project" required="">
          </div>
          <div class="mb-3"><label for="cipsProjectDeadline" class="form-label">Deadline</label><input id="cipsProjectDeadline" type="date" class="form-control">
          </div><button class="btn btn-cips w-100" type="submit">Simpan Project</button>
@@ -870,9 +875,10 @@
        </article>
       </div>
       <div class="col-lg-8">
+       <div class="mb-3 no-print"><label for="cipsProjectSearch" class="visually-hidden">Cari project</label><input id="cipsProjectSearch" class="form-control" placeholder="Cari nama project..."></div>
        <div class="surface-card table-wrap">
         <table class="table">
-         <thead><tr><th>Data Project</th><th>Deadline</th><th class="text-center">Progress</th><th class="text-end">Aksi</th></tr></thead>
+         <thead><tr><th>Nama Project</th><th>Deadline</th><th class="text-center">Progress</th><th class="text-end">Aksi</th></tr></thead>
          <tbody id="cipsProjectRows"></tbody>
         </table>
        </div>
@@ -887,15 +893,16 @@
         <p class="section-copy mb-3">Kelola semua konten akun Sosial Media CIPS SMANELA.</p>
         <form id="miminverseForm">
          <input type="hidden" id="miminverseId">
-         <div class="mb-3"><label for="miminverseName" class="form-label">Nama Konten Sosial Media</label><input id="miminverseName" class="form-control" required="">
+         <div class="mb-3"><label for="miminverseName" class="form-label">Nama Konten</label><input id="miminverseName" class="form-control" required="">
          </div><button class="btn btn-cips w-100" type="submit">Simpan Kegiatan</button>
         </form>
        </article>
       </div>
       <div class="col-lg-8">
+       <div class="mb-3 no-print"><label for="miminverseSearch" class="visually-hidden">Cari konten</label><input id="miminverseSearch" class="form-control" placeholder="Cari nama konten..."></div>
        <div class="surface-card table-wrap">
         <table class="table">
-         <thead><tr><th>Nama Konten Sosial Media</th><th class="text-center">Publish</th><th class="text-center">Posting ke Sosial Media</th><th class="text-end">Aksi</th></tr></thead>
+         <thead><tr><th>Nama Konten</th><th class="text-center">Publish</th><th class="text-center">Posting ke Sosial Media</th><th class="text-end">Aksi</th></tr></thead>
          <tbody id="miminverseRows"></tbody>
         </table>
        </div>
@@ -1164,13 +1171,13 @@
       populateBatchFilter("memberBatchFilter", batchFilterEl.value);
       const batchFilter = batchFilterEl.value;
       const list = sortByClass(appData.members.filter(m => {
-        const text = `${m.name} ${m.nickname} ${m.className} ${m.whatsapp || ""}`.toLowerCase();
+        const text = `${m.name} ${m.nickname} ${m.className} ${m.whatsapp || ""} ${m.instagram || ""}`.toLowerCase();
         return text.includes(search) && (!filter || m.division === filter) && (!batchFilter || m.batch === batchFilter);
       }));
 
       document.getElementById("memberRows").innerHTML = list.length ? list.map(m => `
         <tr>
-          <td><div class="d-flex align-items-center gap-2"><span class="member-initial">${escapeHtml(m.nickname.slice(0,1))}</span><div><strong>${escapeHtml(m.name)}</strong><div class="text-secondary" style="font-size:.67rem;">${escapeHtml(m.nickname)} · No. ${m.absent}${m.whatsapp ? ` (${escapeHtml(m.whatsapp)})` : ""}</div></div></div></td>
+          <td><div class="d-flex align-items-center gap-2"><span class="member-initial">${escapeHtml(m.nickname.slice(0,1))}</span><div><strong>${escapeHtml(m.name)}</strong><div class="text-secondary" style="font-size:.67rem;">${escapeHtml(m.nickname)} · ${m.instagram ? escapeHtml(m.instagram) : "-"}${m.whatsapp ? ` (${escapeHtml(m.whatsapp)})` : ""}</div></div></div></td>
           <td>${escapeHtml(m.className)}</td><td>${escapeHtml(m.batch || "-")}</td><td>${badge(m.division)}</td>
           <td class="text-end"><button class="btn btn-sm btn-soft me-1" onclick="editMember('${m.id}')"><i class="bi bi-pencil"></i></button><button class="btn btn-sm btn-soft btn-danger-soft" onclick="deleteItem('members','${m.id}',this)"><i class="bi bi-trash"></i></button></td>
         </tr>`).join("") : `<tr><td colspan="5"><div class="empty-state"><i class="bi bi-search"></i>Data anggota tidak ditemukan.</div></td></tr>`;
@@ -1178,7 +1185,7 @@
 
     function editMember(id) {
       const item = appData.members.find(m => m.id === id); if (!item) return;
-      memberId.value = item.id; memberName.value = item.name; memberNickname.value = item.nickname; memberAbsent.value = item.absent; memberClass.value = item.className; memberDivision.value = item.division; memberBatch.value = item.batch || ""; memberGradeLevel.value = item.gradeLevel || "Kelas X"; memberWhatsapp.value = item.whatsapp || "";
+      memberId.value = item.id; memberName.value = item.name; memberNickname.value = item.nickname; memberAbsent.value = item.absent; memberClass.value = item.className; memberDivision.value = item.division; memberBatch.value = item.batch || ""; memberGradeLevel.value = item.gradeLevel || "Kelas X"; memberWhatsapp.value = item.whatsapp || ""; memberInstagram.value = item.instagram || "";
       document.querySelector("#members .surface-card").scrollIntoView({ behavior:"smooth", block:"start" });
     }
 
@@ -1384,8 +1391,8 @@
         const final = (Number(r.activity)*.4) + (Number(r.project)*.3) + (Number(r.latdas)*.3);
         const grade = final >= 81 ? "A" : "B";
         const keterangan = grade === "A" ? "Kehadiran sangat baik, partisipasi dalam mengikuti segala kegiatan sangat aktif." : "Kehadiran baik, aktif dalam mengikuti kegiatan.";
-        return `<tr><td><strong>${escapeHtml(m.name)}</strong><div class="text-secondary no-print" style="font-size:.67rem;">${escapeHtml(m.division)}</div></td>${["activity","project","latdas"].map(field => `<td class="text-center no-print"><label class="visually-hidden">Nilai ${field} ${escapeHtml(m.name)}</label><input type="checkbox" class="form-check-input" style="width:1.3em;height:1.3em;" ${Number(r[field]) >= 100 ? "checked" : ""} onchange="updateGrade('${m.id}','${field}',this.checked)"></td>`).join("")}<td><strong>${final.toFixed(1)}</strong></td><td><span class="badge-soft ${grade==="A"?"badge-income":"badge-creative"}">Grade ${grade}</span></td><td style="font-size:.72rem;max-width:220px;">${keterangan}</td></tr>`;
-      }).join("") || `<tr><td colspan="7"><div class="empty-state">Tambahkan anggota terlebih dahulu.</div></td></tr>`;
+        return `<tr><td><strong>${escapeHtml(m.name)}</strong><div class="text-secondary no-print" style="font-size:.67rem;">${escapeHtml(m.division)}</div></td>${["activity","project","latdas"].map(field => `<td class="text-center no-print"><label class="visually-hidden">Nilai ${field} ${escapeHtml(m.name)}</label><input type="checkbox" class="form-check-input" style="width:1.3em;height:1.3em;" ${Number(r[field]) >= 100 ? "checked" : ""} onchange="updateGrade('${m.id}','${field}',this.checked)"></td>`).join("")}<td>${escapeHtml(m.className)}</td><td><strong>${final.toFixed(1)}</strong></td><td><span class="badge-soft ${grade==="A"?"badge-income":"badge-creative"}">Grade ${grade}</span></td><td style="font-size:.72rem;max-width:220px;">${keterangan}</td></tr>`;
+      }).join("") || `<tr><td colspan="8"><div class="empty-state">Tambahkan anggota terlebih dahulu.</div></td></tr>`;
       const totalEl = document.getElementById("gradesPrintTotal");
       if (totalEl) totalEl.textContent = `Total Anggota: ${members.length} orang`;
     }
@@ -1433,9 +1440,13 @@
     }
 
     function exportExcel(collection) {
-      const data = collection === "dispensation" ? sortByClass(appData.members.filter(m => appData.dispensation.includes(m.id))).map(m => ({ name:m.name, absent:m.absent, className:m.className, division:m.division })) : collection === "polo" || collection === "jacket" ? sortByClass(appData.members.filter(m => appData[collection][m.id]?.selected)).map(m => ({ name:m.name, className:m.className, division:m.division, statusBayar:appData[collection][m.id].statusBayar, metode:appData[collection][m.id].metode, size:appData[collection][m.id].size, gender:appData[collection][m.id].gender })) : appData[collection];
+      const data = collection === "members" ? sortByClass(appData.members).map(m => ({
+          "Nama Lengkap": m.name, "Nama Panggilan": m.nickname, "No Absen": m.absent, "Kelas": m.className,
+          "Angkatan": m.batch || "", "Jenjang Kelas": m.gradeLevel || "Kelas X", "Divisi": m.division,
+          "WhatsApp": m.whatsapp || "", "Instagram": m.instagram || ""
+        })) : collection === "dispensation" ? sortByClass(appData.members.filter(m => appData.dispensation.includes(m.id))).map(m => ({ name:m.name, absent:m.absent, className:m.className, division:m.division })) : collection === "polo" || collection === "jacket" ? sortByClass(appData.members.filter(m => appData[collection][m.id]?.selected)).map(m => ({ name:m.name, className:m.className, division:m.division, statusBayar:appData[collection][m.id].statusBayar, metode:appData[collection][m.id].metode, size:appData[collection][m.id].size, gender:appData[collection][m.id].gender })) : appData[collection];
       const content = toCSV(data);
-      const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([content], {type:"application/vnd.ms-excel"})); a.download = `cips-${collection}.xls`; a.click(); URL.revokeObjectURL(a.href); toast(`Data ${collection} berhasil diekspor ke Excel.`);
+      const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob(["\uFEFF" + content], {type:"application/vnd.ms-excel"})); a.download = `cips-${collection}.xls`; a.click(); URL.revokeObjectURL(a.href); toast(`Data ${collection} berhasil diekspor ke Excel.`);
     }
 
     function exportData(collection, format) {
@@ -1484,10 +1495,10 @@
     }
 
     function downloadMemberTemplate() {
-      const headers = ["Nama Lengkap","Nama Panggilan","No Absen","Kelas","Angkatan","Jenjang Kelas","Divisi","WhatsApp"];
+      const headers = ["Nama Lengkap","Nama Panggilan","No Absen","Kelas","Angkatan","Jenjang Kelas","Divisi","WhatsApp","Instagram"];
       const examples = [
-        ["Contoh Nama Anggota","Contoh","1","X-1","51","Kelas X","Creator","081234567890"],
-        ["","","","","","","",""]
+        ["Contoh Nama Anggota","Contoh","1","X-1","51","Kelas X","Creator","081234567890","@contohakun"],
+        ["","","","","","","","",""]
       ];
       const content = headers.map(h => `"${h}"`).join(",") + "\n" + examples.map(row => row.map(v => `"${v}"`).join(",")).join("\n");
       const blob = new Blob(["\uFEFF" + content], { type: "text/csv;charset=utf-8;" });
@@ -1505,19 +1516,32 @@
             const rows = parseCSV(text);
             const divisions = ["Creator","Editor","Creative"];
             const grades = ["Kelas X","Kelas XI","Kelas XII"];
-            const imported = rows.map(row => ({
-              id: uid("m"),
-              name: row["Nama Lengkap"] || "",
-              nickname: row["Nama Panggilan"] || "",
-              absent: Number(row["No Absen"]) || 0,
-              className: row["Kelas"] || "",
-              batch: row["Angkatan"] || "",
-              gradeLevel: grades.includes(row["Jenjang Kelas"]) ? row["Jenjang Kelas"] : "Kelas X",
-              division: divisions.includes(row["Divisi"]) ? row["Divisi"] : "Creator",
-              whatsapp: row["WhatsApp"] || ""
-            })).filter(m => m.name);
-            if (!imported.length) throw new Error("kosong");
-            appData.members = imported;
+            const existingKeys = new Set(appData.members.map(m => (m.name + "|" + m.nickname).toLowerCase().trim()));
+            let skipped = 0;
+            const newMembers = [];
+            rows.forEach(row => {
+              const name = (row["Nama Lengkap"] || "").trim();
+              const nickname = (row["Nama Panggilan"] || "").trim();
+              if (!name) return;
+              const key = (name + "|" + nickname).toLowerCase().trim();
+              if (existingKeys.has(key)) { skipped++; return; }
+              existingKeys.add(key);
+              newMembers.push({
+                id: uid("m"), name, nickname,
+                absent: Number(row["No Absen"]) || 0,
+                className: row["Kelas"] || "",
+                batch: row["Angkatan"] || "",
+                gradeLevel: grades.includes(row["Jenjang Kelas"]) ? row["Jenjang Kelas"] : "Kelas X",
+                division: divisions.includes(row["Divisi"]) ? row["Divisi"] : "Creator",
+                whatsapp: row["WhatsApp"] || "",
+                instagram: row["Instagram"] || ""
+              });
+            });
+            if (!newMembers.length && !skipped) throw new Error("kosong");
+            appData.members = [...appData.members, ...newMembers];
+            saveData(); renderAll();
+            toast(`${newMembers.length} anggota baru ditambahkan${skipped ? `, ${skipped} data duplikat dilewati` : ""}.`);
+            return;
           } else {
             const parsed = JSON.parse(text);
             if (Array.isArray(parsed)) appData[collection] = parsed;
@@ -1529,7 +1553,12 @@
       reader.readAsText(file); event.target.value = "";
     }
 
-    function printCurrent() { window.print(); }
+    function printCurrent() {
+      const activeSection = document.querySelector(".view-section.active");
+      const styleEl = document.getElementById("printOrientationStyle");
+      if (styleEl) styleEl.textContent = activeSection && activeSection.id === "grades" ? "@page { size: landscape; }" : "";
+      window.print();
+    }
 
     function getClassOptions() {
       return [...new Set([...appData.classes, ...appData.members.map(m => m.className).filter(Boolean)])]
@@ -1588,7 +1617,7 @@
       const search = (document.getElementById("dispensationSearch")?.value || "").toLowerCase();
       const list = sortByClass(appData.members.filter(m => `${m.name} ${m.nickname}`.toLowerCase().includes(search)))
         .sort((a, b) => (appData.dispensation.includes(b.id) ? 1 : 0) - (appData.dispensation.includes(a.id) ? 1 : 0));
-      document.getElementById("dispensationRows").innerHTML = list.length ? list.map(m => `<tr><td><input class="form-check-input" type="checkbox" ${appData.dispensation.includes(m.id)?"checked":""} onchange="toggleDispensation('${m.id}',this.checked)"></td><td>${escapeHtml(m.name)}</td><td>${m.absent}</td><td>${escapeHtml(m.className)}</td><td>${badge(m.division)}</td></tr>`).join("") : `<tr><td colspan="5"><div class="empty-state">${search ? "Nama anggota tidak ditemukan." : "Tambahkan anggota terlebih dahulu."}</div></td></tr>`;
+      document.getElementById("dispensationRows").innerHTML = list.length ? list.map(m => `<tr class="${appData.dispensation.includes(m.id) ? "dispensation-checked" : "dispensation-unchecked"}"><td><input class="form-check-input" type="checkbox" ${appData.dispensation.includes(m.id)?"checked":""} onchange="toggleDispensation('${m.id}',this.checked)"></td><td>${escapeHtml(m.name)}</td><td>${m.absent}</td><td>${escapeHtml(m.className)}</td><td>${badge(m.division)}</td></tr>`).join("") : `<tr><td colspan="5"><div class="empty-state">${search ? "Nama anggota tidak ditemukan." : "Tambahkan anggota terlebih dahulu."}</div></td></tr>`;
     }
     document.getElementById("dispensationSearch").addEventListener("input", renderDispensation);
     function toggleDispensation(id, checked) { appData.dispensation = checked ? [...new Set([...appData.dispensation, id])] : appData.dispensation.filter(item => item !== id); saveData(); renderDispensation(); }
@@ -1603,14 +1632,17 @@
       { key: "youtube", label: "YouTube" }
     ];
     function renderMiminverse() {
-      const list = [...appData.miminverse].sort((a, b) => (a.publish === "Sudah" ? 1 : 0) - (b.publish === "Sudah" ? 1 : 0));
+      const search = (document.getElementById("miminverseSearch")?.value || "").toLowerCase();
+      const list = appData.miminverse.filter(item => item.name.toLowerCase().includes(search))
+        .sort((a, b) => (a.publish === "Sudah" ? 1 : 0) - (b.publish === "Sudah" ? 1 : 0));
       document.getElementById("miminverseRows").innerHTML = list.length ? list.map(item => {
         const posted = item.posted && typeof item.posted === "object" ? item.posted : {};
         const publish = item.publish === "Sudah" ? "Sudah" : "Belum";
         const checkboxes = SOCIAL_PLATFORMS.map(p => `<label class="d-inline-flex align-items-center gap-1 me-2" style="font-size:.68rem;"><input type="checkbox" class="form-check-input" ${posted[p.key] ? "checked" : ""} onchange="toggleMiminversePosted('${item.id}','${p.key}', this.checked)" aria-label="${p.label} ${escapeHtml(item.name)}">${p.label}</label>`).join("");
         return `<tr><td>${escapeHtml(item.name)}</td><td class="text-center"><label for="pub-${item.id}" class="visually-hidden">Status publish ${escapeHtml(item.name)}</label><select id="pub-${item.id}" class="form-select" style="min-width:130px;" onchange="setMiminversePublish('${item.id}',this.value)"><option value="Belum" ${publish==="Belum"?"selected":""}>Belum Semua</option><option value="Sudah" ${publish==="Sudah"?"selected":""}>Sudah Semua</option></select></td><td class="text-center">${checkboxes}</td><td class="text-end"><div class="d-flex gap-1 justify-content-end"><button class="btn btn-sm btn-soft" onclick="editMiminverse('${item.id}')" aria-label="Edit ${escapeHtml(item.name)}"><i class="bi bi-pencil"></i></button><button class="btn btn-sm btn-soft" onclick="resetMiminversePosted('${item.id}')" aria-label="Reset centang ${escapeHtml(item.name)}" title="Reset centang"><i class="bi bi-arrow-counterclockwise"></i></button><button class="btn btn-sm btn-soft btn-danger-soft" onclick="deleteItem('miminverse','${item.id}',this)" aria-label="Hapus ${escapeHtml(item.name)}"><i class="bi bi-trash"></i></button></div></td></tr>`;
-      }).join("") : `<tr><td colspan="4"><div class="empty-state">Belum ada kegiatan Miminverse.</div></td></tr>`;
+      }).join("") : `<tr><td colspan="4"><div class="empty-state">${search ? "Konten tidak ditemukan." : "Belum ada kegiatan Miminverse."}</div></td></tr>`;
     }
+    document.getElementById("miminverseSearch").addEventListener("input", renderMiminverse);
     function setMiminversePublish(id, value) {
       const item = appData.miminverse.find(m => m.id === id); if (!item) return;
       item.publish = value === "Sudah" ? "Sudah" : "Belum";
@@ -1651,13 +1683,16 @@
     });
 
     function renderCipsProject() {
-      const list = [...appData.cipsproject].sort((a, b) => (a.progress === "Sudah Selesai" ? 1 : 0) - (b.progress === "Sudah Selesai" ? 1 : 0));
+      const search = (document.getElementById("cipsProjectSearch")?.value || "").toLowerCase();
+      const list = appData.cipsproject.filter(item => item.name.toLowerCase().includes(search))
+        .sort((a, b) => (a.progress === "Sudah Selesai" ? 1 : 0) - (b.progress === "Sudah Selesai" ? 1 : 0));
       document.getElementById("cipsProjectRows").innerHTML = list.length ? list.map(item => {
         const progress = item.progress === "Sudah Selesai" ? "Sudah Selesai" : "Belum Selesai";
         const deadlineLabel = item.deadline ? new Date(item.deadline + "T00:00:00").toLocaleDateString("id-ID", { day:"numeric", month:"long", year:"numeric" }) : "-";
         return `<tr><td>${escapeHtml(item.name)}</td><td>${escapeHtml(deadlineLabel)}</td><td class="text-center"><label for="proj-${item.id}" class="visually-hidden">Progress ${escapeHtml(item.name)}</label><select id="proj-${item.id}" class="form-select" style="min-width:150px;" onchange="setCipsProjectProgress('${item.id}',this.value)"><option value="Belum Selesai" ${progress==="Belum Selesai"?"selected":""}>Belum Selesai</option><option value="Sudah Selesai" ${progress==="Sudah Selesai"?"selected":""}>Sudah Selesai</option></select></td><td class="text-end"><div class="d-flex gap-1 justify-content-end"><button class="btn btn-sm btn-soft" onclick="editCipsProject('${item.id}')" aria-label="Edit ${escapeHtml(item.name)}"><i class="bi bi-pencil"></i></button><button class="btn btn-sm btn-soft btn-danger-soft" onclick="deleteItem('cipsproject','${item.id}',this)" aria-label="Hapus ${escapeHtml(item.name)}"><i class="bi bi-trash"></i></button></div></td></tr>`;
-      }).join("") : `<tr><td colspan="4"><div class="empty-state">Belum ada project CIPS.</div></td></tr>`;
+      }).join("") : `<tr><td colspan="4"><div class="empty-state">${search ? "Project tidak ditemukan." : "Belum ada project CIPS."}</div></td></tr>`;
     }
+    document.getElementById("cipsProjectSearch").addEventListener("input", renderCipsProject);
     function setCipsProjectProgress(id, value) {
       const item = appData.cipsproject.find(p => p.id === id); if (!item) return;
       item.progress = value === "Sudah Selesai" ? "Sudah Selesai" : "Belum Selesai";
@@ -1687,7 +1722,7 @@
     document.getElementById("memberForm").addEventListener("submit", event => {
       event.preventDefault();
       const id = memberId.value || uid("m");
-      const item = { id, name:memberName.value.trim(), nickname:memberNickname.value.trim(), absent:Number(memberAbsent.value), className:memberClass.value.trim(), division:memberDivision.value, batch:memberBatch.value.trim(), gradeLevel:memberGradeLevel.value, whatsapp:memberWhatsapp.value.trim() };
+      const item = { id, name:memberName.value.trim(), nickname:memberNickname.value.trim(), absent:Number(memberAbsent.value), className:memberClass.value.trim(), division:memberDivision.value, batch:memberBatch.value.trim(), gradeLevel:memberGradeLevel.value, whatsapp:memberWhatsapp.value.trim(), instagram:memberInstagram.value.trim() };
       const index = appData.members.findIndex(m => m.id === id);
       if (index >= 0) appData.members[index] = item; else appData.members.push(item);
       if (!appData.classes.includes(item.className)) appData.classes.push(item.className);
