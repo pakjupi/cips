@@ -339,6 +339,8 @@
       .production-member:not(.selected) { display: none !important; }
       .attendance-tidak-hadir { display: none !important; }
       .dispensation-unchecked { display: none !important; }
+      body.print-only-transactions #memberPaymentsBlock { display: none !important; }
+      body.print-only-payments #financeTransactionsBlock { display: none !important; }
     }
   </style>
   <style id="printOrientationStyle"></style>
@@ -623,16 +625,15 @@
     </section>
     <section class="view-section" id="attendance">
      <article class="surface-card mb-3">
-      <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
-       <p id="attendancePrintDate" class="canva-text section-title mb-0" style="color: rgb(15, 23, 42); font-weight: 700; font-style: normal; font-size: 21px;"></p>
-       <div class="d-flex gap-2 no-print flex-wrap">
-        <label for="attendanceDate" class="visually-hidden">Tanggal absensi</label><input id="attendanceDate" type="date" class="form-control" style="max-width:170px;"> <button class="btn btn-soft" type="button" onclick="printCurrent()" title="Print"><i class="bi bi-printer"></i></button> <button class="btn btn-soft" type="button" onclick="exportAttendance()">Export</button> <button class="btn btn-soft btn-danger-soft" type="button" onclick="resetAttendanceSession()">Reset</button>
-       </div>
-      </div>
-      <div class="row g-2 no-print">
-       <div class="col-md-8"><label for="attendanceSearch" class="visually-hidden">Cari nama anggota</label><input id="attendanceSearch" class="form-control" placeholder="Cari nama panggilan atau nama lengkap...">
-       </div>
-       <div class="col-md-4"><label for="attendanceBatchFilter" class="visually-hidden">Filter angkatan</label><select id="attendanceBatchFilter" class="form-select"><option value="">Semua Angkatan</option></select>
+      <p id="attendancePrintDate" class="canva-text section-title mb-3" style="color: rgb(15, 23, 42); font-weight: 700; font-style: normal; font-size: 21px;"></p>
+      <div class="d-flex flex-wrap align-items-center gap-2 no-print">
+       <label for="attendanceSearch" class="visually-hidden">Cari nama anggota</label><input id="attendanceSearch" class="form-control" style="flex:1 1 160px;min-width:140px;" placeholder="Cari nama panggilan atau nama lengkap...">
+       <label for="attendanceBatchFilter" class="visually-hidden">Filter angkatan</label><select id="attendanceBatchFilter" class="form-select" style="flex:0 1 130px;"><option value="">Semua Angkatan</option></select>
+       <label for="attendanceDate" class="visually-hidden">Tanggal absensi</label><input id="attendanceDate" type="date" class="form-control" style="flex:0 1 140px;">
+       <div class="d-flex gap-2" style="flex:0 0 auto;">
+        <button class="btn btn-soft" type="button" onclick="printCurrent()" title="Print"><i class="bi bi-printer"></i></button>
+        <button class="btn btn-soft" type="button" onclick="exportAttendance()">Export</button>
+        <button class="btn btn-soft btn-danger-soft" type="button" onclick="resetAttendanceSession()">Reset</button>
        </div>
       </div>
      </article>
@@ -670,7 +671,7 @@
         </form>
        </article>
       </div>
-      <div class="col-lg-8">
+      <div class="col-lg-8" id="financeTransactionsBlock">
        <article class="surface-card mb-3">
         <div class="d-flex justify-content-between align-items-center">
          <div>
@@ -679,7 +680,7 @@
            Rp0
           </div>
          </div>
-         <div class="d-flex gap-2 no-print"><button class="btn btn-soft" type="button" onclick="printCurrent()"><i class="bi bi-printer"></i></button><label class="btn btn-soft mb-0">Import<input type="file" class="d-none" accept=".json" onchange="importData(event,'finance')"></label><button class="btn btn-soft" type="button" onclick="exportData('finance','csv')">Export</button><button class="btn btn-soft btn-danger-soft" type="button" onclick="resetCollection('finance')">Reset</button>
+         <div class="d-flex gap-2 no-print"><button class="btn btn-soft" type="button" onclick="printFinanceTransactions()" title="Print"><i class="bi bi-printer"></i></button><label class="btn btn-soft mb-0">Import<input type="file" class="d-none" accept=".json" onchange="importData(event,'finance')"></label><button class="btn btn-soft" type="button" onclick="exportData('finance','csv')">Export</button><button class="btn btn-soft btn-danger-soft" type="button" onclick="resetCollection('finance')">Reset</button>
          </div>
         </div>
        </article>
@@ -699,11 +700,12 @@
          </table>
         </div>
        </article>
-       <div class="my-4" style="border-top:1px solid #E2E8F0;"></div>
+      </div>
+      <div class="col-lg-8" id="memberPaymentsBlock">
        <article class="surface-card">
         <h2 data-template-id="finance-member-payment-title" class="canva-text section-title" style="color: rgb(15, 23, 42); font-weight: 700; font-style: normal; font-size: 21px;">Status Pembayaran Anggota</h2>
         <p data-template-id="finance-member-payment-copy" class="canva-text section-copy mb-3" style="color: rgb(100, 116, 139); font-weight: 400; font-style: normal; font-size: 14px;">Centang Ganjil dan/atau Genap sesuai semester yang sudah dibayar anggota.</p>
-        <div class="d-flex justify-content-end gap-2 mb-3 no-print"><button class="btn btn-soft" type="button" onclick="printCurrent()" title="Print"><i class="bi bi-printer"></i></button><button class="btn btn-soft btn-danger-soft" type="button" onclick="resetMemberPayments()">Reset</button></div>
+        <div class="d-flex justify-content-end gap-2 mb-3 no-print"><button class="btn btn-soft" type="button" onclick="printMemberPayments()" title="Print"><i class="bi bi-printer"></i></button><button class="btn btn-soft btn-danger-soft" type="button" onclick="resetMemberPayments()">Reset</button></div>
         <div class="row g-2 mb-3 no-print">
          <div class="col-md-8"><label for="memberPaymentSearch" class="visually-hidden">Cari nama anggota</label><input id="memberPaymentSearch" class="form-control" placeholder="Cari nama lengkap atau nama panggilan..."></div>
          <div class="col-md-4"><label for="memberPaymentBatchFilter" class="visually-hidden">Filter angkatan</label><select id="memberPaymentBatchFilter" class="form-select"><option value="">Semua Angkatan</option></select></div>
@@ -711,7 +713,7 @@
         <div class="row g-2 mb-3 no-print">
          <div class="col-md-4"><label for="cashPerSemester" class="form-label" style="font-size:.68rem;">Nominal Uang Kas / Semester</label><input id="cashPerSemester" type="number" min="0" class="form-control" placeholder="0"></div>
         </div>
-        <div id="cashTotalSummary" class="mb-3" style="font-size:.85rem;font-weight:700;color:#0F172A;"></div>
+        <div id="cashTotalSummary" class="mb-3" style="font-size:.8rem;color:#0F172A;"></div>
         <div class="table-wrap">
          <table class="table">
           <thead>
@@ -1278,7 +1280,20 @@
         return sum + ((p.ganjil?1:0) + (p.genap?1:0)) * cashPrice;
       }, 0);
       const summaryEl = document.getElementById("cashTotalSummary");
-      if (summaryEl) summaryEl.textContent = `Total Uang Kas Terkumpul: ${money(grandTotal)}`;
+      if (summaryEl) {
+        const levelLines = ["Kelas X","Kelas XI","Kelas XII"].map(level => {
+          const group = appData.members.filter(m => (m.gradeLevel || "Kelas X") === level);
+          let total = 0, komplit = 0, setengah = 0;
+          group.forEach(m => {
+            const p = appData.memberPayments[m.id] || { ganjil:false, genap:false };
+            const count = (p.ganjil?1:0) + (p.genap?1:0);
+            total += count * cashPrice;
+            if (count === 2) komplit++; else if (count === 1) setengah++;
+          });
+          return `<div>Total Uang Kas ${level}: ${money(total)} (${komplit} orang bayar komplit, ${setengah} orang bayar setengah)</div>`;
+        }).join("");
+        summaryEl.innerHTML = `<div style="font-weight:700;font-size:.85rem;">Total Uang Kas Terkumpul: ${money(grandTotal)}</div>${levelLines.replace(/<div>/g, '<div class="mt-1">')}`;
+      }
     }
     document.getElementById("memberPaymentSearch").addEventListener("input", renderMemberPayments);
     document.getElementById("memberPaymentBatchFilter").addEventListener("change", renderMemberPayments);
@@ -1351,13 +1366,21 @@
       const pricing = appData.productionPricing[type] || { lunas:0, dp:0 };
       const totalLunas = countBayar("Sudah LUNAS") * (pricing.lunas || 0);
       const totalDp = countBayar("Sudah Bayar DP") * (pricing.dp || 0);
+      const nominalOf = r => r.statusBayar === "Sudah LUNAS" ? (pricing.lunas || 0) : r.statusBayar === "Sudah Bayar DP" ? (pricing.dp || 0) : 0;
+      const totalByMetode = metode => selectedRecords.filter(r => (r.metode || "Tunai") === metode).reduce((sum, r) => sum + nominalOf(r), 0);
       const paymentBlock = `<div class="mt-4 pt-3 no-print" style="border-top:2px dashed #E2E8F0;"><div class="fw-bold mb-2" style="font-size:.8rem;color:#0F172A;">Rekap Status Bayar</div>
         <div class="d-flex justify-content-between py-1" style="font-size:.78rem;"><span>Belum Bayar</span><strong>${countBayar("Belum Bayar")} orang</strong></div>
         <div class="d-flex justify-content-between py-1" style="font-size:.78rem;"><span>Sudah Bayar DP</span><strong>${countBayar("Sudah Bayar DP")} orang</strong></div>
         <div class="d-flex justify-content-between py-1" style="font-size:.78rem;"><span>Sudah LUNAS</span><strong>${countBayar("Sudah LUNAS")} orang</strong></div>
         <div class="d-flex justify-content-between py-1 mt-2 pt-2" style="font-size:.75rem;border-top:1px solid #E2E8F0;"><span>Total Nominal DP</span><strong>${money(totalDp)}</strong></div>
         <div class="d-flex justify-content-between py-1" style="font-size:.75rem;"><span>Total Nominal LUNAS</span><strong>${money(totalLunas)}</strong></div>
-        <div class="d-flex justify-content-between py-1 fw-bold" style="font-size:.8rem;color:#0F172A;"><span>Total Nominal Masuk</span><strong>${money(totalDp + totalLunas)}</strong></div></div>`;
+        <div class="d-flex justify-content-between py-1 fw-bold" style="font-size:.8rem;color:#0F172A;"><span>Total Nominal Masuk</span><strong>${money(totalDp + totalLunas)}</strong></div>
+        <div class="mt-2 pt-2" style="border-top:1px solid #E2E8F0;">
+         <div class="fw-bold mb-1" style="font-size:.75rem;color:#0F172A;">Total Pembayaran per Metode</div>
+         <div class="d-flex justify-content-between py-1" style="font-size:.75rem;"><span>Tunai</span><strong>${money(totalByMetode("Tunai"))}</strong></div>
+         <div class="d-flex justify-content-between py-1" style="font-size:.75rem;"><span>QRIS</span><strong>${money(totalByMetode("QRIS"))}</strong></div>
+         <div class="d-flex justify-content-between py-1" style="font-size:.75rem;"><span>DANA</span><strong>${money(totalByMetode("DANA"))}</strong></div>
+        </div></div>`;
       document.getElementById(type + "Summary").innerHTML = summaryBlock("Cowok", cowok) + summaryBlock("Cewek", cewek) + `<div class="d-flex justify-content-between pt-3 mt-1" style="font-size:.95rem;font-weight:700;border-top:2px solid #0F172A;color:#0F172A;"><span>Total Produksi</span><strong>${totalProduksi} pcs</strong></div>` + paymentBlock;
 
       const printGroupsEl = document.getElementById(type + "PrintGroups");
@@ -1594,6 +1617,17 @@
       if (styleEl) styleEl.textContent = activeSection && activeSection.id === "grades" ? "@page { size: landscape; }" : "";
       window.print();
     }
+    function printFinanceTransactions() {
+      document.body.classList.add("print-only-transactions");
+      window.print();
+    }
+    function printMemberPayments() {
+      document.body.classList.add("print-only-payments");
+      window.print();
+    }
+    window.addEventListener("afterprint", () => {
+      document.body.classList.remove("print-only-transactions", "print-only-payments");
+    });
 
     function getClassOptions() {
       return [...new Set([...appData.classes, ...appData.members.map(m => m.className).filter(Boolean)])]
