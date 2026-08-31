@@ -623,21 +623,18 @@
     </section>
     <section class="view-section" id="attendance">
      <article class="surface-card mb-3">
-      <div class="d-flex flex-wrap justify-content-between gap-3">
-       <div>
-        <p id="attendancePrintDate" class="canva-text section-title mb-0" style="color: rgb(15, 23, 42); font-weight: 700; font-style: normal; font-size: 21px;"></p>
-       </div>
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+       <p id="attendancePrintDate" class="canva-text section-title mb-0" style="color: rgb(15, 23, 42); font-weight: 700; font-style: normal; font-size: 21px;"></p>
        <div class="d-flex gap-2 no-print flex-wrap">
-        <label for="attendanceDate" class="visually-hidden">Tanggal absensi</label><input id="attendanceDate" type="date" class="form-control"> <button class="btn btn-soft" type="button" onclick="printCurrent()"><i class="bi bi-printer"></i></button> <button class="btn btn-soft" type="button" onclick="exportData('attendance','csv')">Export</button> <button class="btn btn-soft btn-danger-soft" type="button" onclick="resetAttendanceSession()">Reset</button>
+        <label for="attendanceDate" class="visually-hidden">Tanggal absensi</label><input id="attendanceDate" type="date" class="form-control" style="max-width:170px;"> <button class="btn btn-soft" type="button" onclick="printCurrent()" title="Print"><i class="bi bi-printer"></i></button> <button class="btn btn-soft" type="button" onclick="exportAttendance()">Export</button> <button class="btn btn-soft btn-danger-soft" type="button" onclick="resetAttendanceSession()">Reset</button>
        </div>
       </div>
-      <div class="row g-2 mt-3 no-print">
-       <div class="col-md-6"><label for="attendanceSearch" class="visually-hidden">Cari nama anggota</label><input id="attendanceSearch" class="form-control" placeholder="Cari nama panggilan atau nama lengkap...">
+      <div class="row g-2 no-print">
+       <div class="col-md-8"><label for="attendanceSearch" class="visually-hidden">Cari nama anggota</label><input id="attendanceSearch" class="form-control" placeholder="Cari nama panggilan atau nama lengkap...">
        </div>
-       <div class="col-md-3"><label for="attendanceBatchFilter" class="visually-hidden">Filter angkatan</label><select id="attendanceBatchFilter" class="form-select"><option value="">Semua Angkatan</option></select>
+       <div class="col-md-4"><label for="attendanceBatchFilter" class="visually-hidden">Filter angkatan</label><select id="attendanceBatchFilter" class="form-select"><option value="">Semua Angkatan</option></select>
        </div>
       </div>
-      <p class="section-copy mt-2 mb-0 no-print" style="font-size:.68rem;">Catatan: data absensi di halaman ini hanya untuk keperluan cetak pada tanggal yang dipilih dan tidak disimpan permanen ke database.</p>
      </article>
      <article class="surface-card">
       <div class="table-wrap">
@@ -705,11 +702,16 @@
        <div class="my-4" style="border-top:1px solid #E2E8F0;"></div>
        <article class="surface-card">
         <h2 data-template-id="finance-member-payment-title" class="canva-text section-title" style="color: rgb(15, 23, 42); font-weight: 700; font-style: normal; font-size: 21px;">Status Pembayaran Anggota</h2>
-        <p data-template-id="finance-member-payment-copy" class="canva-text section-copy mb-3" style="color: rgb(100, 116, 139); font-weight: 400; font-style: normal; font-size: 14px;">Catatan pembayaran anggota tidak memengaruhi saldo kas akhir.</p>
+        <p data-template-id="finance-member-payment-copy" class="canva-text section-copy mb-3" style="color: rgb(100, 116, 139); font-weight: 400; font-style: normal; font-size: 14px;">Centang Ganjil dan/atau Genap sesuai semester yang sudah dibayar anggota.</p>
+        <div class="d-flex justify-content-end gap-2 mb-3 no-print"><button class="btn btn-soft" type="button" onclick="printCurrent()" title="Print"><i class="bi bi-printer"></i></button><button class="btn btn-soft btn-danger-soft" type="button" onclick="resetMemberPayments()">Reset</button></div>
         <div class="row g-2 mb-3 no-print">
          <div class="col-md-8"><label for="memberPaymentSearch" class="visually-hidden">Cari nama anggota</label><input id="memberPaymentSearch" class="form-control" placeholder="Cari nama lengkap atau nama panggilan..."></div>
          <div class="col-md-4"><label for="memberPaymentBatchFilter" class="visually-hidden">Filter angkatan</label><select id="memberPaymentBatchFilter" class="form-select"><option value="">Semua Angkatan</option></select></div>
         </div>
+        <div class="row g-2 mb-3 no-print">
+         <div class="col-md-4"><label for="cashPerSemester" class="form-label" style="font-size:.68rem;">Nominal Uang Kas / Semester</label><input id="cashPerSemester" type="number" min="0" class="form-control" placeholder="0"></div>
+        </div>
+        <div id="cashTotalSummary" class="mb-3" style="font-size:.85rem;font-weight:700;color:#0F172A;"></div>
         <div class="table-wrap">
          <table class="table">
           <thead>
@@ -717,7 +719,9 @@
             <th>Nama Anggota</th>
             <th>Kelas</th>
             <th>Divisi</th>
-            <th>Catatan Pembayaran</th>
+            <th class="text-center">Ganjil</th>
+            <th class="text-center">Genap</th>
+            <th class="text-end">Total Bayar</th>
            </tr>
           </thead>
           <tbody id="financeMemberPaymentRows"></tbody>
@@ -1021,6 +1025,7 @@
         { id: "f2", date: "2026-07-18", type: "Pengeluaran", description: "Kebutuhan latihan produksi", amount: 75000 }
       ],
       memberPayments: {},
+      cashPerSemester: 0,
       polo: {},
       jacket: {},
       classes: [],
@@ -1228,6 +1233,8 @@
 
     function saveAttendance(memberId, status) {
       attendanceSession[memberId] = status;
+      const row = document.getElementById("att-" + memberId)?.closest("tr");
+      if (row) row.className = status === "Hadir" ? "attendance-hadir" : "attendance-tidak-hadir";
     }
     function resetAttendanceSession() {
       attendanceSession = {};
@@ -1251,25 +1258,39 @@
     function renderMemberPayments() {
       const target = document.getElementById("financeMemberPaymentRows");
       if (!target) return;
+      const cashInput = document.getElementById("cashPerSemester");
+      if (cashInput && document.activeElement !== cashInput) cashInput.value = appData.cashPerSemester || "";
       const searchEl = document.getElementById("memberPaymentSearch");
       const batchEl = document.getElementById("memberPaymentBatchFilter");
       populateBatchFilter("memberPaymentBatchFilter", batchEl ? batchEl.value : "");
       const search = (searchEl ? searchEl.value : "").toLowerCase();
       const batchFilter = batchEl ? batchEl.value : "";
       const list = sortByClass(appData.members.filter(m => `${m.name} ${m.nickname}`.toLowerCase().includes(search) && (!batchFilter || m.batch === batchFilter)));
+      const cashPrice = Number(appData.cashPerSemester) || 0;
       target.innerHTML = list.length ? list.map(m => {
-        const note = appData.memberPayments[m.id] || "";
-        return `<tr><td><strong>${escapeHtml(m.name)}</strong><div class="text-secondary" style="font-size:.67rem;">${escapeHtml(m.nickname)}</div></td><td>${escapeHtml(m.className)}</td><td>${badge(m.division)}</td><td><label for="payment-note-${m.id}" class="visually-hidden">Catatan pembayaran ${escapeHtml(m.name)}</label><input id="payment-note-${m.id}" class="form-control" value="${escapeHtml(note)}" placeholder="Tulis catatan pembayaran..." onchange="saveMemberPayment('${m.id}',this.value)"></td></tr>`;
-      }).join("") : `<tr><td colspan="4"><div class="empty-state">${search || batchFilter ? "Anggota tidak ditemukan." : "Tambahkan anggota terlebih dahulu."}</div></td></tr>`;
+        const p = appData.memberPayments[m.id] || { ganjil:false, genap:false };
+        const count = (p.ganjil ? 1 : 0) + (p.genap ? 1 : 0);
+        return `<tr><td><strong>${escapeHtml(m.name)}</strong><div class="text-secondary" style="font-size:.67rem;">${escapeHtml(m.nickname)}</div></td><td>${escapeHtml(m.className)}</td><td>${badge(m.division)}</td><td class="text-center"><label class="visually-hidden">Ganjil ${escapeHtml(m.name)}</label><input type="checkbox" class="form-check-input" ${p.ganjil?"checked":""} onchange="toggleMemberPayment('${m.id}','ganjil',this.checked)"></td><td class="text-center"><label class="visually-hidden">Genap ${escapeHtml(m.name)}</label><input type="checkbox" class="form-check-input" ${p.genap?"checked":""} onchange="toggleMemberPayment('${m.id}','genap',this.checked)"></td><td class="text-end"><strong>${money(count * cashPrice)}</strong></td></tr>`;
+      }).join("") : `<tr><td colspan="6"><div class="empty-state">${search || batchFilter ? "Anggota tidak ditemukan." : "Tambahkan anggota terlebih dahulu."}</div></td></tr>`;
+
+      const grandTotal = appData.members.reduce((sum, m) => {
+        const p = appData.memberPayments[m.id] || { ganjil:false, genap:false };
+        return sum + ((p.ganjil?1:0) + (p.genap?1:0)) * cashPrice;
+      }, 0);
+      const summaryEl = document.getElementById("cashTotalSummary");
+      if (summaryEl) summaryEl.textContent = `Total Uang Kas Terkumpul: ${money(grandTotal)}`;
     }
     document.getElementById("memberPaymentSearch").addEventListener("input", renderMemberPayments);
     document.getElementById("memberPaymentBatchFilter").addEventListener("change", renderMemberPayments);
+    document.getElementById("cashPerSemester").addEventListener("input", event => { appData.cashPerSemester = Number(event.target.value) || 0; saveData(); renderMemberPayments(); });
 
-    function saveMemberPayment(memberId, note) {
-      if (note.trim()) appData.memberPayments[memberId] = note.trim();
-      else delete appData.memberPayments[memberId];
-      saveData();
-      toast("Catatan pembayaran tersimpan.");
+    function toggleMemberPayment(memberId, field, checked) {
+      if (!appData.memberPayments[memberId]) appData.memberPayments[memberId] = { ganjil:false, genap:false };
+      appData.memberPayments[memberId][field] = checked;
+      saveData(); renderMemberPayments();
+    }
+    function resetMemberPayments() {
+      appData.memberPayments = {}; saveData(); renderMemberPayments(); toast("Centang Ganjil & Genap direset.");
     }
 
     function editProgram(id) {
@@ -1447,6 +1468,20 @@
         })) : collection === "dispensation" ? sortByClass(appData.members.filter(m => appData.dispensation.includes(m.id))).map(m => ({ name:m.name, absent:m.absent, className:m.className, division:m.division })) : collection === "polo" || collection === "jacket" ? sortByClass(appData.members.filter(m => appData[collection][m.id]?.selected)).map(m => ({ name:m.name, className:m.className, division:m.division, statusBayar:appData[collection][m.id].statusBayar, metode:appData[collection][m.id].metode, size:appData[collection][m.id].size, gender:appData[collection][m.id].gender })) : appData[collection];
       const content = toCSV(data);
       const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob(["\uFEFF" + content], {type:"application/vnd.ms-excel"})); a.download = `cips-${collection}.xls`; a.click(); URL.revokeObjectURL(a.href); toast(`Data ${collection} berhasil diekspor ke Excel.`);
+    }
+
+    function exportAttendance() {
+      const search = document.getElementById("attendanceSearch").value.toLowerCase();
+      const batchFilter = document.getElementById("attendanceBatchFilter").value;
+      const members = sortByClass(appData.members.filter(m => `${m.name} ${m.nickname}`.toLowerCase().includes(search) && (!batchFilter || m.batch === batchFilter)));
+      const data = members.map(m => ({
+        "Nama Anggota": m.name, "Nama Panggilan": m.nickname, "Kelas": m.className, "Angkatan": m.batch || "",
+        "Divisi": m.division, "Status Kehadiran": attendanceSession[m.id] === "Hadir" ? "Hadir" : "Tidak Hadir",
+        "Tanggal": attendanceDate.value
+      }));
+      const content = toCSV(data);
+      const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob(["\uFEFF" + content], { type: "application/vnd.ms-excel" })); a.download = "cips-absensi.xls"; a.click(); URL.revokeObjectURL(a.href);
+      toast("Data absensi berhasil diekspor ke Excel.");
     }
 
     function exportData(collection, format) {
