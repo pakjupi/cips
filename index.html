@@ -627,8 +627,8 @@
      <article class="surface-card mb-3">
       <p id="attendancePrintDate" class="canva-text section-title mb-3" style="color: rgb(15, 23, 42); font-weight: 700; font-style: normal; font-size: 21px;"></p>
       <div class="d-flex flex-wrap align-items-center gap-2 no-print">
-       <label for="attendanceSearch" class="visually-hidden">Cari nama anggota</label><input id="attendanceSearch" class="form-control" style="flex:1 1 160px;min-width:140px;" placeholder="Cari nama panggilan atau nama lengkap...">
-       <label for="attendanceBatchFilter" class="visually-hidden">Filter angkatan</label><select id="attendanceBatchFilter" class="form-select" style="flex:0 1 130px;"><option value="">Semua Angkatan</option></select>
+       <label for="attendanceSearch" class="visually-hidden">Cari nama anggota</label><input id="attendanceSearch" class="form-control" style="flex:1 1 140px;min-width:120px;" placeholder="Cari nama panggilan atau nama lengkap...">
+       <label for="attendanceBatchFilter" class="visually-hidden">Filter angkatan</label><select id="attendanceBatchFilter" class="form-select" style="flex:0 1 160px;"><option value="">Semua Angkatan</option></select>
        <label for="attendanceDate" class="visually-hidden">Tanggal absensi</label><input id="attendanceDate" type="date" class="form-control" style="flex:0 1 140px;">
        <div class="d-flex gap-2" style="flex:0 0 auto;">
         <button class="btn btn-soft" type="button" onclick="printCurrent()" title="Print"><i class="bi bi-printer"></i></button>
@@ -1376,7 +1376,7 @@
         <div class="d-flex justify-content-between py-1" style="font-size:.75rem;"><span>Total Nominal LUNAS</span><strong>${money(totalLunas)}</strong></div>
         <div class="d-flex justify-content-between py-1 fw-bold" style="font-size:.8rem;color:#0F172A;"><span>Total Nominal Masuk</span><strong>${money(totalDp + totalLunas)}</strong></div>
         <div class="mt-2 pt-2" style="border-top:1px solid #E2E8F0;">
-         <div class="fw-bold mb-1" style="font-size:.75rem;color:#0F172A;">Total Pembayaran per Metode</div>
+         <div class="fw-bold mb-1" style="font-size:.75rem;color:#0F172A;">Total per Metode Pembayaran</div>
          <div class="d-flex justify-content-between py-1" style="font-size:.75rem;"><span>Tunai</span><strong>${money(totalByMetode("Tunai"))}</strong></div>
          <div class="d-flex justify-content-between py-1" style="font-size:.75rem;"><span>QRIS</span><strong>${money(totalByMetode("QRIS"))}</strong></div>
          <div class="d-flex justify-content-between py-1" style="font-size:.75rem;"><span>DANA</span><strong>${money(totalByMetode("DANA"))}</strong></div>
@@ -1790,8 +1790,19 @@
     document.getElementById("classEditInput").addEventListener("keydown", event => { if (event.key === "Enter") saveClassEdit(); if (event.key === "Escape") closeClassEditModal(); });
     document.getElementById("memberForm").addEventListener("submit", event => {
       event.preventDefault();
+      const cleanedWhatsapp = memberWhatsapp.value.replace(/[\s\-+]/g, "").trim();
+      if (!cleanedWhatsapp.startsWith("08")) { toast("Nomor WhatsApp wajib diawali 08."); memberWhatsapp.focus(); return; }
+      const instagramValue = memberInstagram.value.trim();
+      if (!instagramValue.startsWith("@")) { toast("Instagram wajib diawali dengan @."); memberInstagram.focus(); return; }
       const id = memberId.value || uid("m");
-      const item = { id, name:memberName.value.trim(), nickname:memberNickname.value.trim(), absent:Number(memberAbsent.value), className:memberClass.value.trim(), division:memberDivision.value, batch:memberBatch.value.trim(), gradeLevel:memberGradeLevel.value, whatsapp:memberWhatsapp.value.trim(), instagram:memberInstagram.value.trim() };
+      const item = { id, name:memberName.value.trim(), nickname:memberNickname.value.trim(), absent:Number(memberAbsent.value), className:memberClass.value.trim(), division:memberDivision.value, batch:memberBatch.value.trim(), gradeLevel:memberGradeLevel.value, whatsapp:cleanedWhatsapp, instagram:instagramValue };
+      const isDuplicate = appData.members.some(m => m.id !== id &&
+        m.name.trim().toLowerCase() === item.name.toLowerCase() &&
+        m.nickname.trim().toLowerCase() === item.nickname.toLowerCase() &&
+        m.className.trim().toLowerCase() === item.className.toLowerCase() &&
+        Number(m.absent) === item.absent &&
+        (m.whatsapp || "") === item.whatsapp);
+      if (isDuplicate) { toast("Data anggota ini sudah ada dan mohon cek kembali."); return; }
       const index = appData.members.findIndex(m => m.id === id);
       if (index >= 0) appData.members[index] = item; else appData.members.push(item);
       if (!appData.classes.includes(item.className)) appData.classes.push(item.className);
