@@ -680,7 +680,7 @@
            Rp0
           </div>
          </div>
-         <div class="d-flex gap-2 no-print"><button class="btn btn-soft" type="button" onclick="printFinanceTransactions()" title="Print"><i class="bi bi-printer"></i></button><label class="btn btn-soft mb-0">Import<input type="file" class="d-none" accept=".json" onchange="importData(event,'finance')"></label><button class="btn btn-soft" type="button" onclick="exportData('finance','csv')">Export</button><button class="btn btn-soft btn-danger-soft" type="button" onclick="resetCollection('finance')">Reset</button>
+         <div class="d-flex gap-2 no-print"><button class="btn btn-soft" type="button" onclick="printFinanceTransactions()" title="Print"><i class="bi bi-printer"></i></button><label class="btn btn-soft mb-0">Import<input type="file" class="d-none" accept=".json" onchange="importData(event,'finance')"></label><button class="btn btn-soft" type="button" onclick="exportFinanceExcel()">Export</button><button class="btn btn-soft btn-danger-soft" type="button" onclick="resetCollection('finance')">Reset</button>
          </div>
         </div>
        </article>
@@ -1483,14 +1483,28 @@
       }
     }
 
+    function toExcelTable(data) {
+      if (!Array.isArray(data) || !data.length) return "<table><tr><td>Tidak ada data</td></tr></table>";
+      const keys = Object.keys(data[0]);
+      const headerRow = `<tr>${keys.map(k => `<th style="background:#0F172A;color:#ffffff;padding:6px 10px;border:1px solid #94A3B8;text-align:left;">${escapeHtml(k)}</th>`).join("")}</tr>`;
+      const bodyRows = data.map(row => `<tr>${keys.map(k => `<td style="padding:6px 10px;border:1px solid #CBD5E1;">${escapeHtml(String(row[k] ?? ""))}</td>`).join("")}</tr>`).join("");
+      return `<table style="border-collapse:collapse;font-family:Arial,sans-serif;font-size:12px;">${headerRow}${bodyRows}</table>`;
+    }
+
+    function downloadExcelTable(data, filename) {
+      const html = `<html><head><meta charset="UTF-8"></head><body>${toExcelTable(data)}</body></html>`;
+      const blob = new Blob([html], { type: "application/vnd.ms-excel" });
+      const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = filename; a.click(); URL.revokeObjectURL(a.href);
+    }
+
     function exportExcel(collection) {
       const data = collection === "members" ? sortByClass(appData.members).map(m => ({
           "Nama Lengkap": m.name, "Nama Panggilan": m.nickname, "No Absen": m.absent, "Kelas": m.className,
           "Angkatan": m.batch || "", "Jenjang Kelas": m.gradeLevel || "Kelas X", "Divisi": m.division,
           "WhatsApp": m.whatsapp || "", "Instagram": m.instagram || ""
-        })) : collection === "dispensation" ? sortByClass(appData.members.filter(m => appData.dispensation.includes(m.id))).map(m => ({ name:m.name, absent:m.absent, className:m.className, division:m.division })) : collection === "polo" || collection === "jacket" ? sortByClass(appData.members.filter(m => appData[collection][m.id]?.selected)).map(m => ({ name:m.name, className:m.className, division:m.division, statusBayar:appData[collection][m.id].statusBayar, metode:appData[collection][m.id].metode, size:appData[collection][m.id].size, gender:appData[collection][m.id].gender })) : appData[collection];
-      const content = toCSV(data);
-      const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob(["\uFEFF" + content], {type:"application/vnd.ms-excel"})); a.download = `cips-${collection}.xls`; a.click(); URL.revokeObjectURL(a.href); toast(`Data ${collection} berhasil diekspor ke Excel.`);
+        })) : collection === "dispensation" ? sortByClass(appData.members.filter(m => appData.dispensation.includes(m.id))).map(m => ({ "Nama Lengkap":m.name, "No Absen":m.absent, "Kelas":m.className, "Divisi":m.division })) : collection === "polo" || collection === "jacket" ? sortByClass(appData.members.filter(m => appData[collection][m.id]?.selected)).map(m => ({ "Nama Lengkap":m.name, "Kelas":m.className, "Divisi":m.division, "Status Bayar":appData[collection][m.id].statusBayar, "Metode Pembayaran":appData[collection][m.id].metode, "Ukuran":appData[collection][m.id].size, "Gender":appData[collection][m.id].gender })) : collection === "latdas" ? sortByClass(appData.members).map(m => { const r = appData.latdas[m.id] || { participation:"Ikut", attendance:"Hadir", graduation:"Lulus" }; return { "Nama Anggota":m.name, "Kelas":m.className, "Divisi":m.division, "Keikutsertaan":r.participation, "Kehadiran":r.attendance, "Kelulusan":r.graduation || "Lulus" }; }) : collection === "grades" ? sortByClass(appData.members).map(m => { const r = appData.grades[m.id] || { activity:0, project:0, latdas:0 }; const final = (Number(r.activity)*.4) + (Number(r.project)*.3) + (Number(r.latdas)*.3); const grade = final >= 81 ? "A" : "B"; return { "Nama Anggota":m.name, "Kelas":m.className, "Divisi":m.division, "Keaktifan":Number(r.activity) >= 100 ? "Ya" : "Tidak", "Project":Number(r.project) >= 100 ? "Ya" : "Tidak", "LATDAS":Number(r.latdas) >= 100 ? "Ya" : "Tidak", "Nilai Akhir":Number(final.toFixed(1)), "Grade":grade }; }) : appData[collection];
+      downloadExcelTable(data, `cips-${collection}.xls`);
+      toast(`Data ${collection} berhasil diekspor ke Excel.`);
     }
 
     function exportAttendance() {
@@ -1502,28 +1516,14 @@
         "Divisi": m.division, "Status Kehadiran": attendanceSession[m.id] === "Hadir" ? "Hadir" : "Tidak Hadir",
         "Tanggal": attendanceDate.value
       }));
-      const content = toCSV(data);
-      const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob(["\uFEFF" + content], { type: "application/vnd.ms-excel" })); a.download = "cips-absensi.xls"; a.click(); URL.revokeObjectURL(a.href);
+      downloadExcelTable(data, "cips-absensi.xls");
       toast("Data absensi berhasil diekspor ke Excel.");
     }
 
-    function exportData(collection, format) {
-      let data;
-      if (collection === "attendance") {
-        data = sortByClass(appData.members).map(m => ({ tanggal: attendanceDate.value, nama: m.name, kelas: m.className, angkatan: m.batch || "", divisi: m.division, status: attendanceSession[m.id] === "Hadir" ? "Hadir" : "Tidak Hadir" }));
-      } else {
-        data = appData[collection];
-      }
-      const content = format === "csv" ? toCSV(data) : JSON.stringify(data, null, 2);
-      const blob = new Blob([content], { type: format === "csv" ? "text/csv" : "application/json" });
-      const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `cips-${collection}.${format}`; a.click(); URL.revokeObjectURL(a.href);
-      toast(`Data ${collection} berhasil diekspor.`);
-    }
-
-    function toCSV(data) {
-      if (!Array.isArray(data) || !data.length) return "";
-      const keys = Object.keys(data[0]);
-      return [keys.join(","), ...data.map(row => keys.map(key => `"${String(row[key] ?? "").replaceAll('"','""')}"`).join(","))].join("\n");
+    function exportFinanceExcel() {
+      const data = appData.finance.map(f => ({ "Tanggal": f.date, "Jenis": f.type, "Keterangan": f.description, "Nominal": f.amount }));
+      downloadExcelTable(data, "cips-transaksi-kas.xls");
+      toast("Data transaksi kas berhasil diekspor ke Excel.");
     }
 
     function parseCSV(text) {
@@ -1690,7 +1690,6 @@
     }
     document.getElementById("dispensationSearch").addEventListener("input", renderDispensation);
     function toggleDispensation(id, checked) { appData.dispensation = checked ? [...new Set([...appData.dispensation, id])] : appData.dispensation.filter(item => item !== id); saveData(); renderDispensation(); }
-    function exportDispensation() { const rows = sortByClass(appData.members.filter(m => appData.dispensation.includes(m.id))); const content = toCSV(rows.map(m => ({"Nama Lengkap":m.name,"No Absen":m.absent,"Kelas":m.className,"Divisi":m.division}))); const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([content],{type:"text/csv;charset=utf-8;"})); a.download="cips-dispensasi.csv"; a.click(); URL.revokeObjectURL(a.href); toast("Data dispensasi diekspor."); }
     function renderAll() {
       updateDashboard(); renderMembers(); renderDivisions(); renderPrograms(); renderAttendance(); renderFinance(); renderMemberPayments(); renderProduction("polo"); renderProduction("jacket"); renderLatdas(); renderGrades(); renderAchievements(); renderClasses(); renderDispensation(); renderMiminverse(); renderCipsProject();
     }
