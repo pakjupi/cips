@@ -545,6 +545,8 @@
          </div>
          <div class="mb-3"><label for="memberGradeLevel" class="form-label">Jenjang Kelas</label><select id="memberGradeLevel" class="form-select" required=""><option value="Kelas X">Kelas X</option><option value="Kelas XI">Kelas XI</option><option value="Kelas XII">Kelas XII</option></select>
          </div>
+         <div class="mb-3"><label for="memberGender" class="form-label">Gender</label><select id="memberGender" class="form-select" required=""><option value="">Pilih Gender</option><option value="Cowok">Cowok</option><option value="Cewek">Cewek</option></select>
+         </div>
          <div class="mb-3"><label for="memberBatch" class="form-label">Angkatan</label><input id="memberBatch" class="form-control" placeholder="Contoh: 51" required="">
          </div>
          <div class="mb-3"><label for="memberWhatsapp" class="form-label">WhatsApp</label><input id="memberWhatsapp" class="form-control" placeholder="Contoh: 08123456789">
@@ -1196,7 +1198,7 @@
 
     function editMember(id) {
       const item = appData.members.find(m => m.id === id); if (!item) return;
-      memberId.value = item.id; memberName.value = item.name; memberNickname.value = item.nickname; memberAbsent.value = item.absent; memberClass.value = item.className; memberDivision.value = item.division; memberBatch.value = item.batch || ""; memberGradeLevel.value = item.gradeLevel || "Kelas X"; memberWhatsapp.value = item.whatsapp || ""; memberInstagram.value = item.instagram || "";
+      memberId.value = item.id; memberName.value = item.name; memberNickname.value = item.nickname; memberAbsent.value = item.absent; memberClass.value = item.className; memberDivision.value = item.division; memberBatch.value = item.batch || ""; memberGradeLevel.value = item.gradeLevel || "Kelas X"; memberWhatsapp.value = item.whatsapp || ""; memberInstagram.value = item.instagram || ""; memberGender.value = item.gender || "";
       document.querySelector("#members .surface-card").scrollIntoView({ behavior:"smooth", block:"start" });
     }
 
@@ -1355,13 +1357,13 @@
           return bSel - aSel;
         });
       document.getElementById(type + "MemberList").innerHTML = memberSort.length ? memberSort.map(m => {
-        const r = records[m.id] || { selected:false, statusBayar:"Belum Bayar", metode:"Tunai", size:"M", gender:"", bordir:"" };
+        const r = records[m.id] || { selected:false, statusBayar:"Belum Bayar", metode:"Tunai", size:"M", bordir:"" };
         const bordirField = type === "jacket" ? `<input class="form-control production-bordir" placeholder="Nama Bordir" value="${escapeHtml(r.bordir || "")}" onchange="updateProduction('${type}','${m.id}','bordir',this.value)" aria-label="Nama bordir ${escapeHtml(m.name)}">` : "";
-        return `<div class="production-member${r.selected ? " selected" : ""}"><input class="form-check-input" type="checkbox" id="${type}-${m.id}" ${r.selected ? "checked" : ""} onchange="updateProduction('${type}','${m.id}','selected',this.checked)"><label class="flex-grow-1 mb-0" for="${type}-${m.id}"><strong style="font-size:.78rem;">${escapeHtml(m.name)}</strong><small class="d-block text-secondary">${escapeHtml(m.className)} · ${escapeHtml(m.division)} · Angkatan ${escapeHtml(m.batch || "-")}</small></label>${bordirField}<select class="form-select production-status no-print" onchange="updateProduction('${type}','${m.id}','statusBayar',this.value)"><option ${r.statusBayar==="Belum Bayar"?"selected":""}>Belum Bayar</option><option ${r.statusBayar==="Sudah Bayar DP"?"selected":""}>Sudah Bayar DP</option><option ${r.statusBayar==="Sudah LUNAS"?"selected":""}>Sudah LUNAS</option></select><select class="form-select production-method no-print" onchange="updateProduction('${type}','${m.id}','metode',this.value)"><option ${r.metode==="Tunai"?"selected":""}>Tunai</option><option ${r.metode==="QRIS"?"selected":""}>QRIS</option><option ${r.metode==="DANA"?"selected":""}>DANA</option></select><select class="form-select production-size" onchange="updateProduction('${type}','${m.id}','size',this.value)">${["S","M","L","XL","XXL","XXXL"].map(s=>`<option ${r.size===s?"selected":""}>${s}</option>`).join("")}</select><select class="form-select production-gender" onchange="updateProduction('${type}','${m.id}','gender',this.value)"><option value="" ${!r.gender?"selected":""}>Gender</option><option ${r.gender==="Cowok"?"selected":""}>Cowok</option><option ${r.gender==="Cewek"?"selected":""}>Cewek</option></select></div>`;
+        return `<div class="production-member${r.selected ? " selected" : ""}"><input class="form-check-input" type="checkbox" id="${type}-${m.id}" ${r.selected ? "checked" : ""} onchange="updateProduction('${type}','${m.id}','selected',this.checked)"><label class="flex-grow-1 mb-0" for="${type}-${m.id}"><strong style="font-size:.78rem;">${escapeHtml(m.name)}</strong><small class="d-block text-secondary">${escapeHtml(m.className)} · ${escapeHtml(m.division)} · Angkatan ${escapeHtml(m.batch || "-")}</small></label>${bordirField}<select class="form-select production-status no-print" onchange="updateProduction('${type}','${m.id}','statusBayar',this.value)"><option ${r.statusBayar==="Belum Bayar"?"selected":""}>Belum Bayar</option><option ${r.statusBayar==="Sudah Bayar DP"?"selected":""}>Sudah Bayar DP</option><option ${r.statusBayar==="Sudah LUNAS"?"selected":""}>Sudah LUNAS</option></select><select class="form-select production-method no-print" onchange="updateProduction('${type}','${m.id}','metode',this.value)"><option ${r.metode==="Tunai"?"selected":""}>Tunai</option><option ${r.metode==="QRIS"?"selected":""}>QRIS</option><option ${r.metode==="DANA"?"selected":""}>DANA</option></select><select class="form-select production-size" onchange="updateProduction('${type}','${m.id}','size',this.value)">${["S","M","L","XL","XXL","XXXL"].map(s=>`<option ${r.size===s?"selected":""}>${s}</option>`).join("")}</select><span class="badge-soft ${m.gender==="Cewek"?"badge-creative":"badge-creator"} production-gender" style="white-space:nowrap;">${escapeHtml(m.gender || "Belum diisi")}</span></div>`;
       }).join("") : `<div class="empty-state">${search || batchFilter ? "Anggota tidak ditemukan." : "Tambahkan anggota terlebih dahulu."}</div>`;
 
       const sizes = ["S","M","L","XL","XXL","XXXL"];
-      const buildSummary = gender => sizes.map(size => [size, Object.values(records).filter(r => r.selected && r.size === size && r.gender === gender).length]);
+      const buildSummary = gender => sizes.map(size => [size, appData.members.filter(m => records[m.id]?.selected && records[m.id]?.size === size && m.gender === gender).length]);
       const cowok = buildSummary("Cowok"), cewek = buildSummary("Cewek");
       const summaryBlock = (label, rows) => `<div class="mb-4"><div class="fw-bold mb-1" style="font-size:.78rem;color:#0F172A;">${label}</div>${rows.map(([size,total]) => `<div class="d-flex justify-content-between py-2 border-bottom" style="font-size:.78rem;"><span>Ukuran ${size}</span><strong>${total} pcs</strong></div>`).join("")}<div class="d-flex justify-content-between mt-3 pt-3" style="font-size:.85rem;font-weight:700;border-top:2px solid #E2E8F0;"><span>Total ${label}</span><strong>${rows.reduce((sum,[,t])=>sum+t,0)} pcs</strong></div></div>`;
       const totalProduksi = cowok.reduce((sum,[,t])=>sum+t,0) + cewek.reduce((sum,[,t])=>sum+t,0);
@@ -1395,7 +1397,7 @@
           const members = selectedMembers.filter(m => (m.batch || "Tanpa Angkatan") === batch);
           const rows = members.map(m => {
             const r = records[m.id];
-            return `<tr><td>${escapeHtml(m.name)}</td><td>${escapeHtml(m.className)}</td><td>${escapeHtml(r.size || "")}</td><td>${escapeHtml(r.gender || "")}</td><td>${escapeHtml(r.bordir || "")}</td></tr>`;
+            return `<tr><td>${escapeHtml(m.name)}</td><td>${escapeHtml(m.className)}</td><td>${escapeHtml(r.size || "")}</td><td>${escapeHtml(m.gender || "")}</td><td>${escapeHtml(r.bordir || "")}</td></tr>`;
           }).join("");
           return `<div style="margin-bottom:1.2rem;"><h3 style="font-size:1rem;font-weight:700;margin-bottom:.5rem;">Angkatan ${escapeHtml(batch)}</h3><table class="table"><thead><tr><th>Nama</th><th>Kelas</th><th>Ukuran</th><th>Gender</th><th>Nama Bordir</th></tr></thead><tbody>${rows}</tbody></table></div>`;
         }).join("") : `<p>Belum ada anggota yang memesan jaket.</p>`;
@@ -1405,7 +1407,7 @@
     }
 
     function updateProduction(type, memberId, field, value) {
-      if (!appData[type][memberId]) appData[type][memberId] = { selected:false, statusBayar:"Belum Bayar", metode:"Tunai", size:"M", gender:"", bordir:"" };
+      if (!appData[type][memberId]) appData[type][memberId] = { selected:false, statusBayar:"Belum Bayar", metode:"Tunai", size:"M", bordir:"" };
       appData[type][memberId][field] = value; saveData(); renderProductionList(type);
     }
 
@@ -1514,7 +1516,7 @@
           "Nama Lengkap": m.name, "Nama Panggilan": m.nickname, "No Absen": m.absent, "Kelas": m.className,
           "Angkatan": m.batch || "", "Jenjang Kelas": m.gradeLevel || "Kelas X", "Divisi": m.division,
           "WhatsApp": m.whatsapp || "", "Instagram": m.instagram || ""
-        })) : collection === "dispensation" ? sortByClass(appData.members.filter(m => appData.dispensation.includes(m.id))).map(m => ({ "Nama Lengkap":m.name, "No Absen":m.absent, "Kelas":m.className, "Divisi":m.division })) : collection === "polo" || collection === "jacket" ? sortByClass(appData.members.filter(m => appData[collection][m.id]?.selected)).map(m => ({ "Nama Lengkap":m.name, "Kelas":m.className, "Divisi":m.division, "Status Bayar":appData[collection][m.id].statusBayar, "Metode Pembayaran":appData[collection][m.id].metode, "Ukuran":appData[collection][m.id].size, "Gender":appData[collection][m.id].gender })) : collection === "latdas" ? sortByClass(appData.members).map(m => { const r = appData.latdas[m.id] || { keaktifan:"Aktif", contribution:"Ikut", attendance:"Hadir" }; const score = latdasScore(r); return { "Nama Anggota":m.name, "Kelas":m.className, "Angkatan":m.batch || "", "Keaktifan":r.keaktifan, "Kontribusi":r.contribution, "LATDAS":r.attendance, "Nilai":score, "Kelulusan": score >= 60 ? "Lulus" : "Tidak Lulus" }; }) : collection === "grades" ? sortByClass(appData.members).map(m => { const r = appData.grades[m.id] || { activity:0, project:0, latdas:0 }; const final = (Number(r.activity)*.4) + (Number(r.project)*.3) + (Number(r.latdas)*.3); const grade = final >= 81 ? "A" : "B"; return { "Nama Anggota":m.name, "Kelas":m.className, "Divisi":m.division, "Keaktifan":Number(r.activity) >= 100 ? "Ya" : "Tidak", "Project":Number(r.project) >= 100 ? "Ya" : "Tidak", "LATDAS":Number(r.latdas) >= 100 ? "Ya" : "Tidak", "Nilai":Number(final.toFixed(1)), "Grade":grade }; }) : appData[collection];
+        })) : collection === "dispensation" ? sortByClass(appData.members.filter(m => appData.dispensation.includes(m.id))).map(m => ({ "Nama Lengkap":m.name, "No Absen":m.absent, "Kelas":m.className, "Divisi":m.division })) : collection === "polo" || collection === "jacket" ? sortByClass(appData.members.filter(m => appData[collection][m.id]?.selected)).map(m => ({ "Nama Lengkap":m.name, "Kelas":m.className, "Divisi":m.division, "Status Bayar":appData[collection][m.id].statusBayar, "Metode Pembayaran":appData[collection][m.id].metode, "Ukuran":appData[collection][m.id].size, "Gender":m.gender || "" })) : collection === "latdas" ? sortByClass(appData.members).map(m => { const r = appData.latdas[m.id] || { keaktifan:"Aktif", contribution:"Ikut", attendance:"Hadir" }; const score = latdasScore(r); return { "Nama Anggota":m.name, "Kelas":m.className, "Angkatan":m.batch || "", "Keaktifan":r.keaktifan, "Kontribusi":r.contribution, "LATDAS":r.attendance, "Nilai":score, "Kelulusan": score >= 60 ? "Lulus" : "Tidak Lulus" }; }) : collection === "grades" ? sortByClass(appData.members).map(m => { const r = appData.grades[m.id] || { activity:0, project:0, latdas:0 }; const final = (Number(r.activity)*.4) + (Number(r.project)*.3) + (Number(r.latdas)*.3); const grade = final >= 81 ? "A" : "B"; return { "Nama Anggota":m.name, "Kelas":m.className, "Divisi":m.division, "Keaktifan":Number(r.activity) >= 100 ? "Ya" : "Tidak", "Project":Number(r.project) >= 100 ? "Ya" : "Tidak", "LATDAS":Number(r.latdas) >= 100 ? "Ya" : "Tidak", "Nilai":Number(final.toFixed(1)), "Grade":grade }; }) : appData[collection];
       downloadExcelTable(data, `cips-${collection}.xls`);
       toast(`Data ${collection} berhasil diekspor ke Excel.`);
     }
@@ -1806,7 +1808,7 @@
       const instagramValue = memberInstagram.value.trim();
       if (!instagramValue.startsWith("@")) { toast("Instagram wajib diawali dengan @."); memberInstagram.focus(); return; }
       const id = memberId.value || uid("m");
-      const item = { id, name:memberName.value.trim(), nickname:memberNickname.value.trim(), absent:Number(memberAbsent.value), className:memberClass.value.trim(), division:memberDivision.value, batch:memberBatch.value.trim(), gradeLevel:memberGradeLevel.value, whatsapp:cleanedWhatsapp, instagram:instagramValue };
+      const item = { id, name:memberName.value.trim(), nickname:memberNickname.value.trim(), absent:Number(memberAbsent.value), className:memberClass.value.trim(), division:memberDivision.value, batch:memberBatch.value.trim(), gradeLevel:memberGradeLevel.value, whatsapp:cleanedWhatsapp, instagram:instagramValue, gender:memberGender.value };
       const isDuplicate = appData.members.some(m => m.id !== id &&
         m.name.trim().toLowerCase() === item.name.toLowerCase() &&
         m.nickname.trim().toLowerCase() === item.nickname.toLowerCase() &&
