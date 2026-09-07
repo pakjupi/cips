@@ -748,7 +748,10 @@
         <h2 data-template-id="latdas-title" class="canva-text section-title" style="color: rgb(15, 23, 42); font-weight: 700; font-style: normal; font-size: 21px;">Kelulusan LATDAS CIPS SMANELA</h2>
         <p data-template-id="latdas-copy" class="canva-text section-copy" style="color: rgb(100, 116, 139); font-weight: 400; font-style: normal; font-size: 14px;">Daftar nama kelulusan anggota pada kegiatan Latihan Dasar (LATDAS) CIPS SMANELA.</p>
        </div>
-       <div class="no-print" style="min-width:180px;"><label for="latdasBatchFilter" class="visually-hidden">Filter angkatan</label><select id="latdasBatchFilter" class="form-select"><option value="">Semua Angkatan</option></select></div>
+      </div>
+      <div class="row g-2 mb-3 no-print">
+       <div class="col-md-8"><label for="latdasSearch" class="visually-hidden">Cari nama anggota</label><input id="latdasSearch" class="form-control" placeholder="Cari nama lengkap atau nama panggilan..."></div>
+       <div class="col-md-4"><label for="latdasBatchFilter" class="visually-hidden">Filter angkatan</label><select id="latdasBatchFilter" class="form-select"><option value="">Semua Angkatan</option></select></div>
       </div>
       <div class="table-wrap">
        <table class="table">
@@ -756,8 +759,9 @@
          <tr>
           <th>Anggota</th>
           <th>Divisi</th>
-          <th>Keikutsertaan</th>
-          <th>Kehadiran</th>
+          <th>Keaktifan</th>
+          <th>Kontribusi</th>
+          <th>LATDAS</th>
           <th>Kelulusan</th>
          </tr>
         </thead>
@@ -1412,20 +1416,31 @@
       select.innerHTML = `<option value="">Semua Angkatan</option>${batches.map(b => `<option value="${escapeHtml(b)}">${escapeHtml(b)}</option>`).join("")}`;
       select.value = batches.includes(current) ? current : "";
     }
+    function latdasScore(r) {
+      return (r.keaktifan === "Aktif" ? 30 : 0) + (r.contribution === "Ikut" ? 30 : 0) + (r.attendance === "Hadir" ? 40 : 0);
+    }
     function renderLatdas() {
       populateLatdasBatchOptions();
+      const search = (document.getElementById("latdasSearch")?.value || "").toLowerCase();
       const batchFilter = document.getElementById("latdasBatchFilter").value;
-      const members = sortByClass(appData.members.filter(m => !batchFilter || m.batch === batchFilter));
+      const members = sortByClass(appData.members.filter(m => `${m.name} ${m.nickname}`.toLowerCase().includes(search) && (!batchFilter || m.batch === batchFilter)));
       document.getElementById("latdasRows").innerHTML = members.length ? members.map(m => {
-        const r = appData.latdas[m.id] || { participation:"Ikut", attendance:"Hadir", graduation:"Lulus" };
-        return `<tr><td><strong>${escapeHtml(m.name)}</strong></td><td>${badge(m.division)}</td><td><select class="form-select" onchange="updateLatdas('${m.id}','participation',this.value)"><option ${r.participation==="Ikut"?"selected":""}>Ikut</option><option ${r.participation==="Tidak Ikut"?"selected":""}>Tidak Ikut</option></select></td><td><select class="form-select" onchange="updateLatdas('${m.id}','attendance',this.value)"><option ${r.attendance==="Hadir"?"selected":""}>Hadir</option><option ${r.attendance==="Tidak Hadir"?"selected":""}>Tidak Hadir</option></select></td><td><select class="form-select" onchange="updateLatdas('${m.id}','graduation',this.value)"><option ${(r.graduation||"Lulus")==="Lulus"?"selected":""}>Lulus</option><option ${r.graduation==="Tidak Lulus"?"selected":""}>Tidak Lulus</option></select></td></tr>`;
-      }).join("") : `<tr><td colspan="5"><div class="empty-state">Tambahkan anggota terlebih dahulu.</div></td></tr>`;
+        const r = appData.latdas[m.id] || { keaktifan:"Aktif", contribution:"Ikut", attendance:"Hadir", graduation:"Lulus" };
+        const score = latdasScore(r);
+        const forcedFail = score < 60;
+        if (forcedFail && r.graduation !== "Tidak Lulus") { r.graduation = "Tidak Lulus"; appData.latdas[m.id] = r; }
+        return `<tr><td><strong>${escapeHtml(m.name)}</strong></td><td>${badge(m.division)}</td><td><select class="form-select" onchange="updateLatdas('${m.id}','keaktifan',this.value)"><option ${r.keaktifan==="Aktif"?"selected":""}>Aktif</option><option ${r.keaktifan==="Tidak Aktif"?"selected":""}>Tidak Aktif</option></select></td><td><select class="form-select" onchange="updateLatdas('${m.id}','contribution',this.value)"><option ${r.contribution==="Ikut"?"selected":""}>Ikut</option><option ${r.contribution==="Tidak Ikut"?"selected":""}>Tidak Ikut</option></select></td><td><select class="form-select" onchange="updateLatdas('${m.id}','attendance',this.value)"><option ${r.attendance==="Hadir"?"selected":""}>Hadir</option><option ${r.attendance==="Tidak Hadir"?"selected":""}>Tidak Hadir</option></select></td><td><select class="form-select" ${forcedFail?"disabled":""} onchange="updateLatdas('${m.id}','graduation',this.value)"><option ${(r.graduation||"Lulus")==="Lulus"?"selected":""}>Lulus</option><option ${r.graduation==="Tidak Lulus"?"selected":""}>Tidak Lulus</option></select></td></tr>`;
+      }).join("") : `<tr><td colspan="6"><div class="empty-state">${search || batchFilter ? "Anggota tidak ditemukan." : "Tambahkan anggota terlebih dahulu."}</div></td></tr>`;
     }
     document.getElementById("latdasBatchFilter").addEventListener("change", renderLatdas);
+    document.getElementById("latdasSearch").addEventListener("input", renderLatdas);
 
     function updateLatdas(memberId, field, value) {
-      if (!appData.latdas[memberId]) appData.latdas[memberId] = { participation:"Ikut", attendance:"Hadir", graduation:"Lulus" };
-      appData.latdas[memberId][field] = value; saveData();
+      if (!appData.latdas[memberId]) appData.latdas[memberId] = { keaktifan:"Aktif", contribution:"Ikut", attendance:"Hadir", graduation:"Lulus" };
+      appData.latdas[memberId][field] = value;
+      const score = latdasScore(appData.latdas[memberId]);
+      if (score < 60) appData.latdas[memberId].graduation = "Tidak Lulus";
+      saveData(); renderLatdas();
     }
 
     function renderGrades() {
@@ -1502,7 +1517,7 @@
           "Nama Lengkap": m.name, "Nama Panggilan": m.nickname, "No Absen": m.absent, "Kelas": m.className,
           "Angkatan": m.batch || "", "Jenjang Kelas": m.gradeLevel || "Kelas X", "Divisi": m.division,
           "WhatsApp": m.whatsapp || "", "Instagram": m.instagram || ""
-        })) : collection === "dispensation" ? sortByClass(appData.members.filter(m => appData.dispensation.includes(m.id))).map(m => ({ "Nama Lengkap":m.name, "No Absen":m.absent, "Kelas":m.className, "Divisi":m.division })) : collection === "polo" || collection === "jacket" ? sortByClass(appData.members.filter(m => appData[collection][m.id]?.selected)).map(m => ({ "Nama Lengkap":m.name, "Kelas":m.className, "Divisi":m.division, "Status Bayar":appData[collection][m.id].statusBayar, "Metode Pembayaran":appData[collection][m.id].metode, "Ukuran":appData[collection][m.id].size, "Gender":appData[collection][m.id].gender })) : collection === "latdas" ? sortByClass(appData.members).map(m => { const r = appData.latdas[m.id] || { participation:"Ikut", attendance:"Hadir", graduation:"Lulus" }; return { "Nama Anggota":m.name, "Kelas":m.className, "Divisi":m.division, "Keikutsertaan":r.participation, "Kehadiran":r.attendance, "Kelulusan":r.graduation || "Lulus" }; }) : collection === "grades" ? sortByClass(appData.members).map(m => { const r = appData.grades[m.id] || { activity:0, project:0, latdas:0 }; const final = (Number(r.activity)*.4) + (Number(r.project)*.3) + (Number(r.latdas)*.3); const grade = final >= 81 ? "A" : "B"; return { "Nama Anggota":m.name, "Kelas":m.className, "Divisi":m.division, "Keaktifan":Number(r.activity) >= 100 ? "Ya" : "Tidak", "Project":Number(r.project) >= 100 ? "Ya" : "Tidak", "LATDAS":Number(r.latdas) >= 100 ? "Ya" : "Tidak", "Nilai Akhir":Number(final.toFixed(1)), "Grade":grade }; }) : appData[collection];
+        })) : collection === "dispensation" ? sortByClass(appData.members.filter(m => appData.dispensation.includes(m.id))).map(m => ({ "Nama Lengkap":m.name, "No Absen":m.absent, "Kelas":m.className, "Divisi":m.division })) : collection === "polo" || collection === "jacket" ? sortByClass(appData.members.filter(m => appData[collection][m.id]?.selected)).map(m => ({ "Nama Lengkap":m.name, "Kelas":m.className, "Divisi":m.division, "Status Bayar":appData[collection][m.id].statusBayar, "Metode Pembayaran":appData[collection][m.id].metode, "Ukuran":appData[collection][m.id].size, "Gender":appData[collection][m.id].gender })) : collection === "latdas" ? sortByClass(appData.members).map(m => { const r = appData.latdas[m.id] || { keaktifan:"Aktif", contribution:"Ikut", attendance:"Hadir", graduation:"Lulus" }; return { "Nama Anggota":m.name, "Kelas":m.className, "Divisi":m.division, "Keaktifan":r.keaktifan, "Kontribusi":r.contribution, "LATDAS":r.attendance, "Nilai":latdasScore(r), "Kelulusan":r.graduation || "Lulus" }; }) : collection === "grades" ? sortByClass(appData.members).map(m => { const r = appData.grades[m.id] || { activity:0, project:0, latdas:0 }; const final = (Number(r.activity)*.4) + (Number(r.project)*.3) + (Number(r.latdas)*.3); const grade = final >= 81 ? "A" : "B"; return { "Nama Anggota":m.name, "Kelas":m.className, "Divisi":m.division, "Keaktifan":Number(r.activity) >= 100 ? "Ya" : "Tidak", "Project":Number(r.project) >= 100 ? "Ya" : "Tidak", "LATDAS":Number(r.latdas) >= 100 ? "Ya" : "Tidak", "Nilai Akhir":Number(final.toFixed(1)), "Grade":grade }; }) : appData[collection];
       downloadExcelTable(data, `cips-${collection}.xls`);
       toast(`Data ${collection} berhasil diekspor ke Excel.`);
     }
