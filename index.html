@@ -1374,6 +1374,15 @@
       const totalDp = countBayar("Sudah Bayar DP") * (pricing.dp || 0);
       const nominalOf = r => r.statusBayar === "Sudah LUNAS" ? (pricing.lunas || 0) : r.statusBayar === "Sudah Bayar DP" ? (pricing.dp || 0) : 0;
       const totalByMetode = metode => selectedRecords.filter(r => (r.metode || "Tunai") === metode).reduce((sum, r) => sum + nominalOf(r), 0);
+      const batchStats = [...new Set(appData.members.map(m => m.batch || "Tanpa Angkatan"))].sort().map(batch => {
+        const totalInBatch = appData.members.filter(m => (m.batch || "Tanpa Angkatan") === batch).length;
+        const boughtInBatch = appData.members.filter(m => (m.batch || "Tanpa Angkatan") === batch && records[m.id]?.selected).length;
+        return { batch, totalInBatch, boughtInBatch };
+      }).filter(b => b.boughtInBatch > 0 || appData.members.some(m => (m.batch || "Tanpa Angkatan") === b.batch));
+      const batchBlock = `<div class="mt-2 pt-2" style="border-top:1px solid #E2E8F0;">
+         <div class="fw-bold mb-1" style="font-size:.75rem;color:#0F172A;">Total Pembelian per Angkatan</div>
+         ${batchStats.map(b => `<div class="d-flex justify-content-between py-1" style="font-size:.75rem;"><span>Angkatan ${escapeHtml(b.batch)}</span><strong>${b.boughtInBatch} dari ${b.totalInBatch} anggota</strong></div>`).join("")}
+        </div>`;
       const paymentBlock = `<div class="mt-4 pt-3 no-print" style="border-top:2px dashed #E2E8F0;"><div class="fw-bold mb-2" style="font-size:.8rem;color:#0F172A;">Rekap Status Bayar</div>
         <div class="d-flex justify-content-between py-1" style="font-size:.78rem;"><span>Belum Bayar</span><strong>${countBayar("Belum Bayar")} orang</strong></div>
         <div class="d-flex justify-content-between py-1" style="font-size:.78rem;"><span>Sudah Bayar DP</span><strong>${countBayar("Sudah Bayar DP")} orang</strong></div>
@@ -1386,7 +1395,7 @@
          <div class="d-flex justify-content-between py-1" style="font-size:.75rem;"><span>Tunai</span><strong>${money(totalByMetode("Tunai"))}</strong></div>
          <div class="d-flex justify-content-between py-1" style="font-size:.75rem;"><span>QRIS</span><strong>${money(totalByMetode("QRIS"))}</strong></div>
          <div class="d-flex justify-content-between py-1" style="font-size:.75rem;"><span>DANA</span><strong>${money(totalByMetode("DANA"))}</strong></div>
-        </div></div>`;
+        </div>${batchBlock}</div>`;
       document.getElementById(type + "Summary").innerHTML = summaryBlock("Cowok", cowok) + summaryBlock("Cewek", cewek) + `<div class="d-flex justify-content-between pt-3 mt-1" style="font-size:.95rem;font-weight:700;border-top:2px solid #0F172A;color:#0F172A;"><span>Total Produksi</span><strong>${totalProduksi} pcs</strong></div>` + paymentBlock;
 
       const printGroupsEl = document.getElementById(type + "PrintGroups");
