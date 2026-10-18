@@ -388,6 +388,7 @@
      </div>
      <nav id="sideNavigationSync">
       <button class="menu-link" data-view="classes"><i class="bi bi-building"></i><span data-template-id="nav-classes" class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Data Kelas</span></button>
+      <button class="menu-link" data-view="mainMenu"><i class="bi bi-plus-square-dotted"></i><span class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Main Menu</span></button>
       <button class="menu-link" data-view="adminProfile"><i class="bi bi-person-gear"></i><span class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">Profil Admin</span></button>
      </nav>
      <div class="mt-3 p-3 rounded-4" style="background:#EAF8FF;">
@@ -966,6 +967,56 @@
       </div>
      </div>
     </section>
+    <section class="view-section" id="mainMenu">
+     <div class="row g-3">
+      <div class="col-lg-5">
+       <article class="surface-card">
+        <h2 class="section-title">Main Menu</h2>
+        <p class="section-copy mb-3">Buat menu baru berupa tautan ke website/halaman lain, tanpa menambah beban render website ini.</p>
+        <form id="customMenuForm">
+         <input type="hidden" id="customMenuId">
+         <div class="mb-3"><label for="customMenuName" class="form-label">Nama Menu</label><input id="customMenuName" class="form-control" placeholder="Contoh: Grup WhatsApp" required="">
+         </div>
+         <div class="mb-3"><label for="customMenuIcon" class="form-label">Icon Menu</label>
+          <select id="customMenuIcon" class="form-select">
+           <option value="bi-link-45deg">Tautan (link)</option>
+           <option value="bi-globe2">Dunia (globe)</option>
+           <option value="bi-file-earmark-text-fill">Dokumen</option>
+           <option value="bi-folder-fill">Folder</option>
+           <option value="bi-chat-dots-fill">Chat</option>
+           <option value="bi-calendar-event-fill">Kalender</option>
+           <option value="bi-star-fill">Bintang</option>
+           <option value="bi-gear-fill">Pengaturan</option>
+           <option value="bi-info-circle-fill">Info</option>
+           <option value="bi-question-circle-fill">Tanya</option>
+           <option value="bi-image-fill">Gambar</option>
+           <option value="bi-music-note-beamed">Musik</option>
+           <option value="bi-cloud-fill">Awan</option>
+           <option value="bi-map-fill">Peta</option>
+           <option value="bi-bookmark-star-fill">Bookmark</option>
+          </select>
+         </div>
+         <div class="mb-3"><label for="customMenuAfter" class="form-label">Letakkan di Bawah Menu</label><select id="customMenuAfter" class="form-select"></select>
+         </div>
+         <div class="mb-3"><label for="customMenuUrl" class="form-label">Link Tautan</label><input id="customMenuUrl" type="url" class="form-control" placeholder="https://..." required="">
+         </div><button class="btn btn-cips w-100" type="submit">Simpan Menu</button>
+        </form>
+       </article>
+      </div>
+      <div class="col-lg-7">
+       <article class="surface-card">
+        <h2 class="section-title">Daftar Main Menu</h2>
+        <p class="section-copy mb-3">Menu yang dibuat akan membuka tautan di tab baru saat diklik, tanpa memuat halaman tambahan di website ini.</p>
+        <div class="table-wrap">
+         <table class="table">
+          <thead><tr><th>Nama Menu</th><th>Diletakkan Setelah</th><th>Link</th><th class="text-end">Aksi</th></tr></thead>
+          <tbody id="customMenuRows"></tbody>
+         </table>
+        </div>
+       </article>
+      </div>
+     </div>
+    </section>
     <section class="view-section" id="adminProfile">
      <div class="row g-3">
       <div class="col-lg-5">
@@ -1094,6 +1145,7 @@
       productionPricing: { polo: { lunas:0, dp:0 }, jacket: { lunas:0, dp:0 } },
       eclipseTasks: [],
       eclipseCommittee: {},
+      customMenus: [],
       auth: { username: "admin", password: "admin123" }
     };
 
@@ -1112,9 +1164,14 @@
     // saveData() dipanggil di semua form/aksi yang sudah ada di file ini.
     // Sekarang selain menyimpan ke localStorage (cache instan/offline),
     // data juga dikirim ke Firebase Firestore supaya bisa diakses dari perangkat lain.
+    let firebaseSaveTimer = null;
     function saveData() {
       saveDataLocal();
-      if (window.__fb) window.__fb.save(appData);
+      if (!window.__fb) return;
+      // Simpan ke localStorage langsung (instan), tapi kirim ke Firestore sedikit
+      // ditunda & digabung supaya klik/edit beruntun tidak masing-masing menunggu jaringan.
+      clearTimeout(firebaseSaveTimer);
+      firebaseSaveTimer = setTimeout(() => { window.__fb.save(appData); }, 700);
     }
 
     function syncWithFirebase() {
@@ -1137,6 +1194,14 @@
       });
     }
     document.addEventListener("firebase-ready", syncWithFirebase);
+
+    // Kalau tab ditutup/disembunyikan tepat setelah edit terakhir (sebelum jeda 700ms selesai),
+    // paksa kirim sisa perubahan supaya tidak hilang.
+    function flushPendingSave() {
+      if (firebaseSaveTimer) { clearTimeout(firebaseSaveTimer); firebaseSaveTimer = null; if (window.__fb) window.__fb.save(appData); }
+    }
+    document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") flushPendingSave(); });
+    window.addEventListener("beforeunload", flushPendingSave);
 
     function loadData() {
       const saved = localStorage.getItem(KEY);
@@ -1532,6 +1597,38 @@
       document.querySelector("#achievements .surface-card").scrollIntoView({ behavior:"smooth", block:"start" });
     }
 
+    // Agar setiap perubahan kecil tidak memaksa SEMUA menu digambar ulang (lambat saat data banyak),
+    // kita hanya menggambar ulang bagian yang benar-benar terdampak.
+    const COLLECTION_RENDERERS = {
+      programs: () => { updateDashboard(); renderPrograms(); },
+      finance: () => { updateDashboard(); renderFinance(); },
+      achievements: () => { updateDashboard(); renderAchievements(); },
+      dispensation: () => renderDispensation(),
+      polo: () => renderProductionList("polo"),
+      jacket: () => renderProductionList("jacket"),
+      latdas: () => renderLatdas(),
+      grades: () => renderGrades(),
+      miminverse: () => renderMiminverse(),
+      cipsproject: () => renderCipsProject(),
+      eclipseTasks: () => renderEclipseTasks(),
+      eclipseCommittee: () => renderEclipseCommittee(),
+      classes: () => { renderClasses(); renderMembers(); },
+      members: () => renderMemberDependents()
+    };
+    function renderFor(collection) {
+      const fn = COLLECTION_RENDERERS[collection];
+      if (fn) fn(); else renderAll();
+    }
+
+    // Menambah/mengedit/menghapus anggota memengaruhi banyak menu (karena menu-menu itu
+    // menampilkan daftar anggota), tapi TIDAK memengaruhi Program Kerja, Uang Kas, Prestasi,
+    // atau Main Menu — jadi bagian-bagian itu tidak perlu digambar ulang setiap kali.
+    function renderMemberDependents() {
+      updateDashboard(); renderMembers(); renderDivisions(); renderAttendance(); renderMemberPayments();
+      renderProductionList("polo"); renderProductionList("jacket"); renderLatdas(); renderGrades();
+      renderClasses(); renderDispensation(); renderEclipseCommittee();
+    }
+
     function deleteItem(collection, id, button) {
       if (button.dataset.confirm !== "true") {
         button.dataset.confirm = "true"; button.innerHTML = "Yakin?";
@@ -1539,14 +1636,14 @@
         return;
       }
       appData[collection] = appData[collection].filter(item => item.id !== id);
-      saveData(); renderAll(); toast("Data berhasil dihapus.");
+      saveData(); renderFor(collection); toast("Data berhasil dihapus.");
     }
 
     function resetCollection(collection) {
       const key = "reset-" + collection;
       if (window[key]) {
         appData[collection] = clone(defaultData[collection]);
-        saveData(); renderAll(); window[key] = false; toast("Data dikembalikan ke data awal.");
+        saveData(); renderFor(collection); window[key] = false; toast("Data dikembalikan ke data awal.");
       } else {
         window[key] = true; toast("Klik Reset sekali lagi untuk mengonfirmasi.");
         setTimeout(() => window[key] = false, 2800);
@@ -1667,7 +1764,7 @@
             });
             if (!newMembers.length && !skipped) throw new Error("kosong");
             appData.members = [...appData.members, ...newMembers];
-            saveData(); renderAll();
+            saveData(); renderMemberDependents();
             toast(`${newMembers.length} anggota baru ditambahkan${skipped ? `, ${skipped} data duplikat dilewati` : ""}.`);
             return;
           } else {
@@ -1676,7 +1773,7 @@
             else if (parsed && typeof parsed === "object") appData[collection] = parsed;
             else throw new Error();
           }
-          saveData(); renderAll(); toast("Data berhasil diimpor.");
+          saveData(); renderFor(collection); toast("Data berhasil diimpor.");
         } catch { toast("File tidak dapat dibaca. Pastikan format sesuai template."); }
       };
       reader.readAsText(file); event.target.value = "";
@@ -1762,7 +1859,7 @@
     document.getElementById("dispensationSearch").addEventListener("input", renderDispensation);
     function toggleDispensation(id, checked) { appData.dispensation = checked ? [...new Set([...appData.dispensation, id])] : appData.dispensation.filter(item => item !== id); saveData(); renderDispensation(); }
     function renderAll() {
-      updateDashboard(); renderMembers(); renderDivisions(); renderPrograms(); renderAttendance(); renderFinance(); renderMemberPayments(); renderProduction("polo"); renderProduction("jacket"); renderLatdas(); renderGrades(); renderAchievements(); renderClasses(); renderDispensation(); renderMiminverse(); renderCipsProject(); renderEclipseTasks(); renderEclipseCommittee();
+      updateDashboard(); renderMembers(); renderDivisions(); renderPrograms(); renderAttendance(); renderFinance(); renderMemberPayments(); renderProduction("polo"); renderProduction("jacket"); renderLatdas(); renderGrades(); renderAchievements(); renderClasses(); renderDispensation(); renderMiminverse(); renderCipsProject(); renderEclipseTasks(); renderEclipseCommittee(); renderCustomMenus();
     }
 
     const SOCIAL_PLATFORMS = [
@@ -1818,7 +1915,7 @@
       const item = { id, name: miminverseName.value.trim(), posted: existing && existing.posted ? existing.posted : {}, publish: existing ? existing.publish : "Belum" };
       const index = appData.miminverse.findIndex(m => m.id === id);
       if (index >= 0) appData.miminverse[index] = item; else appData.miminverse.push(item);
-      saveData(); event.target.reset(); miminverseId.value = ""; renderAll(); toast(index >= 0 ? "Kegiatan Miminverse diperbarui." : "Kegiatan Miminverse ditambahkan.");
+      saveData(); event.target.reset(); miminverseId.value = ""; renderMiminverse(); toast(index >= 0 ? "Kegiatan Miminverse diperbarui." : "Kegiatan Miminverse ditambahkan.");
     });
 
     function renderCipsProject() {
@@ -1850,7 +1947,7 @@
       const item = { id, name: cipsProjectName.value.trim(), deadline: cipsProjectDeadline.value, progress: existing ? existing.progress : "Belum Selesai" };
       const index = appData.cipsproject.findIndex(p => p.id === id);
       if (index >= 0) appData.cipsproject[index] = item; else appData.cipsproject.push(item);
-      saveData(); event.target.reset(); cipsProjectId.value = ""; renderAll(); toast(index >= 0 ? "Project CIPS diperbarui." : "Project CIPS ditambahkan.");
+      saveData(); event.target.reset(); cipsProjectId.value = ""; renderCipsProject(); toast(index >= 0 ? "Project CIPS diperbarui." : "Project CIPS ditambahkan.");
     });
 
     function renderEclipseTasks() {
@@ -1881,7 +1978,7 @@
       const item = { id, name: eclipseTaskName.value.trim(), deadline: eclipseTaskDeadline.value, status: existing ? existing.status : "On Progress" };
       const index = appData.eclipseTasks.findIndex(t => t.id === id);
       if (index >= 0) appData.eclipseTasks[index] = item; else appData.eclipseTasks.push(item);
-      saveData(); event.target.reset(); eclipseTaskId.value = ""; renderAll(); toast(index >= 0 ? "Persiapan acara diperbarui." : "Persiapan acara ditambahkan.");
+      saveData(); event.target.reset(); eclipseTaskId.value = ""; renderEclipseTasks(); toast(index >= 0 ? "Persiapan acara diperbarui." : "Persiapan acara ditambahkan.");
     });
 
     const ECLIPSE_SIE = ["Sie Acara","Sie Sekretariat","Sie Humas","Sie PDD","Sie Perlekor","Sie Konsumroh"];
@@ -1937,6 +2034,61 @@
       saveData(); renderEclipseCommittee();
     }
 
+    function populateCustomMenuAfterOptions() {
+      const select = document.getElementById("customMenuAfter");
+      if (!select) return;
+      const current = select.value;
+      const builtIn = [...document.querySelectorAll(".side-panel .menu-link[data-view]")].map(btn => ({ value: "view:" + btn.dataset.view, label: btn.textContent.trim() }));
+      const customs = appData.customMenus.map(cm => ({ value: "custom:" + cm.id, label: cm.name + " (Tautan)" }));
+      const options = [...builtIn, ...customs];
+      select.innerHTML = options.map(o => `<option value="${o.value}">${escapeHtml(o.label)}</option>`).join("");
+      if (options.some(o => o.value === current)) select.value = current;
+    }
+
+    function renderCustomMenus() {
+      populateCustomMenuAfterOptions();
+      document.getElementById("customMenuRows").innerHTML = appData.customMenus.length ? appData.customMenus.map(cm => {
+        let afterLabel = "-";
+        if (cm.after && cm.after.startsWith("view:")) {
+          const btn = document.querySelector(`.menu-link[data-view="${cm.after.slice(5)}"]`);
+          afterLabel = btn ? btn.textContent.trim() : "-";
+        } else if (cm.after && cm.after.startsWith("custom:")) {
+          const other = appData.customMenus.find(x => x.id === cm.after.slice(7));
+          afterLabel = other ? other.name : "-";
+        }
+        return `<tr><td><i class="bi ${escapeHtml(cm.icon)} me-1"></i>${escapeHtml(cm.name)}</td><td>${escapeHtml(afterLabel)}</td><td style="max-width:200px;overflow-wrap:anywhere;font-size:.72rem;">${escapeHtml(cm.url)}</td><td class="text-end"><div class="d-flex gap-1 justify-content-end"><button class="btn btn-sm btn-soft" onclick="editCustomMenu('${cm.id}')" aria-label="Edit ${escapeHtml(cm.name)}"><i class="bi bi-pencil"></i></button><button class="btn btn-sm btn-soft btn-danger-soft" onclick="deleteItem('customMenus','${cm.id}',this)" aria-label="Hapus ${escapeHtml(cm.name)}"><i class="bi bi-trash"></i></button></div></td></tr>`;
+      }).join("") : `<tr><td colspan="4"><div class="empty-state">Belum ada Main Menu dibuat.</div></td></tr>`;
+
+      document.querySelectorAll(".custom-menu-link").forEach(el => el.remove());
+      appData.customMenus.forEach(cm => {
+        const btn = document.createElement("button");
+        btn.className = "menu-link custom-menu-link";
+        btn.dataset.customId = cm.id;
+        btn.innerHTML = `<i class="bi ${escapeHtml(cm.icon)}"></i><span class="canva-text" style="color: rgb(71, 85, 105); font-weight: 400; font-style: normal; font-size: 14px;">${escapeHtml(cm.name)}</span>`;
+        btn.addEventListener("click", () => window.open(cm.url, "_blank", "noopener"));
+        let anchor = null;
+        if (cm.after && cm.after.startsWith("view:")) anchor = document.querySelector(`.menu-link[data-view="${cm.after.slice(5)}"]`);
+        else if (cm.after && cm.after.startsWith("custom:")) anchor = document.querySelector(`.custom-menu-link[data-custom-id="${cm.after.slice(7)}"]`);
+        if (anchor && anchor.parentNode) anchor.parentNode.insertBefore(btn, anchor.nextSibling);
+        else document.getElementById("sideNavigationSync")?.appendChild(btn);
+      });
+    }
+
+    function editCustomMenu(id) {
+      const item = appData.customMenus.find(c => c.id === id); if (!item) return;
+      customMenuId.value = item.id; customMenuName.value = item.name; customMenuIcon.value = item.icon; customMenuUrl.value = item.url;
+      populateCustomMenuAfterOptions(); customMenuAfter.value = item.after;
+      document.querySelector("#mainMenu .surface-card").scrollIntoView({ behavior:"smooth", block:"start" });
+    }
+    document.getElementById("customMenuForm").addEventListener("submit", event => {
+      event.preventDefault();
+      const id = customMenuId.value || uid("cm");
+      const item = { id, name: customMenuName.value.trim(), icon: customMenuIcon.value, after: customMenuAfter.value, url: customMenuUrl.value.trim() };
+      const index = appData.customMenus.findIndex(c => c.id === id);
+      if (index >= 0) appData.customMenus[index] = item; else appData.customMenus.push(item);
+      saveData(); event.target.reset(); customMenuId.value = ""; renderAll(); toast(index >= 0 ? "Main Menu diperbarui." : "Main Menu ditambahkan.");
+    });
+
     document.getElementById("classForm").addEventListener("submit", event => { event.preventDefault(); const name = classNameInput.value.trim(); if (!name) return; if (editingClassName) { closeClassEditModal(); return; } if (!appData.classes.includes(name)) appData.classes.push(name); saveData(); event.target.reset(); renderClasses(); toast("Kelas ditambahkan."); });
     document.getElementById("classEditSave").addEventListener("click", saveClassEdit);
     document.getElementById("classEditCancel").addEventListener("click", closeClassEditModal);
@@ -1960,7 +2112,7 @@
       const index = appData.members.findIndex(m => m.id === id);
       if (index >= 0) appData.members[index] = item; else appData.members.push(item);
       if (!appData.classes.includes(item.className)) appData.classes.push(item.className);
-      saveData(); event.target.reset(); memberId.value = ""; renderAll(); toast(index >= 0 ? "Data anggota diperbarui." : "Anggota baru ditambahkan.");
+      saveData(); event.target.reset(); memberId.value = ""; renderMemberDependents(); toast(index >= 0 ? "Data anggota diperbarui." : "Anggota baru ditambahkan.");
     });
 
     document.getElementById("programForm").addEventListener("submit", event => {
@@ -1969,7 +2121,7 @@
       const item = { id, name:programName.value.trim(), month:programMonth.value.trim(), status:programStatus.value, description:programDescription.value.trim() };
       const index = appData.programs.findIndex(p => p.id === id);
       if (index >= 0) appData.programs[index] = item; else appData.programs.push(item);
-      saveData(); event.target.reset(); programId.value = ""; renderAll(); toast("Program kerja tersimpan.");
+      saveData(); event.target.reset(); programId.value = ""; renderPrograms(); toast("Program kerja tersimpan.");
     });
 
     document.getElementById("financeForm").addEventListener("submit", event => {
@@ -1978,7 +2130,7 @@
       const item = { id, date:financeDate.value, type:financeType.value, description:financeDescription.value.trim(), amount:Number(financeAmount.value) };
       const index = appData.finance.findIndex(f => f.id === id);
       if (index >= 0) appData.finance[index] = item; else appData.finance.push(item);
-      saveData(); event.target.reset(); financeId.value = ""; financeDate.value = new Date().toISOString().slice(0,10); renderAll(); toast("Transaksi kas tersimpan.");
+      saveData(); event.target.reset(); financeId.value = ""; financeDate.value = new Date().toISOString().slice(0,10); updateDashboard(); renderFinance(); toast("Transaksi kas tersimpan.");
     });
 
     function renderYearGrid(centerYear, selectedYear) {
@@ -2013,7 +2165,7 @@
       const item = { id, name:achievementName.value.trim(), organizer:achievementOrganizer.value.trim(), year:Number(achievementYear.value), month:achievementMonth.value, award:achievementAward.value.trim() };
       const index = appData.achievements.findIndex(a => a.id === id);
       if (index >= 0) appData.achievements[index] = item; else appData.achievements.push(item);
-      saveData(); event.target.reset(); achievementId.value = ""; setAchievementYear(""); renderAll(); toast("Prestasi lomba tersimpan.");
+      saveData(); event.target.reset(); achievementId.value = ""; setAchievementYear(""); updateDashboard(); renderAchievements(); toast("Prestasi lomba tersimpan.");
     });
 
     document.getElementById("memberSearch").addEventListener("input", renderMembers);
