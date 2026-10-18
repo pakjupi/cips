@@ -979,6 +979,13 @@
          </div>
          <div class="mb-3"><label for="customMenuIcon" class="form-label">Icon Menu</label>
           <select id="customMenuIcon" class="form-select">
+           <option value="bi-camera-fill">Kamera</option>
+           <option value="bi-image-fill">Foto</option>
+           <option value="bi-play-btn-fill">Video</option>
+           <option value="bi-film">Film</option>
+           <option value="bi-camera-reels-fill">Clipper Film</option>
+           <option value="bi-camera2">Kamera Foto</option>
+           <option value="bi-camera-video-fill">Kamera Video</option>
            <option value="bi-link-45deg">Tautan (link)</option>
            <option value="bi-globe2">Dunia (globe)</option>
            <option value="bi-file-earmark-text-fill">Dokumen</option>
@@ -989,7 +996,6 @@
            <option value="bi-gear-fill">Pengaturan</option>
            <option value="bi-info-circle-fill">Info</option>
            <option value="bi-question-circle-fill">Tanya</option>
-           <option value="bi-image-fill">Gambar</option>
            <option value="bi-music-note-beamed">Musik</option>
            <option value="bi-cloud-fill">Awan</option>
            <option value="bi-map-fill">Peta</option>
@@ -1011,6 +1017,23 @@
          <table class="table">
           <thead><tr><th>Nama Menu</th><th>Diletakkan Setelah</th><th>Link</th><th class="text-end">Aksi</th></tr></thead>
           <tbody id="customMenuRows"></tbody>
+         </table>
+        </div>
+       </article>
+       <article class="surface-card mt-3">
+        <h2 class="section-title">Menu Bawaan</h2>
+        <p class="section-copy mb-3">Edit menu yang sudah ada agar langsung membuka link tautan (icon bisa tetap bawaan atau diganti), atau sembunyikan menu yang tidak dipakai.</p>
+        <form id="builtinMenuForm" class="mb-3 p-3 rounded-4 d-none" style="background:#F1F5F9;">
+         <input type="hidden" id="builtinMenuView">
+         <div class="fw-bold mb-2" style="font-size:.85rem;">Edit menu: <span id="builtinMenuTitle"></span></div>
+         <div class="mb-2"><label for="builtinMenuIcon" class="form-label">Icon Menu</label><select id="builtinMenuIcon" class="form-select"></select></div>
+         <div class="mb-2"><label for="builtinMenuUrl" class="form-label">Link Tautan (kosongkan jika ingin menu normal)</label><input id="builtinMenuUrl" type="url" class="form-control" placeholder="https://..."></div>
+         <div class="d-flex gap-2 flex-wrap"><button class="btn btn-cips" type="submit">Simpan</button><button class="btn btn-soft" type="button" onclick="cancelBuiltinMenuEdit()">Batal</button><button class="btn btn-soft btn-danger-soft" type="button" onclick="resetBuiltinMenu()">Kembalikan ke Bawaan</button></div>
+        </form>
+        <div class="table-wrap">
+         <table class="table">
+          <thead><tr><th>Menu</th><th>Status</th><th class="text-end">Aksi</th></tr></thead>
+          <tbody id="builtinMenuRows"></tbody>
          </table>
         </div>
        </article>
@@ -1146,6 +1169,7 @@
       eclipseTasks: [],
       eclipseCommittee: {},
       customMenus: [],
+      menuOverrides: {},
       auth: { username: "admin", password: "admin123" }
     };
 
@@ -1613,7 +1637,8 @@
       eclipseTasks: () => renderEclipseTasks(),
       eclipseCommittee: () => renderEclipseCommittee(),
       classes: () => { renderClasses(); renderMembers(); },
-      members: () => renderMemberDependents()
+      members: () => renderMemberDependents(),
+      customMenus: () => renderCustomMenus()
     };
     function renderFor(collection) {
       const fn = COLLECTION_RENDERERS[collection];
@@ -2045,7 +2070,72 @@
       if (options.some(o => o.value === current)) select.value = current;
     }
 
+    const PROTECTED_MENUS = ["mainMenu", "adminProfile"];
+    function builtInMenuList() {
+      return [...document.querySelectorAll(".side-panel .menu-link[data-view]")].map(btn => {
+        const iconEl = btn.querySelector("i");
+        if (!btn.dataset.origIcon && iconEl) btn.dataset.origIcon = [...iconEl.classList].find(c => c.startsWith("bi-")) || "";
+        return { btn, view: btn.dataset.view, name: btn.textContent.trim(), origIcon: btn.dataset.origIcon || "" };
+      });
+    }
+    function applyMenuOverrides() {
+      const overrides = appData.menuOverrides || {};
+      builtInMenuList().forEach(({ btn, view, origIcon }) => {
+        const ov = overrides[view] || {};
+        btn.style.display = ov.hidden ? "none" : "";
+        const iconEl = btn.querySelector("i");
+        if (iconEl) iconEl.className = "bi " + (ov.icon || origIcon);
+      });
+    }
+    function renderBuiltinMenuRows() {
+      const overrides = appData.menuOverrides || {};
+      document.getElementById("builtinMenuRows").innerHTML = builtInMenuList().map(({ view, name, origIcon }) => {
+        const ov = overrides[view] || {};
+        const locked = PROTECTED_MENUS.includes(view);
+        const status = ov.hidden ? "Disembunyikan" : ov.url ? "Langsung ke link" : "Normal";
+        const actions = locked ? `<span class="text-secondary" style="font-size:.68rem;">Terkunci</span>` : `<button class="btn btn-sm btn-soft" onclick="editBuiltinMenu('${view}')" aria-label="Edit ${escapeHtml(name)}"><i class="bi bi-pencil"></i></button> ${ov.hidden ? `<button class="btn btn-sm btn-soft" onclick="toggleBuiltinMenuHidden('${view}')" aria-label="Tampilkan ${escapeHtml(name)}"><i class="bi bi-eye"></i></button>` : (view === "dashboard" ? "" : `<button class="btn btn-sm btn-soft btn-danger-soft" onclick="toggleBuiltinMenuHidden('${view}')" aria-label="Sembunyikan ${escapeHtml(name)}"><i class="bi bi-trash"></i></button>`)}`;
+        return `<tr><td><i class="bi ${escapeHtml(ov.icon || origIcon)} me-1"></i>${escapeHtml(name)}</td><td style="font-size:.72rem;">${status}${ov.url && !ov.hidden ? `<div class="text-secondary" style="overflow-wrap:anywhere;">${escapeHtml(ov.url)}</div>` : ""}</td><td class="text-end">${actions}</td></tr>`;
+      }).join("");
+    }
+    function editBuiltinMenu(view) {
+      const item = builtInMenuList().find(m => m.view === view); if (!item) return;
+      const ov = (appData.menuOverrides || {})[view] || {};
+      const iconOptions = [...document.querySelectorAll("#customMenuIcon option")];
+      builtinMenuIcon.innerHTML = `<option value="">Icon tetap (bawaan)</option>` + iconOptions.map(o => `<option value="${o.value}">${escapeHtml(o.textContent)}</option>`).join("");
+      builtinMenuIcon.value = ov.icon || "";
+      builtinMenuView.value = view; builtinMenuTitle.textContent = item.name; builtinMenuUrl.value = ov.url || "";
+      builtinMenuForm.classList.remove("d-none");
+      builtinMenuForm.scrollIntoView({ behavior:"smooth", block:"center" });
+    }
+    function cancelBuiltinMenuEdit() { builtinMenuForm.classList.add("d-none"); builtinMenuForm.reset(); }
+    function saveBuiltinOverride(view, ov) {
+      if (!appData.menuOverrides) appData.menuOverrides = {};
+      if (!ov.url && !ov.icon && !ov.hidden) delete appData.menuOverrides[view]; else appData.menuOverrides[view] = ov;
+      saveData(); renderCustomMenus();
+    }
+    function resetBuiltinMenu() {
+      const view = builtinMenuView.value; if (!view) return;
+      const ov = (appData.menuOverrides || {})[view] || {};
+      saveBuiltinOverride(view, { hidden: ov.hidden });
+      cancelBuiltinMenuEdit(); toast("Menu dikembalikan ke bawaan.");
+    }
+    function toggleBuiltinMenuHidden(view) {
+      const ov = { ...((appData.menuOverrides || {})[view] || {}) };
+      if (!ov.hidden && !confirm("Sembunyikan menu ini dari sidebar? Anda bisa menampilkannya lagi di daftar Menu Bawaan.")) return;
+      ov.hidden = !ov.hidden;
+      saveBuiltinOverride(view, ov);
+      toast(ov.hidden ? "Menu disembunyikan." : "Menu ditampilkan kembali.");
+    }
+    document.getElementById("builtinMenuForm").addEventListener("submit", event => {
+      event.preventDefault();
+      const view = builtinMenuView.value;
+      const ov = { ...((appData.menuOverrides || {})[view] || {}), icon: builtinMenuIcon.value, url: builtinMenuUrl.value.trim() };
+      saveBuiltinOverride(view, ov);
+      cancelBuiltinMenuEdit(); toast("Menu diperbarui.");
+    });
+
     function renderCustomMenus() {
+      applyMenuOverrides(); renderBuiltinMenuRows();
       populateCustomMenuAfterOptions();
       document.getElementById("customMenuRows").innerHTML = appData.customMenus.length ? appData.customMenus.map(cm => {
         let afterLabel = "-";
@@ -2086,7 +2176,7 @@
       const item = { id, name: customMenuName.value.trim(), icon: customMenuIcon.value, after: customMenuAfter.value, url: customMenuUrl.value.trim() };
       const index = appData.customMenus.findIndex(c => c.id === id);
       if (index >= 0) appData.customMenus[index] = item; else appData.customMenus.push(item);
-      saveData(); event.target.reset(); customMenuId.value = ""; renderAll(); toast(index >= 0 ? "Main Menu diperbarui." : "Main Menu ditambahkan.");
+      saveData(); event.target.reset(); customMenuId.value = ""; renderCustomMenus(); toast(index >= 0 ? "Main Menu diperbarui." : "Main Menu ditambahkan.");
     });
 
     document.getElementById("classForm").addEventListener("submit", event => { event.preventDefault(); const name = classNameInput.value.trim(); if (!name) return; if (editingClassName) { closeClassEditModal(); return; } if (!appData.classes.includes(name)) appData.classes.push(name); saveData(); event.target.reset(); renderClasses(); toast("Kelas ditambahkan."); });
@@ -2181,6 +2271,12 @@
     document.querySelectorAll(".menu-link").forEach(button => {
       button.addEventListener("click", () => {
         const view = button.dataset.view;
+        const override = (appData.menuOverrides || {})[view];
+        if (override && override.url) {
+          window.open(override.url, "_blank", "noopener");
+          document.querySelector(".side-panel").classList.remove("open"); navBackdrop.classList.remove("open");
+          return;
+        }
         document.querySelectorAll(".menu-link").forEach(item => item.classList.remove("active"));
         document.querySelectorAll(".view-section").forEach(item => item.classList.remove("active"));
         button.classList.add("active"); document.getElementById(view).classList.add("active");
